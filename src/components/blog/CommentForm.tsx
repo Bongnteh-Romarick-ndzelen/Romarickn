@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { Send } from 'lucide-react';
+import { commentService } from '@/lib/services/comment.service';
+import type { CreateCommentData } from '@/types/comment';
 
 const commentFormSchema = z.object({
   content: z.string().min(3, 'Comment must be at least 3 characters.'),
@@ -37,17 +39,14 @@ export default function CommentForm({ postId, parentId, onCommentSubmitted }: Co
   const onSubmit = async (data: CommentFormValues) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, postId, parentId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit comment');
-      }
-      
-      const newComment = await response.json();
+      const commentData: CreateCommentData = {
+        content: data.content,
+        authorName: data.authorName,
+        authorEmail: data.authorEmail,
+        postId,
+        parentId,
+      };
+      const newComment = await commentService.createComment(commentData);
       toast({
         title: 'Comment Submitted!',
         description: 'Your comment is awaiting moderation.',

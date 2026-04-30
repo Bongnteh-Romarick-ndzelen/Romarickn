@@ -1,19 +1,17 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Bongnteh Romarick Ndzelen - Portfolio',
-  description: 'The personal portfolio of Bongnteh Romarick Ndzelen, a passionate developer.',
+  title: 'Sign Up - Bongnteh Romarick Ndzelen',
+  description: 'Create a new account',
 };
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -21,9 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(inter.variable, 'dark')} suppressHydrationWarning>
       <body className="antialiased bg-slate-950 text-slate-300">
-        <Header />
         {children}
-        <Footer />
         <Toaster />
       </body>
     </html>

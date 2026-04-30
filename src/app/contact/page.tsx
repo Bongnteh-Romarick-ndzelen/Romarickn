@@ -1,6 +1,4 @@
 
-import { Header } from '@/components/portfolio/header';
-import { Footer } from '@/components/portfolio/footer';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -10,7 +8,6 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 export default function ContactPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
           <header className="text-center mb-12 md:mb-16">
@@ -87,7 +84,6 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

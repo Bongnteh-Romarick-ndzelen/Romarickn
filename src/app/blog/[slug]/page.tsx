@@ -15,6 +15,7 @@ import LikeButton from '@/components/blog/LikeButton';
 import CommentList from '@/components/blog/CommentList';
 import CommentForm from '@/components/blog/CommentForm';
 import Link from 'next/link';
+import { postService } from '@/lib/services/post.service';
 
 // Define the shape of your post data
 interface Post {
@@ -46,17 +47,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   useEffect(() => {
     async function fetchPost() {
       try {
-        const response = await fetch(`/api/posts/${params.slug}`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            notFound();
-          }
-          throw new Error('Failed to fetch post');
-        }
-        const data = await response.json();
+        const data = await postService.getPostBySlug(params.slug);
         setPost(data);
       } catch (error) {
         console.error(error);
+        notFound();
       } finally {
         setLoading(false);
       }

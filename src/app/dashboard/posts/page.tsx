@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { formatDate } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { adminService } from '@/lib/services/admin.service';
 
 interface Post {
   id: string;
@@ -54,12 +55,8 @@ export default function DashboardPostsPage() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const response = await fetch('/api/dashboard/posts');
-        if (!response.ok) {
-          throw new Error('Failed to fetch posts');
-        }
-        const data = await response.json();
-        setPosts(data.posts);
+        const data = await adminService.getAllPosts();
+        setPosts(data);
       } catch (error) {
         console.error(error);
         toast({
@@ -76,12 +73,7 @@ export default function DashboardPostsPage() {
 
   const handleDelete = async (postId: string) => {
     try {
-      const response = await fetch(`/api/posts/${postId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete post');
-      }
+      await adminService.deletePost(postId);
       setPosts(posts.filter((post) => post.id !== postId));
       toast({
         title: 'Post Deleted',

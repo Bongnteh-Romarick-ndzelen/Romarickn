@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { postService } from '@/lib/services/post.service';
 
 interface LikeButtonProps {
   postId: string;
@@ -23,34 +24,16 @@ export default function LikeButton({ postId, initialLikes }: LikeButtonProps) {
   const handleLike = async () => {
     setLoading(true);
 
-    // This is a placeholder for getting the authenticated user ID.
-    // In your real application, you would get this from your auth context.
-    const userId = "mock-user-id"; 
-
     try {
       if (isLiked) {
         // Unlike the post
-        const response = await fetch(`/api/posts/${postId}/likes`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId }), // You'd send the actual user ID
-        });
-
-        if (!response.ok) throw new Error('Failed to unlike');
-        
-        setLikes(prev => prev - 1);
+        const result = await postService.unlikePost(postId);
+        setLikes(result.likesCount);
         setIsLiked(false);
       } else {
         // Like the post
-        const response = await fetch(`/api/posts/${postId}/likes`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId }), // You'd send the actual user ID
-        });
-        
-        if (!response.ok) throw new Error('Failed to like');
-
-        setLikes(prev => prev + 1);
+        const result = await postService.likePost(postId);
+        setLikes(result.likesCount);
         setIsLiked(true);
       }
     } catch (error) {

@@ -1,6 +1,4 @@
 
-import { Header } from '@/components/portfolio/header';
-import { Footer } from '@/components/portfolio/footer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +15,6 @@ const skills = {
 export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
           {/* Header */}
@@ -106,7 +103,6 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

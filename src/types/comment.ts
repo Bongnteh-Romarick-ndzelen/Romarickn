@@ -1,0 +1,30 @@
+export interface Comment {
+  id: string;
+  content: string;
+  authorName: string;
+  authorEmail: string;
+  authorWebsite?: string;
+  authorIp: string;
+  userId?: string;
+  user?: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  postId: string;
+  parentId?: string;
+  isApproved: boolean;
+  createdAt: string;
+  updatedAt: string;
+  likes: number;
+}
+
+export interface CreateCommentData {
+  content: string;
+  authorName: string;
+  authorEmail: string;
+  authorWebsite?: string;
+  postId: string;
+  parentId?: string;
+  userId?: string;
+}

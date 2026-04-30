@@ -1,6 +1,4 @@
 
-import { Header } from '@/components/portfolio/header';
-import { Footer } from '@/components/portfolio/footer';
 import { Briefcase } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -31,7 +29,6 @@ const experiences = [
 export default function ExperiencePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-1">
         <div className="container mx-auto max-w-4xl px-4 py-16 md:py-24">
           <header className="text-center mb-12 md:mb-16">
@@ -74,7 +71,6 @@ export default function ExperiencePage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

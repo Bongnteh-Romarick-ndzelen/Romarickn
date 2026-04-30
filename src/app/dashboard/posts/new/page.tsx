@@ -10,6 +10,8 @@ import RichTextEditor from '@/components/editor/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { postService } from '@/lib/services/post.service';
+import type { CreatePostData } from '@/types/post';
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -24,7 +26,7 @@ export default function NewPostPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const postData = {
+    const postData: CreatePostData = {
       title,
       excerpt,
       content,
@@ -32,10 +34,31 @@ export default function NewPostPage() {
     };
 
     try {
-      const response = await fetch('/api/posts', {
+      await postService.createPost(postData);
+      toast({
+        title: 'Success!',
+        description: `Post has been ${publish ? 'published' : 'saved as a draft'}.`,
+      });
+      router.push('/dashboard/posts');
+      router.refresh();
+    } catch (error: any) {
+      console.error('Failed to create post:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Uh oh! Something went wrong.',
+        description: error.message,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(postData),
+        credentials: 'include',
       });
 
       if (response.ok) {
