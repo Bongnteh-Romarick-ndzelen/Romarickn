@@ -96,7 +96,7 @@ export default function DashboardPostsPage() {
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Posts</h1>
-        <Link href="/dashboard/posts/new" passHref>
+        <Link href="/admin/dashboard/posts/new" passHref>
           <Button>Create Post</Button>
         </Link>
       </div>
@@ -139,7 +139,7 @@ export default function DashboardPostsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Link href={`/dashboard/posts/edit/${post.id}`} passHref>
+                        <Link href={`/admin/dashboard/posts/edit/${post.id}`} passHref>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                         </Link>
                         <DropdownMenuSeparator />

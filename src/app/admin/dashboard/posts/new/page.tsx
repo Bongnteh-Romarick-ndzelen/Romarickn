@@ -39,7 +39,7 @@ export default function NewPostPage() {
         title: 'Success!',
         description: `Post has been ${publish ? 'published' : 'saved as a draft'}.`,
       });
-      router.push('/dashboard/posts');
+      router.push('/admin/dashboard/posts');
       router.refresh();
     } catch (error: any) {
       console.error('Failed to create post:', error);
@@ -53,39 +53,8 @@ export default function NewPostPage() {
     }
   };
 
-    try {
-      const response = await fetch('http://localhost:5000/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData),
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        toast({
-          title: 'Success!',
-          description: `Post has been ${publish ? 'published' : 'saved as a draft'}.`,
-        });
-        router.push('/dashboard/posts');
-        router.refresh(); // Refresh server components
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create post');
-      }
-    } catch (error: any) {
-      console.error('Failed to create post:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Uh oh! Something went wrong.',
-        description: error.message,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
-    <div className="container mx-auto py-10 px-4">
+      <div className="container mx-auto py-10 px-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <h1 className="text-3xl font-bold">Create New Post</h1>
         <div className="flex items-center space-x-2 shrink-0">

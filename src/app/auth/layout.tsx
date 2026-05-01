@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Login - Bongnteh Romarick Ndzelen',
-  description: 'Sign in to your account',
+  title: 'Auth - Bongnteh Romarick Ndzelen',
+  description: 'Authentication pages',
 };
 
 export default function AuthLayout({

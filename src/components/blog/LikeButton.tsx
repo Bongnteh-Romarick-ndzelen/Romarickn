@@ -6,6 +6,8 @@ import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { postService } from '@/lib/services/post.service';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface LikeButtonProps {
   postId: string;
@@ -17,11 +19,23 @@ export default function LikeButton({ postId, initialLikes }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const router = useRouter();
 
   // In a real app, you'd check if the user has already liked this post
   // For now, we'll just use the local state `isLiked`
 
   const handleLike = async () => {
+    if (!user) {
+      toast({
+        variant: 'destructive',
+        title: 'Authentication Required',
+        description: 'You must be logged in to like a post.',
+      });
+      router.push('/login');
+      return;
+    }
+
     setLoading(true);
 
     try {

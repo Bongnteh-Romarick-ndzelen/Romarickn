@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail } from "lucide-react";
 import { authService } from "@/lib/services/auth.service";
 
 export default function ForgotPasswordPage() {
@@ -30,12 +30,10 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
-      await authService.forgotPassword(email);
+      await authService.requestPasswordReset(email);
       setIsSuccess(true);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to send reset email",
-      );
+      setError(err instanceof Error ? err.message : "Failed to send reset email");
     } finally {
       setIsLoading(false);
     }
@@ -45,18 +43,10 @@ export default function ForgotPasswordPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-[360px]">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
-          >
-            <ArrowLeft className="h-3 w-3" />
-            Back to Login
-          </Link>
-
-          <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
+          <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl">
             <CardHeader className="pb-4 pt-5 px-5 text-center">
-              <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/25">
-                <CheckCircle className="h-5 w-5 text-white" />
+              <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-white" />
               </div>
               <CardTitle className="text-lg font-bold text-white">
                 Check Your Email
@@ -67,25 +57,20 @@ export default function ForgotPasswordPage() {
             </CardHeader>
 
             <CardContent className="px-5 pb-4 text-center">
-              <p className="text-sm text-slate-300 mb-3">
-                We've sent a password reset code to{" "}
-                <span className="text-purple-400 font-medium">{email}</span>
+              <p className="text-sm text-slate-400 mb-4">
+                We've sent a password reset link to{" "}
+                <span className="text-slate-300">{email}</span>
               </p>
-              <div className="bg-slate-800/50 rounded-lg p-3 mb-3">
-                <p className="text-xs text-slate-400">
-                  Please check your inbox and enter the 5-digit code on the
-                  reset page.
-                </p>
-              </div>
-              <p className="text-[10px] text-slate-500">
-                The code will expire in 10 minutes
+              <p className="text-xs text-slate-500">
+                Please check your inbox and click the link to reset your password.
               </p>
             </CardContent>
 
             <CardFooter className="flex justify-center pb-5 px-5">
               <Button
+                variant="outline"
                 onClick={() => router.push("/login")}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9"
+                className="border-slate-700 text-slate-300 hover:bg-slate-800"
               >
                 Back to Login
               </Button>
@@ -99,24 +84,16 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-[360px]">
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
-        >
-          <ArrowLeft className="h-3 w-3" />
-          Back to Login
-        </Link>
-
-        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
+        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl">
           <CardHeader className="pb-4 pt-5 px-5 text-center">
-            <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
+            <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
               <Mail className="h-5 w-5 text-white" />
             </div>
             <CardTitle className="text-lg font-bold text-white">
               Reset Password
             </CardTitle>
             <CardDescription className="text-slate-400 text-xs">
-              Enter your email to receive a reset code
+              Enter your email to receive reset instructions
             </CardDescription>
           </CardHeader>
 
@@ -124,15 +101,15 @@ export default function ForgotPasswordPage() {
             <CardContent className="space-y-3 px-5 pb-4">
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-slate-300 text-xs">
-                  Email Address
+                  Email
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
-                    className="pl-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500"
+                    placeholder="your@email.com"
+                    className="pl-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -141,28 +118,22 @@ export default function ForgotPasswordPage() {
               </div>
 
               {error && (
-                <p className="text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
+                <p className="text-xs text-red-400 bg-red-500/10 p-2 rounded">
                   {error}
                 </p>
               )}
 
-              <div className="bg-slate-800/50 rounded-lg p-2.5">
-                <p className="text-[10px] text-slate-400 text-center">
-                  We'll send a 5-digit verification code to your email
-                </p>
-              </div>
-
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm h-9"
               >
-                {isLoading ? "Sending..." : "Send Reset Code"}
+                {isLoading ? "Sending..." : "Send Reset Link"}
               </Button>
             </CardContent>
           </form>
 
-          <CardFooter className="flex justify-center pb-5 px-5">
+          <CardFooter className="flex justify-center pt-0 pb-5 px-5">
             <p className="text-xs text-slate-400">
               Remember your password?{" "}
               <Link

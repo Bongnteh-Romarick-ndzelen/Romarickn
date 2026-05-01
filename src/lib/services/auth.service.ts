@@ -6,12 +6,13 @@ interface AuthResponse {
   success: boolean;
   message: string;
   data?: {
-    user?: User;
-    token?: string;
     _id?: string;
     name?: string;
     email?: string;
     role?: string;
+    token?: string;
+    user?: User;
+    session?: any;
   };
 }
 
@@ -23,12 +24,31 @@ export const authService = {
       credentials,
     );
 
-    if (response.success && response.data?.token) {
-      localStorage.setItem("token", response.data.token);
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+    console.log("Login response:", response);
+
+    // Extract user from the response structure
+    if (response.success && response.data) {
+      // Create user object from the data
+      const userData: User = {
+        _id: response.data._id || response.data.user?._id || "",
+        name: response.data.name || response.data.user?.name || "",
+        email: response.data.email || response.data.user?.email || "",
+        role: (response.data.role || response.data.user?.role || "user") as
+          | "user"
+          | "admin",
+        avatar: response.data.user?.avatar || "",
+        isActive: true,
+        isEmailVerified: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(userData));
       }
     }
+
     return response;
   },
 
@@ -37,7 +57,6 @@ export const authService = {
     const response = await apiPost<AuthResponse>("/api/auth/register", data);
 
     if (response.success) {
-      // Store email for verification
       localStorage.setItem("pendingVerificationEmail", data.email);
     }
     return response;

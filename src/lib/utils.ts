@@ -7,5 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(dateString: string) {
-  return format(new Date(dateString), "MMM d, yyyy")
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return "Date not available";
+  }
+  return format(date, "MMM d, yyyy");
 }

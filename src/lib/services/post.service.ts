@@ -12,12 +12,14 @@ export const postService = {
 
   // Get post by slug
   async getPostBySlug(slug: string) {
-    return apiRequest<Post>(`/api/posts/${slug}`);
+    const response = await apiRequest<{success: boolean; message: string; data: Post}>(`/api/posts/${slug}`);
+    return response.data;
   },
 
   // Get post by ID
   async getPostById(id: string) {
-    return apiRequest<Post>(`/api/posts/id/${id}`);
+    const response = await apiRequest<{success: boolean; message: string; data: Post}>(`/api/posts/id/${id}`);
+    return response.data;
   },
 
   // Create new post
