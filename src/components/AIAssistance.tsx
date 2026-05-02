@@ -1,57 +1,51 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  MessageCircle,
   Send,
   Bot,
   User,
   Clock,
-  CheckCircle,
-  XCircle,
   Loader2,
   Search,
   MapPin,
-  Calendar,
   Mail,
   Phone,
   Globe,
   Linkedin,
   Github,
   Twitter,
+  Sparkles,
+  MessageCircle,
+  Calendar,
+  Award,
+  Briefcase,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import axios from "axios";
 
 interface Message {
   id: string;
   content: string;
   sender: "user" | "ai";
   timestamp: Date;
-  type?: "text" | "contact" | "location" | "availability";
+  type?: "text" | "contact" | "location" | "availability" | "skills";
   metadata?: any;
 }
 
@@ -73,119 +67,162 @@ interface AvailabilitySlot {
 }
 
 interface AIAssistanceProps {
-  userProfile?: {
+  profileData: {
     name: string;
-    email: string;
-    bio?: string;
+    title: string;
+    bio: string;
     avatar?: string;
-    role?: string;
-    skills?: string[];
-    experience?: string[];
+    skills: string[];
+    experience: string[];
+    education?: string[];
+    contact: ContactInfo;
+    availability?: AvailabilitySlot[];
+    socialLinks?: {
+      github?: string;
+      linkedin?: string;
+      twitter?: string;
+    };
   };
-  contactInfo?: ContactInfo;
-  availability?: AvailabilitySlot[];
-  onContactRequest?: (message: string) => Promise<boolean>;
 }
 
-export function AIAssistance({
-  userProfile,
-  contactInfo,
-  availability,
-  onContactRequest,
-}: AIAssistanceProps) {
-  const { user } = useAuth();
+export function AIAssistance({ profileData }: AIAssistanceProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [isTrackingEnabled, setIsTrackingEnabled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showContactInfo, setShowContactInfo] = useState(false);
-  const [showAvailability, setShowAvailability] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showQuickActions, setShowQuickActions] = useState(true);
+
+  // Scroll to bottom of messages
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Initialize with welcome message
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       const welcomeMessage: Message = {
         id: "1",
-        content: `Hello! I'm your AI assistant. I can help you find and connect with ${userProfile?.name || "this person"}. I can provide their contact information, availability, skills, and help you send them a message. How can I help you today?`,
+        content: `👋 Hi there! I'm an AI assistant for ${profileData.name}. I can help you learn more about my skills, experience, how to contact me, and more. What would you like to know?`,
         sender: "ai",
         timestamp: new Date(),
         type: "text",
       };
       setMessages([welcomeMessage]);
+      setShowQuickActions(true);
     }
-  }, [isOpen, userProfile?.name]);
+  }, [isOpen, profileData.name]);
 
-  // Simulate AI response
+  // Generate AI response using Grok API
   const generateAIResponse = async (userMessage: string): Promise<Message> => {
     setIsTyping(true);
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+    setShowQuickActions(false);
 
-    const message = userMessage.toLowerCase();
-    let response = "";
-    let type: "text" | "contact" | "location" | "availability" = "text";
-    let metadata: any = undefined;
+    // Build system prompt with profile data
+    const systemPrompt = `You are a helpful AI assistant representing ${profileData.name}, a ${profileData.title}. 
+Your role is to help visitors learn about this person and facilitate communication.
 
-    // Contact information queries
-    if (message.includes("contact") || message.includes("email") || 
-        message.includes("phone") || message.includes("reach") ||
-        message.includes("connect")) {
-      type = "contact";
-      response = `Here's how you can contact ${userProfile?.name || "them"}:`;
-      metadata = contactInfo;
-    }
-    // Location queries
-    else if (message.includes("location") || message.includes("where") ||
-             message.includes("based") || message.includes("live")) {
-      type = "location";
-      response = `${userProfile?.name || "They"} are based in ${contactInfo?.location || "their profile location"}.`;
-      metadata = { location: contactInfo?.location };
-    }
-    // Availability queries
-    else if (message.includes("available") || message.includes("time") ||
-             message.includes("schedule") || message.includes("meet")) {
-      type = "availability";
-      response = `${userProfile?.name || "They"} are available at these times:`;
-      metadata = { availability: availability };
-    }
-    // Skills/experience queries
-    else if (message.includes("skill") || message.includes("experience") ||
-             message.includes("do") || message.includes("work")) {
-      response = `${userProfile?.name || "They"} have experience in: ${userProfile?.skills?.join(", ") || "various areas"}. ${userProfile?.experience?.[0] || "They have professional experience in their field."}`;
-    }
-    // Bio/profile queries
-    else if (message.includes("about") || message.includes("bio") ||
-             message.includes("who") || message.includes("tell me")) {
-      response = `${userProfile?.name || "They"} ${userProfile?.bio || "are a professional in their field."} ${userProfile?.role ? `They work as a ${userProfile?.role}.` : ""}`;
-    }
-    // Direct message request
-    else if (message.includes("message") || message.includes("send") ||
-             message.includes("hello") || message.includes("hi") ||
-             message.includes("greeting")) {
-      response = `I can help you send a message to ${userProfile?.name || "them"}. What would you like to say?`;
-    }
-    // Default response
-    else {
-      const responses = [
-        `I can help you find information about ${userProfile?.name || "this person"}. You can ask about their contact details, availability, skills, or send them a message.`,
-        `What would you like to know about ${userProfile?.name || "them"}? I can provide contact information, availability, or help you send a message.`,
-        `I'm here to help you connect with ${userProfile?.name || "this person"}. Try asking about their contact details, skills, or availability!`,
-      ];
-      response = responses[Math.floor(Math.random() * responses.length)];
-    }
+PERSON'S INFORMATION:
+- Name: ${profileData.name}
+- Title/Role: ${profileData.title}
+- Bio: ${profileData.bio}
+- Skills: ${profileData.skills.join(", ")}
+- Experience: ${profileData.experience.join(". ")}
+- Education: ${profileData.education?.join(", ") || "Not specified"}
+- Location: ${profileData.contact.location || "Not specified"}
+- Email: ${profileData.contact.email}
+- Phone: ${profileData.contact.phone || "Not publicly available"}
+- Website: ${profileData.contact.website || "Not specified"}
+- Availability: ${profileData.availability ? profileData.availability.length + " time slots available" : "Contact for availability"}
 
-    setIsTyping(false);
-    return {
-      id: Date.now().toString(),
-      content: response,
-      sender: "ai",
-      timestamp: new Date(),
-      type,
-      metadata,
-    };
+GUIDELINES:
+- Be professional, friendly, and enthusiastic about the person's work
+- Keep responses concise (under 150 words when possible)
+- If asked about contact, provide email and encourage appropriate communication
+- If asked about skills or experience, highlight key achievements
+- If someone expresses interest in collaboration, be encouraging
+- Be honest about what you don't know and offer to help with what you can
+- Never share sensitive personal information beyond what's provided`;
+
+    try {
+      const response = await axios.post(
+        "https://api.x.ai/v1/chat/completions",
+        {
+          model: "grok-beta",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMessage },
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_XAI_API_KEY}`,
+          },
+        }
+      );
+
+      const aiResponse = response.data.choices[0]?.message?.content || 
+        "I'm sorry, I couldn't process that request. Please try asking something else about my background or how to contact me.";
+
+      // Determine message type based on content
+      let type: "text" | "contact" | "location" | "availability" | "skills" = "text";
+      const lowerContent = aiResponse.toLowerCase();
+      
+      if (lowerContent.includes("contact") || lowerContent.includes("email")) {
+        type = "contact";
+      } else if (lowerContent.includes("location") || lowerContent.includes("based")) {
+        type = "location";
+      } else if (lowerContent.includes("available") || lowerContent.includes("schedule")) {
+        type = "availability";
+      } else if (lowerContent.includes("skill") || lowerContent.includes("experience")) {
+        type = "skills";
+      }
+
+      return {
+        id: Date.now().toString(),
+        content: aiResponse,
+        sender: "ai",
+        timestamp: new Date(),
+        type,
+        metadata: type === "contact" ? profileData.contact : 
+                 type === "availability" ? { availability: profileData.availability } : 
+                 type === "skills" ? { skills: profileData.skills, experience: profileData.experience } :
+                 type === "location" ? { location: profileData.contact.location } : undefined,
+      };
+    } catch (error) {
+      console.error("Grok API error:", error);
+      
+      // Fallback responses if API fails
+      let fallbackResponse = "I'm having trouble connecting right now. Please try again in a moment or use the contact form to reach out directly.";
+      
+      const message = userMessage.toLowerCase();
+      if (message.includes("contact") || message.includes("email")) {
+        fallbackResponse = `You can reach ${profileData.name} at ${profileData.contact.email}. Feel free to send a message for any inquiries or collaboration opportunities!`;
+      } else if (message.includes("skill") || message.includes("experience")) {
+        fallbackResponse = `${profileData.name} specializes in: ${profileData.skills.slice(0, 4).join(", ")}${profileData.skills.length > 4 ? ", and more" : ""}. With experience in ${profileData.experience[0] || "the field"}.`;
+      } else if (message.includes("about") || message.includes("bio")) {
+        fallbackResponse = profileData.bio;
+      } else if (message.includes("work") || message.includes("do")) {
+        fallbackResponse = `As a ${profileData.title}, ${profileData.name} focuses on ${profileData.skills.slice(0, 3).join(", ")}.`;
+      } else {
+        fallbackResponse = `I'd love to help! You can ask me about ${profileData.name}'s skills, experience, how to contact them, or their background. What would you like to know?`;
+      }
+      
+      return {
+        id: Date.now().toString(),
+        content: fallbackResponse,
+        sender: "ai",
+        timestamp: new Date(),
+        type: "text",
+      };
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -201,39 +238,21 @@ export function AIAssistance({
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
+    setShowQuickActions(false);
 
-    // Generate AI response
     const aiResponse = await generateAIResponse(input);
     setMessages(prev => [...prev, aiResponse]);
   };
 
-  const handleContactRequest = async () => {
-    if (!input.trim() || !onContactRequest) return;
-
-    const success = await onContactRequest(input);
-    
-    const resultMessage: Message = {
-      id: Date.now().toString(),
-      content: success 
-        ? "Your message has been sent successfully!"
-        : "Sorry, I couldn't send your message. Please try again later.",
-      sender: "ai",
-      timestamp: new Date(),
-      type: "text",
-    };
-
-    setMessages(prev => [...prev, resultMessage]);
-    setInput("");
+  const handleQuickQuestion = (question: string) => {
+    setInput(question);
+    setTimeout(() => handleSendMessage(), 100);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (showContactInfo && onContactRequest) {
-        handleContactRequest();
-      } else {
-        handleSendMessage();
-      }
+      handleSendMessage();
     }
   };
 
@@ -253,34 +272,28 @@ export function AIAssistance({
       .slice(0, 2);
   };
 
+  const quickQuestions = [
+    { icon: Briefcase, text: "What do you do?", question: "What do you do professionally?" },
+    { icon: Award, text: "Skills", question: "What are your main skills and expertise?" },
+    { icon: Mail, text: "Contact", question: "How can I contact you?" },
+    { icon: Calendar, text: "Availability", question: "When are you available for meetings?" },
+  ];
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Tracking Toggle */}
-      <div className="mb-3 flex items-center gap-2 bg-slate-800/90 backdrop-blur-sm rounded-full px-4 py-2 border border-slate-700/50 shadow-lg">
-        <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${isTrackingEnabled ? "bg-green-500 animate-pulse" : "bg-slate-600"}`} />
-          <span className="text-sm text-slate-400">Tracking</span>
-        </div>
-        <Switch
-          checked={isTrackingEnabled}
-          onCheckedChange={setIsTrackingEnabled}
-          className="scale-75"
-        />
-      </div>
-
       {/* AI Assistant Button */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button
-            size="lg"
             className="rounded-full w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25 transition-all duration-300 hover:scale-110"
           >
-            <Bot className="h-6 w-6" />
+            <MessageCircle className="h-6 w-6" />
           </Button>
         </DialogTrigger>
         
-        <DialogContent className="bg-slate-900 border-slate-700 max-w-lg max-h-[80vh] flex flex-col">
-          <DialogHeader>
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-md max-h-[85vh] flex flex-col p-0 gap-0 rounded-2xl">
+          {/* Header */}
+          <DialogHeader className="p-4 pb-2 border-b border-slate-800">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur opacity-30"></div>
@@ -289,203 +302,155 @@ export function AIAssistance({
                 </div>
               </div>
               <div>
-                <DialogTitle className="text-white">AI Assistant</DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  Helping you connect with {userProfile?.name || "this person"}
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <span>Chat with {profileData.name.split(' ')[0]}'s AI</span>
+                  <Badge className="bg-purple-500/20 text-purple-300 text-[9px]">Powered by Grok</Badge>
+                </DialogTitle>
+                <DialogDescription className="text-slate-400 text-xs">
+                  Ask me anything about my background, skills, or how to connect
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
 
-          {/* Profile Preview */}
-          {userProfile && (
-            <>
-              <Separator className="bg-slate-800" />
-              <div className="flex items-center gap-3 p-2 bg-slate-800/50 rounded-lg">
-                <Avatar className="h-10 w-10 border-2 border-purple-500/30">
-                  <AvatarImage src={userProfile.avatar} />
-                  <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
-                    {getInitials(userProfile.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <p className="text-white font-medium">{userProfile.name}</p>
-                  <p className="text-sm text-slate-400">{userProfile.role || "Professional"}</p>
-                </div>
-                {isTrackingEnabled && (
-                  <Badge className="bg-green-500/20 text-green-400">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse" />
-                    Online
-                  </Badge>
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowContactInfo(!showContactInfo)}
-              className="text-xs border-slate-700 text-slate-400 hover:text-white"
-            >
-              <Mail className="h-3 w-3 mr-1" />
-              Contact
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAvailability(!showAvailability)}
-              className="text-xs border-slate-700 text-slate-400 hover:text-white"
-            >
-              <Clock className="h-3 w-3 mr-1" />
-              Available
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setInput("Tell me about their skills and experience");
-                handleSendMessage();
-              }}
-              className="text-xs border-slate-700 text-slate-400 hover:text-white"
-            >
-              <Search className="h-3 w-3 mr-1" />
-              Skills
-            </Button>
+          {/* Profile Mini Card */}
+          <div className="flex items-center gap-3 p-3 mx-4 mt-3 bg-slate-800/30 rounded-xl border border-slate-700/50">
+            <Avatar className="h-12 w-12 border-2 border-purple-500/30">
+              <AvatarImage src={profileData.avatar} />
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-sm">
+                {getInitials(profileData.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="text-white font-medium text-sm">{profileData.name}</p>
+              <p className="text-xs text-slate-400">{profileData.title}</p>
+            </div>
+            <Badge className="bg-green-500/20 text-green-400 text-[10px]">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1 animate-pulse" />
+              Online
+            </Badge>
           </div>
 
-          {/* Contact Info Dropdown */}
-          {showContactInfo && contactInfo && (
-            <Card className="bg-slate-800/50 border-slate-700/50">
-              <CardContent className="pt-4">
-                <h4 className="text-sm font-medium text-white mb-3">Contact Information</h4>
-                <div className="space-y-2">
-                  {contactInfo.email && (
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <Mail className="h-4 w-4 text-purple-400" />
-                      <span>{contactInfo.email}</span>
-                    </div>
-                  )}
-                  {contactInfo.phone && (
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <Phone className="h-4 w-4 text-purple-400" />
-                      <span>{contactInfo.phone}</span>
-                    </div>
-                  )}
-                  {contactInfo.location && (
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <MapPin className="h-4 w-4 text-purple-400" />
-                      <span>{contactInfo.location}</span>
-                    </div>
-                  )}
-                  {contactInfo.website && (
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <Globe className="h-4 w-4 text-purple-400" />
-                      <span>{contactInfo.website}</span>
-                    </div>
-                  )}
-                  <div className="flex gap-2 pt-2">
-                    {contactInfo.linkedin && (
-                      <a href={contactInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    )}
-                    {contactInfo.github && (
-                      <a href={contactInfo.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white">
-                        <Github className="h-4 w-4" />
-                      </a>
-                    )}
-                    {contactInfo.twitter && (
-                      <a href={contactInfo.twitter} target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300">
-                        <Twitter className="h-4 w-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Availability Dropdown */}
-          {showAvailability && availability && availability.length > 0 && (
-            <Card className="bg-slate-800/50 border-slate-700/50">
-              <CardContent className="pt-4">
-                <h4 className="text-sm font-medium text-white mb-3">Availability</h4>
-                <div className="space-y-2">
-                  {availability.map((slot, index) => (
-                    <div key={index} className="flex items-center justify-between text-sm">
-                      <span className="text-slate-300">{slot.day}</span>
-                      <span className="text-purple-400">
-                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
-                      </span>
-                      <span className="text-slate-500 text-xs">{slot.timezone}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Quick Questions - Show only at start */}
+          {showQuickActions && messages.length <= 2 && (
+            <div className="px-4 py-3">
+              <p className="text-xs text-slate-400 mb-2">Quick questions:</p>
+              <div className="grid grid-cols-2 gap-2">
+                {quickQuestions.map((q, idx) => {
+                  const Icon = q.icon;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleQuickQuestion(q.question)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-lg text-slate-300 transition-all"
+                    >
+                      <Icon className="h-3.5 w-3.5 text-purple-400" />
+                      {q.text}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-3 p-4 bg-slate-900/50 rounded-lg max-h-64">
+          <div className="flex-1 overflow-y-auto space-y-3 p-4 min-h-[300px] max-h-[400px]">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.sender === "user"
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                    : "bg-slate-800 text-slate-300"
-                    }`}
+                  className={`max-w-[85%] px-3 py-2 rounded-xl ${
+                    message.sender === "user"
+                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                      : "bg-slate-800 border border-slate-700 text-slate-200"
+                  }`}
                 >
-                  {message.sender === "ai" && (
-                    <Bot className="h-3 w-3 inline-block mr-1 mb-1" />
-                  )}
-                  {message.sender === "user" && (
-                    <User className="h-3 w-3 inline-block mr-1 mb-1" />
-                  )}
-                  <span className="text-sm">{message.content}</span>
+                  <div className="flex items-center gap-1 mb-1">
+                    {message.sender === "ai" && (
+                      <Sparkles className="h-3 w-3 text-purple-400" />
+                    )}
+                    {message.sender === "user" && (
+                      <User className="h-3 w-3" />
+                    )}
+                    <span className="text-[10px] opacity-70">
+                      {message.sender === "ai" ? "AI Assistant" : "You"}
+                    </span>
+                  </div>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
                   
                   {/* Contact Info Display */}
                   {message.type === "contact" && message.metadata && (
                     <div className="mt-2 pt-2 border-t border-slate-700/50">
                       {message.metadata.email && (
-                        <div className="text-xs text-slate-400 mb-1">
-                          <Mail className="h-3 w-3 inline mr-1" />
-                          {message.metadata.email}
+                        <div className="flex items-center gap-1.5 text-xs text-slate-300 mb-1">
+                          <Mail className="h-3 w-3 text-purple-400" />
+                          <span>{message.metadata.email}</span>
                         </div>
                       )}
                       {message.metadata.phone && (
-                        <div className="text-xs text-slate-400 mb-1">
-                          <Phone className="h-3 w-3 inline mr-1" />
-                          {message.metadata.phone}
+                        <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                          <Phone className="h-3 w-3 text-purple-400" />
+                          <span>{message.metadata.phone}</span>
                         </div>
                       )}
-                      {message.metadata.location && (
-                        <div className="text-xs text-slate-400">
-                          <MapPin className="h-3 w-3 inline mr-1" />
-                          {message.metadata.location}
-                        </div>
-                      )}
+                      <div className="flex gap-2 mt-2">
+                        {profileData.socialLinks?.github && (
+                          <a href={profileData.socialLinks.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors">
+                            <Github className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                        {profileData.socialLinks?.linkedin && (
+                          <a href={profileData.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors">
+                            <Linkedin className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                        {profileData.socialLinks?.twitter && (
+                          <a href={profileData.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:text-sky-300 transition-colors">
+                            <Twitter className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Location Display */}
+                  {message.type === "location" && message.metadata?.location && (
+                    <div className="mt-2 pt-2 border-t border-slate-700/50">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                        <MapPin className="h-3 w-3 text-purple-400" />
+                        <span>{message.metadata.location}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Skills Display */}
+                  {message.type === "skills" && message.metadata?.skills && (
+                    <div className="mt-2 pt-2 border-t border-slate-700/50">
+                      <div className="flex flex-wrap gap-1">
+                        {message.metadata.skills.slice(0, 4).map((skill: string, idx: number) => (
+                          <Badge key={idx} className="bg-purple-500/20 text-purple-300 text-[9px]">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   {/* Availability Display */}
                   {message.type === "availability" && message.metadata?.availability && (
-                    <div className="mt-2 pt-2 border-t border-slate-700/50">
-                      {message.metadata.availability.map((slot: AvailabilitySlot, index: number) => (
-                        <div key={index} className="text-xs text-slate-400 mb-1">
-                          <Clock className="h-3 w-3 inline mr-1" />
-                          {slot.day}: {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                    <div className="mt-2 pt-2 border-t border-slate-700/50 space-y-1">
+                      {message.metadata.availability.slice(0, 3).map((slot: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-1.5 text-xs text-slate-300">
+                          <Clock className="h-3 w-3 text-purple-400" />
+                          <span>{slot.day}: {formatTime(slot.startTime)} - {formatTime(slot.endTime)}</span>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  <div className="text-[10px] text-slate-500 mt-1">
+                  <div className="text-[9px] text-slate-500 mt-1 text-right">
                     {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
@@ -494,7 +459,7 @@ export function AIAssistance({
             
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-slate-800 px-4 py-2 rounded-lg">
+                <div className="bg-slate-800 px-4 py-2 rounded-xl">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
@@ -503,32 +468,54 @@ export function AIAssistance({
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Contact CTA */}
+          <div className="px-4 py-2 bg-slate-800/30 border-t border-slate-800">
+            <p className="text-[10px] text-slate-500 text-center">
+              Want to have a real conversation?{" "}
+              <button 
+                onClick={() => handleQuickQuestion("How can I contact you?")}
+                className="text-purple-400 hover:text-purple-300"
+              >
+                Contact me directly →
+              </button>
+            </p>
           </div>
 
           {/* Input Area */}
-          <div className="pt-3">
-            <Separator className="bg-slate-800 mb-3" />
+          <div className="p-4 pt-2 border-t border-slate-800">
             <div className="flex gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={showContactInfo ? "Type your message..." : "Ask about contact, availability, or skills..."}
-                className="bg-slate-800 border-slate-700 text-white"
+                placeholder="Ask me anything..."
+                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 text-sm h-9"
               />
               <Button
                 size="icon"
-                onClick={showContactInfo && onContactRequest ? handleContactRequest : handleSendMessage}
+                onClick={handleSendMessage}
                 disabled={!input.trim() || isTyping}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                className="h-9 w-9 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
                 {isTyping ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <Send className="h-4 w-4" />
+                  <Send className="h-3.5 w-3.5" />
                 )}
               </Button>
             </div>
+            <p className="text-[9px] text-slate-500 text-center mt-2">
+              AI responses are generated by Grok • 
+              <button 
+                onClick={() => setShowQuickActions(!showQuickActions)}
+                className="text-purple-400 hover:text-purple-300 ml-1"
+              >
+                {showQuickActions ? "Hide suggestions" : "Show suggestions"}
+              </button>
+            </p>
           </div>
         </DialogContent>
       </Dialog>
@@ -536,61 +523,46 @@ export function AIAssistance({
   );
 }
 
-// Example usage component for profile page
-export function ProfileAIAssistance() {
-  const { user } = useAuth();
-
-  const contactInfo = {
-    email: user?.email || "",
-    location: "Remote / Available Worldwide",
-    website: "https://portfolio.example.com",
-    linkedin: "https://linkedin.com/in/example",
-    github: "https://github.com/example",
+// Pre-configured instance for your profile
+export function MyAIAssistance() {
+  const profileData = {
+    name: "Bongnteh Romarick",
+    title: "Full-Stack Developer & Tech Innovator",
+    bio: "Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Next.js, Node.js, and cloud technologies. I love creating innovative solutions that make a difference.",
+    avatar: "/romarick.jpeg",
+    skills: [
+      "React", "Next.js", "TypeScript", "Node.js", 
+      "Express", "Python", "MongoDB", "PostgreSQL",
+      "Tailwind CSS", "Docker", "AWS", "GraphQL"
+    ],
+    experience: [
+      "Senior Full-Stack Developer at Tech Solutions Inc. (2021-Present)",
+      "Led development of 10+ successful web applications",
+      "Mentored junior developers and conducted code reviews",
+      "Improved application performance by 40% through optimization"
+    ],
+    education: [
+      "B.S. in Computer Science - State University"
+    ],
+    contact: {
+      email: "ndzelenromarick@gmail.com",
+      phone: "+237 676 154 253",
+      location: "Cameroon (Remote / Worldwide)",
+      website: "https://romarick.vercel.app",
+    },
+    availability: [
+      { day: "Monday", startTime: "09:00", endTime: "17:00", timezone: "WAT" },
+      { day: "Tuesday", startTime: "09:00", endTime: "17:00", timezone: "WAT" },
+      { day: "Wednesday", startTime: "09:00", endTime: "17:00", timezone: "WAT" },
+      { day: "Thursday", startTime: "09:00", endTime: "17:00", timezone: "WAT" },
+      { day: "Friday", startTime: "09:00", endTime: "15:00", timezone: "WAT" }
+    ],
+    socialLinks: {
+      github: "https://github.com/bongnteh-romarick-ndzelen",
+      linkedin: "https://linkedin.com/in/bongnteh-romarick-ndzelen",
+      twitter: "https://twitter.com/BongntehNdzelen"
+    }
   };
 
-  const availability = [
-    { day: "Monday", startTime: "09:00", endTime: "17:00", timezone: "UTC" },
-    { day: "Tuesday", startTime: "09:00", endTime: "17:00", timezone: "UTC" },
-    { day: "Wednesday", startTime: "09:00", endTime: "17:00", timezone: "UTC" },
-    { day: "Thursday", startTime: "09:00", endTime: "17:00", timezone: "UTC" },
-    { day: "Friday", startTime: "09:00", endTime: "15:00", timezone: "UTC" }
-  ];
-
-  const handleContactRequest = async (message: string): Promise<boolean> => {
-    // Simulate sending contact request
-    console.log("Contact request sent:", message);
-    return true;
-  };
-
-  if (!user) return null;
-
-  return (
-    <AIAssistance
-      userProfile={{
-        name: user.name,
-        email: user.email,
-        bio: user.bio,
-        avatar: user.avatar,
-        role: user.role,
-        skills: ["Full-Stack Development", "React", "Node.js", "TypeScript"],
-        experience: ["5+ years of professional experience", "Led multiple successful projects"],
-      }}
-      contactInfo={contactInfo}
-      availability={availability}
-      onContactRequest={handleContactRequest}
-    />
-  );
-}
-
-// Simplified version for visitor use
-export function VisitorAIAssistance({ profileData }: { profileData?: any }) {
-  return (
-    <AIAssistance
-      userProfile={profileData}
-      contactInfo={{
-        email: profileData?.email || "",
-        location: profileData?.location || "",
-      }}
-    />
-  );
+  return <AIAssistance profileData={profileData} />;
 }
