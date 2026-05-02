@@ -1,5 +1,5 @@
 // lib/services/subscription.service.ts
-import { apiPost, apiGet } from "../api";
+import { apiPost, apiGet, API_BASE_URL, apiDelete } from "../api";
 
 export interface SubscriptionResponse {
   success: boolean;
@@ -78,4 +78,44 @@ export const subscriptionService = {
       };
     }
   },
+  // Get all subscribers (admin only)
+  async getAllSubscribers(
+    page: number = 1,
+    limit: number = 20,
+    status?: string,
+    search?: string,
+  ) {
+    let url = `/api/admin/subscribers?page=${page}&limit=${limit}`;
+    if (status && status !== "all") url += `&status=${status}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    const response = await apiGet<any>(url);
+    return response;
+  },
+
+  // Get subscriber statistics (admin only)
+  async getSubscriberStats() {
+    const response = await apiGet<any>("/api/admin/subscribers/stats");
+    return response;
+  },
+
+  // Remove subscriber (admin only)
+  async removeSubscriber(id: string) {
+    const response = await apiDelete<any>(`/api/admin/subscribers/${id}`);
+    return response;
+  },
+
+  // Bulk remove subscribers (admin only)
+  async bulkRemoveSubscribers(ids: string[]) {
+    const response = await apiPost<any>("/api/admin/subscribers/bulk-remove", {
+      subscriberIds: ids,
+    });
+    return response;
+  },
+
+  // Export subscribers to CSV (admin only)
+  async exportSubscribers() {
+    window.open(`${API_BASE_URL}/api/admin/subscribers/export`, "_blank");
+  },
 };
+
+

@@ -7,6 +7,8 @@ export interface User {
   role: "user" | "admin";
   isActive: boolean;
   isEmailVerified: boolean;
+  bio?: string;
+  lastLogin?: Date | string;
   createdAt: string;
   updatedAt: string;
 }

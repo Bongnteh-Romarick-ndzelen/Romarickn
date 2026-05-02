@@ -25,6 +25,9 @@ const menuItems = [
   { href: "/admin/dashboard/users", label: "Users", icon: Users },
   { href: "/admin/dashboard/comments", label: "Comments", icon: MessageSquare },
   { href: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart3 },
+   { href: "/admin/dashboard/newsletter", label: "Newsletter", icon: Users },
+  { href: "/admin/dashboard/subscribers", label: "Subscribers", icon: Users },
+  { href: "/admin/dashboard/contacts", label: "Contacts", icon: MessageSquare },
   { href: "/admin/dashboard/settings", label: "Settings", icon: Settings },
 ];
 

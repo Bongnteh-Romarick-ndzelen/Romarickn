@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import {
-  Code,
   Menu,
   X,
   Sparkles,
@@ -210,23 +210,34 @@ export function Header() {
     >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          {/* Logo - Redesigned with larger logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-3 group"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative p-1.5 rounded-md bg-gradient-to-br from-slate-800 to-slate-900">
-                <Code className="h-5 w-5 md:h-6 md:w-6 text-purple-400" />
+              {/* Animated gradient ring */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-all duration-500 group-hover:scale-110"></div>
+
+              {/* Logo container with gradient border */}
+              <div className="relative p-2 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 group-hover:border-purple-500/50 transition-all duration-300">
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 md:h-12 md:w-12 object-contain transition-transform duration-300 group-hover:scale-110"
+                />
               </div>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-bold text-white text-sm md:text-base leading-tight whitespace-nowrap">
-                Bongnteh-Romarick
+
+            {/* Name with gradient text */}
+            <div className="flex flex-col">
+              <span className="font-bold text-lg md:text-xl text-white leading-tight tracking-tight group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                Romarick
               </span>
-              <span className="text-[11px] text-slate-400 hidden md:block truncate">
+              <span className="text-[10px] md:text-xs text-slate-400 hidden sm:block">
                 Full-Stack Developer
               </span>
             </div>
@@ -343,15 +354,24 @@ export function Header() {
                 className="bg-slate-900 border-l border-slate-800/50 w-full max-w-[280px] sm:max-w-[320px] p-0"
               >
                 <div className="flex flex-col h-full">
-                  {/* Mobile Header */}
+                  {/* Mobile Header - Redesigned */}
                   <div className="p-5 border-b border-slate-800">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900">
-                        <Code className="h-5 w-5 text-purple-400" />
+                      <div className="relative">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-30"></div>
+                        <div className="relative p-2 rounded-lg bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50">
+                          <Image
+                            src="/logo.png"
+                            alt="Logo"
+                            width={36}
+                            height={36}
+                            className="h-9 w-9 object-contain"
+                          />
+                        </div>
                       </div>
                       <div>
-                        <h3 className="font-bold text-white text-sm">
-                          Bongnteh-Romarick
+                        <h3 className="font-bold text-white text-base bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                          Romarick
                         </h3>
                         <p className="text-[10px] text-slate-400">
                           Full-Stack Developer

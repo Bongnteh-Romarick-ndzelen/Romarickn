@@ -1,14 +1,22 @@
-'use client';
+// context/AuthContext.tsx
+"use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@/types/user';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "@/types/user";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,20 +26,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize auth state from localStorage
     const initializeAuth = () => {
       try {
-        const userStr = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-        
+        const userStr = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
+
         if (userStr && token) {
           const userData = JSON.parse(userStr);
           setUser(userData);
         }
       } catch (error) {
-        console.error('Error initializing auth state:', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        console.error("Error initializing auth state:", error);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
       } finally {
         setIsLoading(false);
       }
@@ -39,44 +46,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initializeAuth();
 
-    // Listen for storage changes (for multi-tab support)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'user') {
+      if (e.key === "user") {
         if (e.newValue) {
           setUser(JSON.parse(e.newValue));
         } else {
           setUser(null);
         }
       }
-      if (e.key === 'token' && !e.newValue) {
+      if (e.key === "token" && !e.newValue) {
         setUser(null);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
-  const login = (userData: User) => {
+  const login = (userData: User, token: string) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   const updateUser = (userData: Partial<User>) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify(updatedUser));
     }
+  };
+
+  const getToken = () => {
+    return typeof window !== "undefined" ? localStorage.getItem("token") : null;
   };
 
   const value = {
@@ -85,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     updateUser,
+    getToken,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -93,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

@@ -102,7 +102,7 @@ export default function AboutPage() {
                 <div className="relative inline-block mx-auto">
                   <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur opacity-30"></div>
                   <Avatar className="h-24 w-24 mx-auto border-4 border-slate-800 relative">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Bongnteh&backgroundColor=7c3aed" alt="Bongnteh Romarick" />
+                    <AvatarImage src="/romarick.jpeg" alt="Bongnteh Romarick" />
                     <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl">BR</AvatarFallback>
                   </Avatar>
                 </div>

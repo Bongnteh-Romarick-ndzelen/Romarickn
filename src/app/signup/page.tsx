@@ -32,6 +32,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { authService } from "@/lib/services/auth.service";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +46,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const {toast} = useToast();
   const router = useRouter();
   const { login: authLogin } = useAuth();
 
@@ -152,6 +154,11 @@ export default function SignupPage() {
       });
       
       if (response.success) {
+        toast({
+          variant: "success",
+          title: "User Created!",
+          description: "Account created Successfully, Please verify email",
+        });
         // Don't auto-login, just redirect to verification
         router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
       } else {
@@ -222,7 +229,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-3 px-5 pb-4">
               {error && (
-                <p className="text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20 animate-in fade-in">
+                <p className="text-[16px] text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20 animate-in fade-in">
                   {error}
                 </p>
               )}

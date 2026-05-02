@@ -87,7 +87,7 @@ export function Footer() {
 
   return (
     <footer className="border-t bg-slate-950/80 border-slate-800/50 mt-auto">
-      <div className="container mx-auto px-4 py-10 md:py-12">
+      <div className="container mx-auto px-4 py-5 md:py-6">
         {/* Main Footer Grid - Organized Layout */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Column 1 - Brand & About */}
@@ -157,14 +157,6 @@ export function Footer() {
                   className="text-xs text-slate-400 hover:text-purple-400 transition-colors"
                 >
                   Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-xs text-slate-400 hover:text-purple-400 transition-colors"
-                >
-                  Contact
                 </Link>
               </li>
             </ul>
@@ -260,7 +252,7 @@ export function Footer() {
         </div>
 
         {/* Social Links Row */}
-        <div className="py-4 border-t border-slate-800/50 flex flex-wrap justify-center gap-2">
+        <div className="py-2 border-t border-slate-800/50 flex flex-wrap justify-center gap-2">
           <Link
             href={`https://github.com/${contactInfo.github}`}
             target="_blank"
@@ -317,18 +309,6 @@ export function Footer() {
               <Facebook className="h-4 w-4" />
             </Button>
           </Link>
-        </div>
-
-        {/* Copyright Row */}
-        <div className="pt-4 border-t border-slate-800/50 text-center">
-          <p className="text-[10px] text-slate-500">
-            &copy; {new Date().getFullYear()} Bongnteh Romarick Ndzelen. All
-            rights reserved.
-          </p>
-          <p className="text-[9px] text-slate-600 mt-1 flex items-center justify-center gap-1">
-            Made with <Heart className="h-2.5 w-2.5 text-pink-400" /> using
-            Next.js & Tailwind CSS
-          </p>
         </div>
       </div>
     </footer>

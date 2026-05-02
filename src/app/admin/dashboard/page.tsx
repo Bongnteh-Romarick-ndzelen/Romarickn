@@ -454,7 +454,7 @@ export default function AdminDashboardPage() {
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Link href="/admin/posts/new">
+        <Link href="/dashboard/admin/posts/new">
           <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all cursor-pointer group">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-all">
@@ -471,7 +471,7 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/admin/comments?status=pending">
+        <Link href="/dashboard/admin/comments?status=pending">
           <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all cursor-pointer group">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-500/10 group-hover:bg-amber-500/20 transition-all">
@@ -488,7 +488,7 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link href="/admin/newsletter">
+        <Link href="/dashboard/admin/newsletter">
           <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all cursor-pointer group">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-all">

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   ImagePlus,
   Save,
   Eye,
@@ -30,6 +40,7 @@ import {
   Loader2,
   X,
   Plus,
+  Trash2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
@@ -37,10 +48,30 @@ import Link from "next/link";
 import { postService } from "@/lib/services/post.service";
 import TiptapEditor from "@/components/admin/TiptapEditor";
 
-export default function CreatePostPage() {
+interface PostData {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  coverImagePublicId: string;
+  categories: string[];
+  tags: string[];
+  featured: boolean;
+  status: string;
+  publishedAt?: string;
+}
+
+export default function EditPostPage() {
   const router = useRouter();
+  const { id } = useParams();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<PostData | null>(null);
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -53,6 +84,36 @@ export default function CreatePostPage() {
   const [status, setStatus] = useState("draft");
   const [featured, setFeatured] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchPost();
+  }, [id]);
+
+  const fetchPost = async () => {
+    setIsLoading(true);
+    try {
+      const post = await postService.getPostById(id as string);
+      setFormData(post);
+      setTitle(post.title);
+      setExcerpt(post.excerpt);
+      setContent(post.content);
+      setCoverImagePreview(post.coverImage);
+      setCategories(post.categories || []);
+      setTags(post.tags || []);
+      setStatus(post.status);
+      setFeatured(post.featured);
+    } catch (error) {
+      console.error("Error fetching post:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load post",
+        variant: "destructive",
+      });
+      router.push("/admin/dashboard/posts");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -67,7 +128,9 @@ export default function CreatePostPage() {
       }
       setCoverImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => setCoverImagePreview(reader.result as string);
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result as string);
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -79,8 +142,9 @@ export default function CreatePostPage() {
     }
   };
 
-  const removeCategory = (category: string) =>
+  const removeCategory = (category: string) => {
     setCategories(categories.filter((c) => c !== category));
+  };
 
   const addTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -89,12 +153,11 @@ export default function CreatePostPage() {
     }
   };
 
-  const removeTag = (tag: string) => setTags(tags.filter((t) => t !== tag));
+  const removeTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
 
-  const handleSubmit = async (e: React.FormEvent, publishNow = false) => {
-    e.preventDefault();
-
-    // Validation
+  const handleSave = async (publishNow = false) => {
     if (!title.trim()) {
       toast({
         title: "Title required",
@@ -111,7 +174,7 @@ export default function CreatePostPage() {
       });
       return;
     }
-    if (!content.trim() || content === "<p></p>") {
+    if (!content.trim()) {
       toast({
         title: "Content required",
         description: "Please enter post content",
@@ -119,57 +182,86 @@ export default function CreatePostPage() {
       });
       return;
     }
-    if (!coverImage && !coverImagePreview) {
-      toast({
-        title: "Cover image required",
-        description: "Please select a cover image",
-        variant: "destructive",
-      });
-      return;
+
+    setIsSaving(true);
+
+    const updateData: any = {
+      title: title.trim(),
+      excerpt: excerpt.trim(),
+      content: content,
+      categories: categories,
+      tags: tags,
+      featured: featured,
+      status: publishNow ? "published" : status,
+    };
+
+    if (coverImage) {
+      updateData.coverImage = coverImage;
     }
 
-    setIsLoading(true);
-
-    // Debug log
-    console.log("Sending post data:");
-    console.log("title:", title.trim());
-    console.log("excerpt:", excerpt.trim());
-    console.log("content:", content);
-    console.log("categories:", categories);
-    console.log("tags:", tags);
-    console.log("featured:", featured);
-    console.log("coverImage:", coverImage);
-
     try {
-      const response = await postService.createPost({
-        title: title.trim(),
-        excerpt: excerpt.trim(),
-        content,
-        categories,
-        tags,
-        featured,
-        published: publishNow,
-        coverImage: coverImage || undefined,
-      });
-      console.log("Response:", response);
+      const response = await postService.updatePost(id as string, updateData);
 
-      toast({
-        variant: "success",
-        title: publishNow ? "Post Published Successfully!" : "Post Created successfully!",
-        description: "Success!",
-      });
-      router.push("/admin/dashboard/posts");
-    } catch (error: any) {
-      console.error("Error creating post:", error);
+      if (response.success) {
+        toast({
+          variant: "success",
+          title: publishNow ? "Post Published!" : "Changes Saved!",
+          description: publishNow
+            ? "Your post has been published."
+            : "Your changes have been saved.",
+        });
+        router.push("/admin/dashboard/posts");
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to update post",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create post",
+        description: "Something went wrong",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await postService.deletePost(id as string);
+      toast({
+        title: "Post Deleted",
+        description: "Your post has been deleted successfully",
+      });
+      router.push("/admin/dashboard/posts");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete post",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 w-48 bg-slate-800 rounded mb-4"></div>
+          <div className="h-4 w-64 bg-slate-800 rounded mb-8"></div>
+          <div className="h-96 bg-slate-800 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -189,20 +281,28 @@ export default function CreatePostPage() {
             </Link>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-white">
-            Create New Post
+            Edit Post
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Write and publish new content for your blog
+            Edit your blog post content and settings
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={(e) => handleSubmit(e, false)}
-            disabled={isLoading}
-            className="border-slate-700 text-slate-300"
+            onClick={() => setDeleteDialogOpen(true)}
+            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
           >
-            {isLoading ? (
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSave(false)}
+            disabled={isSaving}
+            className="border-slate-700 text-slate-300 hover:bg-slate-800"
+          >
+            {isSaving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Save className="h-4 w-4 mr-2" />
@@ -210,16 +310,16 @@ export default function CreatePostPage() {
             Save Draft
           </Button>
           <Button
-            onClick={(e) => handleSubmit(e, true)}
-            disabled={isLoading}
-            className="bg-gradient-to-r from-purple-600 to-pink-600"
+            onClick={() => handleSave(true)}
+            disabled={isSaving}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
-            {isLoading ? (
+            {isSaving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Eye className="h-4 w-4 mr-2" />
             )}
-            Publish
+            {status === "published" ? "Update & Publish" : "Publish"}
           </Button>
         </div>
       </div>
@@ -227,13 +327,14 @@ export default function CreatePostPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Title */}
           <Card className="bg-slate-800/30 border border-slate-700/50">
             <CardContent className="p-6">
               <Input
                 placeholder="Enter post title..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="text-2xl font-bold bg-transparent border-slate-700 focus:border-purple-500 text-white"
+                className="text-xl font-bold bg-transparent border-slate-700 focus:border-purple-500 text-white placeholder-slate-500"
               />
             </CardContent>
           </Card>
@@ -243,7 +344,7 @@ export default function CreatePostPage() {
             <CardHeader>
               <CardTitle className="text-white">Cover Image</CardTitle>
               <CardDescription className="text-slate-400">
-                Upload a featured image for your post
+                Update the featured image for your post
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -296,7 +397,7 @@ export default function CreatePostPage() {
             <CardHeader>
               <CardTitle className="text-white">Content</CardTitle>
               <CardDescription className="text-slate-400">
-                Write your post content using the rich text editor
+                Edit your post content using the rich text editor
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -321,7 +422,7 @@ export default function CreatePostPage() {
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value.slice(0, 500))}
                 rows={4}
-                className="bg-slate-800/50 border-slate-700 text-white"
+                className="bg-slate-800/50 border-slate-700 text-white placeholder-slate-500"
               />
               <p className="text-xs text-slate-500 mt-2 text-right">
                 {excerpt.length}/500
@@ -382,7 +483,7 @@ export default function CreatePostPage() {
               <div className="flex flex-wrap gap-2">
                 {categories.map((cat) => (
                   <Badge key={cat} className="bg-purple-500/20 text-purple-400">
-                    {cat}{" "}
+                    {cat}
                     <button
                       onClick={() => removeCategory(cat)}
                       className="ml-2 hover:text-purple-200"
@@ -391,6 +492,9 @@ export default function CreatePostPage() {
                     </button>
                   </Badge>
                 ))}
+                {categories.length === 0 && (
+                  <p className="text-xs text-slate-500">No categories added</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -421,7 +525,7 @@ export default function CreatePostPage() {
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <Badge key={tag} variant="outline" className="text-slate-300">
-                    #{tag}{" "}
+                    #{tag}
                     <button
                       onClick={() => removeTag(tag)}
                       className="ml-2 hover:text-slate-200"
@@ -430,11 +534,66 @@ export default function CreatePostPage() {
                     </button>
                   </Badge>
                 ))}
+                {tags.length === 0 && (
+                  <p className="text-xs text-slate-500">No tags added</p>
+                )}
               </div>
             </CardContent>
           </Card>
+
+          {/* Info Card */}
+          {formData && (
+            <Card className="bg-slate-800/30 border border-slate-700/50">
+              <CardContent className="p-4 space-y-2">
+                <p className="text-xs text-slate-400">
+                  <span className="font-medium">Slug:</span> {formData.slug}
+                </p>
+                {formData.publishedAt && (
+                  <p className="text-xs text-slate-400">
+                    <span className="font-medium">Published:</span>{" "}
+                    {new Date(formData.publishedAt).toLocaleDateString()}
+                  </p>
+                )}
+                <p className="text-xs text-slate-400">
+                  <span className="font-medium">Post ID:</span> {formData.id}
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-slate-900 border-slate-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">
+              Delete Post
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
+              Are you sure you want to delete "{title}"? This action cannot be
+              undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

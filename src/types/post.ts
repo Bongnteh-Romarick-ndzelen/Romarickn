@@ -1,5 +1,6 @@
 export interface Post {
   id: string;
+  _id?: string;
   title: string;
   slug: string;
   excerpt: string;
@@ -29,6 +30,7 @@ export interface Post {
     name: string;
     slug: string;
   }>;
+  comments?: any[];
   _count?: {
     likes: number;
     comments: number;
@@ -39,7 +41,7 @@ export interface CreatePostData {
   title: string;
   excerpt: string;
   content: string;
-  coverImage?: string;
+  coverImage?: File;
   published?: boolean;
   featured?: boolean;
   categories?: string[];

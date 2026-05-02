@@ -18,16 +18,20 @@ import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { authService } from "@/lib/services/auth.service";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   const [error, setError] = useState("");
   const router = useRouter();
   const { login: authLogin } = useAuth();
 
+  // app/login/page.tsx
+  // Update the login handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,27 +43,27 @@ export default function LoginPage() {
       console.log("Login response:", response);
 
       if (response.success && response.data) {
-        // Create user object from the response data
+        // Create user object
         const userData = {
           _id: response.data._id || "",
           name: response.data.name || "",
           email: response.data.email || "",
           role: response.data.role || "user",
-          avatar: "",
+          avatar: response.data.avatar || "",
           isActive: true,
           isEmailVerified: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
 
-        // Update auth context
-        authLogin(userData);
-
-        // Store token if present
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(userData));
-        }
+        // Pass both user data AND token to auth context
+        const token = response.data.token || "";
+        toast({
+          variant: "success",
+          title: "Login success",
+          description: "Login Successfully, Redirecting you to home",
+        });
+        authLogin(userData, token);
 
         router.push("/");
       } else {
@@ -67,16 +71,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error("Login error:", err);
-
-      if (err.message?.includes("Please verify your email")) {
-        setError(
-          "Please verify your email before logging in. Check your inbox for the verification code.",
-        );
-      } else if (err.message?.includes("Invalid credentials")) {
-        setError("Invalid email or password. Please try again.");
-      } else {
-        setError(err.message || "Login failed. Please try again.");
-      }
+      setError(err.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +108,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-3 px-5 pb-4">
               {error && (
-                <p className="text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
+                <p className="text-[16px] text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
                   {error}
                 </p>
               )}

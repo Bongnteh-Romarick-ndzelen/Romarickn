@@ -106,4 +106,20 @@ export const authService = {
       newPassword,
     });
   },
+
+  // Change password
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<AuthResponse> {
+    return apiPut<AuthResponse>("/api/auth/change-password", {
+      currentPassword,
+      newPassword,
+    });
+  },
+
+  // Delete account
+  async deleteAccount(): Promise<AuthResponse> {
+    return apiDelete<AuthResponse>("/api/auth/account");
+  },
 };

@@ -23,18 +23,43 @@ export const postService = {
   },
 
   // Create new post
-  async createPost(data: CreatePostData) {
+  async createPost(data: CreatePostData & { coverImage?: File }) {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('excerpt', data.excerpt);
+    formData.append('content', data.content);
+    formData.append('categories', JSON.stringify(data.categories || []));
+    formData.append('tags', JSON.stringify(data.tags || []));
+    formData.append('featured', String(data.featured || false));
+    formData.append('status', data.published ? 'published' : 'draft');
+    if (data.coverImage) {
+      formData.append('coverImage', data.coverImage);
+    }
+
     return apiRequest<Post>('/api/posts', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: formData,
+      headers: {},
     });
   },
 
   // Update post
-  async updatePost(id: string, data: UpdatePostData) {
+  async updatePost(id: string, data: UpdatePostData & { coverImage?: File }) {
+    const formData = new FormData();
+    if (data.title !== undefined) formData.append('title', data.title);
+    if (data.excerpt !== undefined) formData.append('excerpt', data.excerpt);
+    if (data.content !== undefined) formData.append('content', data.content);
+    if (data.categories !== undefined) formData.append('categories', JSON.stringify(data.categories));
+    if (data.tags !== undefined) formData.append('tags', JSON.stringify(data.tags));
+    if (data.featured !== undefined) formData.append('featured', String(data.featured));
+    if (data.coverImage) {
+      formData.append('coverImage', data.coverImage);
+    }
+
     return apiRequest<Post>(`/api/posts/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: formData,
+      headers: {},
     });
   },
 
@@ -50,6 +75,18 @@ export const postService = {
     return apiRequest<Post>(`/api/posts/${id}/publish`, {
       method: 'PUT',
     });
+  },
+
+  // Upload image for editor
+  async uploadImage(formData: FormData) {
+    return apiRequest<{ success: boolean; message: string; data: { url: string; publicId: string } }>(
+      '/api/posts/upload-image',
+      {
+        method: 'POST',
+        body: formData,
+        headers: {},
+      }
+    );
   },
 
   // Like a post
@@ -76,4 +113,6 @@ export const postService = {
   async getPostLikes(postId: string) {
     return apiRequest<{ count: number }>(`/api/posts/${postId}/likes`);
   },
+
+
 };

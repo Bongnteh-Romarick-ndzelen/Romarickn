@@ -265,7 +265,7 @@ export default function HomePage() {
                 <div className="absolute -inset-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full blur-2xl opacity-60 group-hover:opacity-100 transition duration-500"></div>
                 <Avatar className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 border-4 border-slate-800 shadow-2xl relative">
                   <AvatarImage
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=romarick&backgroundColor=7c3aed&hairColor=2c2c2c"
+                    src="/romarick.jpeg"
                     alt="Bongnteh Romarick"
                   />
                   <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-2xl">
