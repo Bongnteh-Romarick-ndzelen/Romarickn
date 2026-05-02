@@ -57,7 +57,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate } from "@/lib/utils";
 import { authService } from "@/lib/services/auth.service";
-import { ProfileAIAssistance } from "@/components/AIAssistance";
 
 export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
@@ -869,9 +868,6 @@ export default function ProfilePage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      
-      {/* AI Assistance */}
-      {user && <ProfileAIAssistance />}
     </div>
   );
 }
