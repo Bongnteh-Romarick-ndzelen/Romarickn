@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
@@ -15,8 +14,6 @@ import type { CreateCommentData } from '@/types/comment';
 
 const commentFormSchema = z.object({
   content: z.string().min(3, 'Comment must be at least 3 characters.'),
-  authorName: z.string().min(2, 'Name must be at least 2 characters.'),
-  authorEmail: z.string().email('Please enter a valid email.'),
 });
 
 type CommentFormValues = z.infer<typeof commentFormSchema>;
@@ -25,31 +22,40 @@ interface CommentFormProps {
   postId: string;
   parentId?: string;
   onCommentSubmitted: (comment: any) => void;
+  userId?: string;
 }
 
-export default function CommentForm({ postId, parentId, onCommentSubmitted }: CommentFormProps) {
+export default function CommentForm({ postId, parentId, onCommentSubmitted, userId }: CommentFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CommentFormValues>({
     resolver: zodResolver(commentFormSchema),
-    defaultValues: { content: '', authorName: '', authorEmail: '' },
+    defaultValues: { content: '' },
   });
 
   const onSubmit = async (data: CommentFormValues) => {
+    if (!userId) {
+      toast({
+        title: 'Authentication required',
+        description: 'Please log in to post a comment.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const commentData: CreateCommentData = {
         content: data.content,
-        authorName: data.authorName,
-        authorEmail: data.authorEmail,
         postId,
         parentId,
+        userId,
       };
       const newComment = await commentService.createComment(commentData);
       toast({
         title: 'Comment Submitted!',
-        description: 'Your comment is awaiting moderation.',
+        description: 'Your comment has been posted.',
       });
       form.reset();
       onCommentSubmitted(newComment);
@@ -63,6 +69,14 @@ export default function CommentForm({ postId, parentId, onCommentSubmitted }: Co
       setIsSubmitting(false);
     }
   };
+
+  if (!userId) {
+    return (
+      <div className="p-6 rounded-lg bg-slate-800/30 border border-slate-700/50 text-center">
+        <p className="text-slate-400 mb-4">Please log in to post a comment.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 rounded-lg bg-slate-800/30 border border-slate-700/50">
@@ -86,35 +100,7 @@ export default function CommentForm({ postId, parentId, onCommentSubmitted }: Co
               </FormItem>
             )}
           />
-          <div className="grid md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="authorName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="sr-only">Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Your Name" {...field} className="bg-slate-800/50 border-slate-700" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="authorEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="sr-only">Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="Your Email" {...field} className="bg-slate-800/50 border-slate-700" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting}>
             <Send className="mr-2 h-4 w-4" />
             {isSubmitting ? 'Submitting...' : 'Submit Comment'}
           </Button>

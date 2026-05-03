@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import ConditionalHeader from '@/components/ConditionalHeader';
 import ConditionalFooter from '@/components/ConditionalFooter';
 import { AuthProvider } from '@/context/AuthContext';
+import { LoadingScreenSpinner } from '@/components/LoadingScreen'; // Import your loading screen
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -26,12 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(inter.variable, 'dark')} suppressHydrationWarning>
       <body className="antialiased bg-slate-950 text-slate-300">
-        <AuthProvider>
-          <ConditionalHeader />
-          {children}
-          <ConditionalFooter />
-          <Toaster />
-        </AuthProvider>
+        <LoadingScreenSpinner>
+          <AuthProvider>
+            <ConditionalHeader />
+            {children}
+            <ConditionalFooter />
+            <Toaster />
+          </AuthProvider>
+        </LoadingScreenSpinner>
       </body>
     </html>
   );

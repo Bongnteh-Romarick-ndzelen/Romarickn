@@ -21,8 +21,8 @@ export interface Comment {
 
 export interface CreateCommentData {
   content: string;
-  authorName: string;
-  authorEmail: string;
+  authorName?: string;
+  authorEmail?: string;
   authorWebsite?: string;
   postId: string;
   parentId?: string;

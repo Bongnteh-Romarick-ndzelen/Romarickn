@@ -6,13 +6,13 @@ export const commentService = {
   // Get comments for a post
   async getComments(postId: string, page: number = 1, limit: number = 10) {
     return apiRequest<PaginatedResponse<Comment>>(
-      `/api/posts/${postId}/comments?page=${page}&limit=${limit}`
+      `/api/comments/post/${postId}?page=${page}&limit=${limit}`
     );
   },
 
   // Create comment
   async createComment(data: CreateCommentData) {
-    return apiRequest<Comment>(`/api/posts/${data.postId}/comments`, {
+    return apiRequest<Comment>(`/api/comments`, {
       method: 'POST',
       body: JSON.stringify(data),
     });

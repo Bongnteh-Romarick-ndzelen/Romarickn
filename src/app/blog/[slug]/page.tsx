@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Metadata } from 'next';
 import {
   Clock,
   Eye,
-  MessageCircle,
   Calendar,
   ArrowLeft,
   Heart,
@@ -22,34 +22,37 @@ import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { postService } from "@/lib/services/post.service";
+import { commentService } from "@/lib/services/comment.service";
 import { useToast } from "@/hooks/use-toast";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  vscDarkPlus,
-  coy,
-  darcula,
-  materialDark,
-  oneDark,
-  vsCodeDark,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import CommentList from "@/components/blog/CommentList";
+import CommentForm from "@/components/blog/CommentForm";
+import { useAuth } from "@/context/AuthContext";
+import LikeButton from '@/components/blog/LikeButton';
+import { ShareButtons } from '@/components/blog/ShareButtons';
+
 
 interface Post {
   id: string;
   title: string;
   content: string;
+  excerpt: string;
+  slug: string;
   coverImage: string;
   publishedAt: string;
   readTime: number;
   views: number;
-  author: {
+  userHasLiked?: boolean;
+  author?: {
+    id: string;
     name: string;
     avatar: string;
-    bio: string;
+    bio?: string;
   };
-  categories: { name: string; slug: string }[];
-  tags: { name: string; slug: string }[];
-  _count: {
+  categories?: { name: string; slug: string }[];
+  tags?: { name: string; slug: string }[];
+  _count?: {
     likes: number;
     comments: number;
   };
@@ -63,15 +66,26 @@ function decodeHtml(html: string) {
   return txt.value;
 }
 
+
+// Fixed CodeBlock Component with proper line breaks
 function CodeBlock({ code, language }: { code: string; language: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
+    navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const formattedCode = code.replace(/\\n/g, '\n');
+  // Better formatting for line breaks
+  const formattedCode = code
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "  ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 
   return (
     <div className="relative group my-5">
@@ -89,11 +103,16 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
       </div>
       <div className="rounded-lg overflow-hidden border border-slate-700">
         <div className="bg-slate-800/50 px-3 py-1.5 border-b border-slate-700">
-          <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
-            {language || 'javascript'}
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">
+              {language || "javascript"}
+            </span>
+            <span className="text-[9px] text-slate-500">
+              {formattedCode.split("\n").length} lines
+            </span>
+          </div>
         </div>
-        <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: '500px' }}>
+        <div className="overflow-x-auto" style={{ maxHeight: "500px" }}>
           <SyntaxHighlighter
             language={language || "javascript"}
             style={vscDarkPlus}
@@ -106,6 +125,8 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
               fontSize: "13px",
               fontFamily: "'Fira Code', 'Cascadia Code', monospace",
               background: "#0f172a",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
             lineNumberStyle={{
               minWidth: "2.5em",
@@ -122,12 +143,36 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
     </div>
   );
 }
-// Custom component to render content with highlighted code blocks
+
+// Fixed RenderContent component - properly renders HTML tags
+// Fixed RenderContent component - properly decodes HTML entities first
 function RenderContent({ html }: { html: string }) {
+  // First, decode the entire HTML string to convert &lt; to <, etc.
+  const decodeFullHtml = (content: string) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = content;
+    return txt.value;
+  };
+
   // Parse HTML and find code blocks
   const processContent = (content: string) => {
+    // First decode the entire content to convert HTML entities
+    let decodedContent = content;
+    
+    // Decode common HTML entities
+    decodedContent = decodedContent
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&ldquo;/g, '"')
+      .replace(/&rdquo;/g, '"')
+      .replace(/&lsquo;/g, "'")
+      .replace(/&rsquo;/g, "'");
+
     // Split by pre tags to identify code blocks
-    const parts = content.split(/(<pre><code[^>]*>[\s\S]*?<\/code><\/pre>)/gi);
+    const parts = decodedContent.split(/(<pre><code[^>]*>[\s\S]*?<\/code><\/pre>)/gi);
 
     return parts.map((part, index) => {
       // Check if this part is a code block
@@ -146,16 +191,19 @@ function RenderContent({ html }: { html: string }) {
           language = langMatch[1];
         }
 
-        // Decode HTML entities in code
+        // Decode HTML entities in code (again for safety)
         code = code
           .replace(/&lt;/g, "<")
           .replace(/&gt;/g, ">")
-          .replace(/&amp;/g, "&");
+          .replace(/&amp;/g, "&")
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .replace(/\\n/g, '\n');
 
         return <CodeBlock key={index} code={code} language={language} />;
       }
 
-      // Regular HTML content
+      // For regular HTML content, use dangerouslySetInnerHTML with decoded content
       return (
         <div
           key={index}
@@ -169,8 +217,11 @@ function RenderContent({ html }: { html: string }) {
             [&_li]:my-1 [&_li_marker]:text-purple-400
             [&_a]:text-purple-400 [&_a]:no-underline hover:[&_a]:underline
             [&_blockquote]:border-l-4 [&_blockquote]:border-l-purple-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-slate-300 [&_blockquote]:my-5
-            [&_img]:rounded-lg [&_img]:my-6
-            [&_hr]:border-slate-800 [&_hr]:my-8"
+            [&_img]:rounded-lg [&_img]:my-6 [&_img]:max-w-full [&_img]:h-auto
+            [&_hr]:border-slate-800 [&_hr]:my-8
+            [&_code]:bg-slate-800 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono [&_code]:text-purple-300
+            [&_strong]:text-white [&_strong]:font-semibold
+            [&_em]:text-slate-300 [&_em]:italic"
         />
       );
     });
@@ -182,6 +233,7 @@ function RenderContent({ html }: { html: string }) {
 export default function BlogPostPage() {
   const { slug } = useParams();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
@@ -189,6 +241,8 @@ export default function BlogPostPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [renderedContent, setRenderedContent] = useState("");
+  const [comments, setComments] = useState<any[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -210,6 +264,7 @@ export default function BlogPostPage() {
         setPost(data);
         setRenderedContent(decoded);
         setLikesCount(data._count?.likes || 0);
+        setLiked(data.userHasLiked || false);
       } catch (error) {
         console.error("Error fetching post:", error);
         notFound();
@@ -220,13 +275,36 @@ export default function BlogPostPage() {
     fetchPost();
   }, [slug]);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikesCount(likesCount - 1);
-      setLiked(false);
-    } else {
-      setLikesCount(likesCount + 1);
-      setLiked(true);
+  useEffect(() => {
+    async function fetchComments() {
+      if (!post?.id) return;
+      setCommentsLoading(true);
+      try {
+        const response = await commentService.getComments(post.id, 1, 50);
+        const commentsData = response as any;
+        setComments(commentsData.data?.comments || []);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setCommentsLoading(false);
+      }
+    }
+    fetchComments();
+  }, [post?.id]);
+
+  const handleLike = async () => {
+    if (!post || !user) return;
+    try {
+      const response = await postService.toggleLike(post.id);
+      setLiked(response.liked);
+      setLikesCount(response.likesCount);
+    } catch (error) {
+      console.error("Error updating like:", error);
+      toast({
+        title: "Error",
+        description: "Could not update like. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -240,6 +318,10 @@ export default function BlogPostPage() {
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
     toast({ title: "Link copied!" });
+  };
+
+  const handleCommentSubmitted = (newComment: any) => {
+    setComments((prev) => [newComment, ...prev]);
   };
 
   if (loading) {
@@ -276,7 +358,7 @@ export default function BlogPostPage() {
       />
 
       <div className="container mx-auto px-4 py-6 md:py-10">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Back Button */}
           <Link href="/blog">
             <Button
@@ -293,14 +375,14 @@ export default function BlogPostPage() {
             {/* Header */}
             <header className="mb-8">
               <div className="flex flex-wrap gap-2 mb-4">
-                {(post.categories || []).map((cat: any) => (
-                  <Badge
-                    key={cat.slug}
-                    className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs px-3 py-1"
-                  >
-                    {cat.name}
-                  </Badge>
-                ))}
+                 {(post.categories || []).map((cat: any, index: number) => (
+                   <Badge
+                     key={cat.slug || index}
+                     className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs px-3 py-1"
+                   >
+                     {cat.name}
+                   </Badge>
+                 ))}
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
@@ -353,15 +435,11 @@ export default function BlogPostPage() {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-800">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLike}
-                className={`gap-2 ${liked ? "text-pink-400" : "text-slate-400"}`}
-              >
-                <Heart className={`h-4 w-4 ${liked ? "fill-pink-400" : ""}`} />
-                <span>{likesCount}</span>
-              </Button>
+               <LikeButton 
+                  postId={post.id} 
+                  initialLikes={post._count?.likes || 0}
+                  userHasLiked={post.userHasLiked || false}
+                  />
 
               <Button
                 variant="ghost"
@@ -375,15 +453,13 @@ export default function BlogPostPage() {
                 <span>Save</span>
               </Button>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleShare}
-                className="gap-2 text-slate-400"
-              >
-                <Share2 className="h-4 w-4" />
-                <span>Share</span>
-              </Button>
+               <ShareButtons 
+                  title={post.title}
+                  description={post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>/g, '')}
+                  imageUrl={post.coverImage}
+                  url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
+                  slug={post.slug}
+                />
             </div>
 
             {/* Post Content with Syntax Highlighting */}
@@ -391,20 +467,53 @@ export default function BlogPostPage() {
               <RenderContent html={renderedContent} />
             </div>
 
-            {/* Tags */}
-            {(post.tags || []).length > 0 && (
-              <div className="mt-8 pt-4 flex flex-wrap gap-2">
-                {(post.tags || []).map((tag: any) => (
-                  <Badge
-                    key={tag.slug}
-                    variant="outline"
-                    className="text-slate-400 border-slate-700 text-xs px-3 py-1"
-                  >
-                    #{tag.name}
-                  </Badge>
-                ))}
+             {/* Tags */}
+             {(post.tags || []).length > 0 && (
+               <div className="mt-8 pt-4 flex flex-wrap gap-2">
+                 {(post.tags || []).map((tag: any, index: number) => (
+                   <Badge
+                     key={tag.slug || index}
+                     variant="outline"
+                     className="text-slate-400 border-slate-700 text-xs px-3 py-1"
+                   >
+                     #{tag.name}
+                   </Badge>
+                 ))}
+               </div>
+             )}
+
+            {/* Comments Section */}
+            <div className="mt-12 pt-8 border-t border-slate-800">
+              <div className="flex items-center gap-2 mb-6">
+                <h3 className="text-xl font-semibold text-white">
+                  Comments
+                </h3>
+                <span className="text-sm text-slate-400">
+                  ({comments.length})
+                </span>
               </div>
-            )}
+              
+              {/* Comment Form */}
+              <div className="mb-8">
+                <CommentForm
+                  postId={post.id}
+                  onCommentSubmitted={handleCommentSubmitted}
+                  userId={user?._id}
+                />
+              </div>
+
+              {/* Comments List */}
+              <div className="mt-8">
+                {commentsLoading ? (
+                  <div className="space-y-4">
+                    <div className="h-20 bg-slate-800/30 rounded-lg animate-pulse"></div>
+                    <div className="h-20 bg-slate-800/30 rounded-lg animate-pulse"></div>
+                  </div>
+                ) : (
+                  <CommentList comments={comments} />
+                )}
+              </div>
+            </div>
 
             <Separator className="my-8 bg-slate-800" />
 

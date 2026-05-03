@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Send,
   Bot,
@@ -18,9 +17,9 @@ import {
   Zap,
   Briefcase,
   X,
-  Minimize2,
+  MapPin,
+  Code2,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,41 +31,82 @@ interface Message {
   timestamp: Date;
 }
 
+interface GroqMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
 export function AIAssistance() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<GroqMessage[]>(
+    [],
+  );
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Romarick's profile data
   const profileData = {
     name: "Romarick",
     fullName: "Bongnteh Romarick Ndzelen",
     title: "Full-Stack Developer",
     bio: "Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Next.js, Node.js, and cloud technologies. I love creating innovative solutions that make a difference.",
     avatar: "/romarick.jpeg",
-    skills: [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Node.js",
-      "Express",
-      "Python",
-      "MongoDB",
-      "PostgreSQL",
-      "Tailwind CSS",
-      "Docker",
-      "AWS",
-      "GraphQL",
-    ],
+    skills: {
+      frontend: [
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Tailwind CSS",
+        "Framer Motion",
+      ],
+      backend: ["Node.js", "Express", "Python", "GraphQL", "REST APIs"],
+      database: ["MongoDB", "PostgreSQL", "Redis"],
+      devops: ["Docker", "AWS", "CI/CD", "Linux"],
+    },
     experience: [
-      "Senior Full-Stack Developer at Tech Solutions Inc. (2021-Present) - Led development of 10+ successful web applications",
-      "Full-Stack Developer at Digital Innovations (2019-2021) - Built scalable e-commerce platforms",
-      "Freelance Developer (2018-Present) - Worked with 20+ clients worldwide",
+      {
+        role: "Senior Full-Stack Developer",
+        company: "Tech Solutions Inc.",
+        period: "2021–Present",
+        highlights: [
+          "Led development of 10+ successful web applications",
+          "Architected microservices reducing latency by 40%",
+          "Mentored a team of 5 junior developers",
+        ],
+      },
+      {
+        role: "Full-Stack Developer",
+        company: "Digital Innovations",
+        period: "2019–2021",
+        highlights: [
+          "Built scalable e-commerce platforms serving 50k+ users",
+          "Improved site performance by 60% through optimization",
+        ],
+      },
+      {
+        role: "Freelance Developer",
+        company: "Self-employed",
+        period: "2018–Present",
+        highlights: [
+          "Worked with 20+ clients worldwide",
+          "Delivered projects across fintech, edtech, and healthcare",
+        ],
+      },
     ],
-    education: ["B.S. in Computer Science - University of Buea"],
+    education: [
+      {
+        degree: "B.S. in Computer Science",
+        school: "University of Buea",
+        year: "2018",
+      },
+    ],
+    projects: [
+      "Built a real-time collaborative platform using WebSockets and React",
+      "Developed an AI-powered job matching platform with 10k+ users",
+      "Created an e-learning management system used by 3 universities",
+    ],
     contact: {
       email: "ndzelenromarick@gmail.com",
       phone: "+237 676 154 253",
@@ -77,7 +117,65 @@ export function AIAssistance() {
       linkedin: "https://linkedin.com/in/bongnteh-romarick-ndzelen",
       twitter: "https://twitter.com/BongntehNdzelen",
     },
+    availability:
+      "Available for freelance, contract, and full-time remote opportunities",
+    languages: ["English (Fluent)", "French (Conversational)"],
+    softSkills: [
+      "Team leadership",
+      "Problem-solving",
+      "Agile/Scrum",
+      "Client communication",
+    ],
   };
+
+  const systemPrompt = `You are an intelligent, friendly, and professional AI assistant for Romarick (${profileData.fullName}), a ${profileData.title} based in Cameroon.
+
+YOUR ROLE: You represent Romarick's personal portfolio assistant. Be warm, knowledgeable, and genuinely helpful.
+
+=== FULL PROFILE ===
+
+NAME: ${profileData.fullName} (goes by Romarick)
+TITLE: ${profileData.title}
+BIO: ${profileData.bio}
+
+TECHNICAL SKILLS:
+- Frontend: ${profileData.skills.frontend.join(", ")}
+- Backend: ${profileData.skills.backend.join(", ")}
+- Databases: ${profileData.skills.database.join(", ")}
+- DevOps: ${profileData.skills.devops.join(", ")}
+
+WORK EXPERIENCE:
+${profileData.experience.map((e) => `• ${e.role} @ ${e.company} (${e.period})\n  - ${e.highlights.join("\n  - ")}`).join("\n\n")}
+
+NOTABLE PROJECTS:
+${profileData.projects.map((p) => `• ${p}`).join("\n")}
+
+EDUCATION: ${profileData.education[0].degree} — ${profileData.education[0].school} (${profileData.education[0].year})
+
+CONTACT:
+- Email: ${profileData.contact.email}
+- Phone: ${profileData.contact.phone}
+- Location: ${profileData.contact.location}
+
+SOCIAL:
+- GitHub: ${profileData.socialLinks.github}
+- LinkedIn: ${profileData.socialLinks.linkedin}
+- Twitter: ${profileData.socialLinks.twitter}
+
+AVAILABILITY: ${profileData.availability}
+LANGUAGES: ${profileData.languages.join(", ")}
+SOFT SKILLS: ${profileData.softSkills.join(", ")}
+
+=== BEHAVIOR RULES ===
+1. MEMORY: You have full conversation history. Reference prior messages naturally — never ask something already answered.
+2. INTELLIGENCE: Give specific, detailed answers. If asked about a skill, explain HOW Romarick uses it in real projects.
+3. TONE: Warm, professional, enthusiastic. Use emojis sparingly (1–2 per response max).
+4. LENGTH: Keep responses concise (under 130 words) unless a detailed answer is clearly needed.
+5. HONESTY: If something isn't in the profile, say so rather than inventing details.
+6. PROACTIVITY: Occasionally suggest a related topic the visitor might find interesting.
+7. HIRING PITCH: If someone seems interested in hiring, highlight Romarick's strengths and encourage reaching out at ${profileData.contact.email}.
+8. FORMAT: Use short paragraphs and line breaks. Use bullet points only when listing 3+ items.
+9. PERSPECTIVE: Speak as Romarick's assistant, not as Romarick himself.`;
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -89,7 +187,7 @@ export function AIAssistance() {
     if (isOpen && messages.length === 0) {
       const welcomeMessage: Message = {
         id: "1",
-        content: `👋 Hey! I'm Romarick's AI assistant. Ask me about his skills, experience, or how to connect!`,
+        content: `👋 Hi! I'm Romarick's AI assistant.\n\nI can tell you about his skills, experience, projects, or help you get in touch. What would you like to know?`,
         sender: "ai",
         timestamp: new Date(),
       };
@@ -101,71 +199,57 @@ export function AIAssistance() {
   const generateAIResponse = async (userMessage: string): Promise<string> => {
     setIsTyping(true);
 
-    const systemPrompt = `You are a friendly, professional AI assistant representing Romarick (full name: ${profileData.fullName}), a ${profileData.title}.
-
-PERSONAL INFORMATION:
-- Name: ${profileData.fullName} (goes by Romarick)
-- Title: ${profileData.title}
-- Bio: ${profileData.bio}
-- Skills: ${profileData.skills.join(", ")}
-- Experience: ${profileData.experience.join(". ")}
-- Education: ${profileData.education.join(", ")}
-- Location: ${profileData.contact.location}
-- Email: ${profileData.contact.email}
-- Phone: ${profileData.contact.phone}
-${profileData.socialLinks.github ? `- GitHub: ${profileData.socialLinks.github}` : ""}
-${profileData.socialLinks.linkedin ? `- LinkedIn: ${profileData.socialLinks.linkedin}` : ""}
-
-GUIDELINES:
-- Be conversational, warm, and enthusiastic like a real assistant
-- Keep responses under 150 words
-- Use emojis occasionally to be friendly
-- If asked about contact, provide the email and encourage reaching out
-- If asked about skills/experience, highlight key strengths and achievements
-- If asked about location, mention he's based in Cameroon but works remotely worldwide
-- Be honest about limitations - don't invent information
-- Format responses with line breaks for readability
-- Speak in first person as if you are Romarick's assistant
-- Always be helpful and professional`;
+    const updatedHistory: GroqMessage[] = [
+      ...conversationHistory,
+      { role: "user", content: userMessage },
+    ];
 
     try {
       const response = await axios.post(
-        "https://api.x.ai/v1/chat/completions",
+        "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "grok-4-1-fast",
+          model: "llama-3.3-70b-versatile",
           messages: [
             { role: "system", content: systemPrompt },
-            { role: "user", content: userMessage },
+            ...updatedHistory,
           ],
-          temperature: 0.7,
-          max_tokens: 500,
+          temperature: 0.75,
+          max_tokens: 600,
+          top_p: 0.9,
+          frequency_penalty: 0.3,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_XAI_API_KEY}`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`,
           },
         },
       );
 
-      return (
+      const assistantReply =
         response.data.choices[0]?.message?.content ||
-        "Thanks for your interest! Could you rephrase that? I'd be happy to tell you more about Romarick's background and work."
-      );
+        "Thanks for your question! Could you rephrase that? I'd love to help.";
+
+      setConversationHistory([
+        ...updatedHistory,
+        { role: "assistant", content: assistantReply },
+      ]);
+
+      return assistantReply;
     } catch (error) {
-      console.error("API error:", error);
-      return "I'm having trouble connecting right now. Please try again in a moment, or feel free to reach out directly via the contact information provided.";
+      console.error("Groq API error:", error);
+      return "I'm having a little trouble connecting right now. Please try again, or reach out to Romarick directly at ndzelenromarick@gmail.com 📧";
     } finally {
       setIsTyping(false);
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || isTyping) return;
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isTyping) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: input,
+      content: text,
       sender: "user",
       timestamp: new Date(),
     };
@@ -173,7 +257,7 @@ GUIDELINES:
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    const aiResponseContent = await generateAIResponse(input);
+    const aiResponseContent = await generateAIResponse(text);
 
     const aiMessage: Message = {
       id: (Date.now() + 1).toString(),
@@ -185,45 +269,74 @@ GUIDELINES:
     setMessages((prev) => [...prev, aiMessage]);
   };
 
-  const handleQuickQuestion = (question: string) => {
-    setInput(question);
-    setTimeout(() => handleSendMessage(), 100);
-  };
+  const handleSendMessage = () => sendMessage(input);
+  const handleQuickQuestion = (question: string) => sendMessage(question);
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name: string) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
 
   const quickQuestions = [
     {
       icon: Zap,
       text: "Skills",
-      question: "What technologies and skills does Romarick specialize in?",
+      question: "What are Romarick's main technical skills?",
     },
     {
       icon: Briefcase,
       text: "Experience",
-      question: "Can you tell me about Romarick's work experience?",
+      question: "Tell me about Romarick's work experience.",
+    },
+    {
+      icon: Code2,
+      text: "Projects",
+      question: "What notable projects has Romarick built?",
     },
     {
       icon: Mail,
-      text: "Contact",
-      question: "How can I contact Romarick for opportunities?",
+      text: "Hire him",
+      question: "I'd like to hire Romarick. How can I contact him?",
+    },
+  ];
+
+  const socialButtons = [
+    {
+      label: "GitHub",
+      icon: Github,
+      href: profileData.socialLinks.github,
+      hoverBg: "hover:bg-slate-600",
+      hoverText: "hover:text-white",
     },
     {
-      icon: Clock,
-      text: "Availability",
-      question: "Is Romarick available for freelance work or collaboration?",
+      label: "LinkedIn",
+      icon: Linkedin,
+      href: profileData.socialLinks.linkedin,
+      hoverBg: "hover:bg-blue-600",
+      hoverText: "hover:text-white",
+    },
+    {
+      label: "Twitter",
+      icon: Twitter,
+      href: profileData.socialLinks.twitter,
+      hoverBg: "hover:bg-sky-500",
+      hoverText: "hover:text-white",
+    },
+    {
+      label: "Email",
+      icon: Mail,
+      href: `mailto:${profileData.contact.email}`,
+      hoverBg: "hover:bg-purple-600",
+      hoverText: "hover:text-white",
     },
   ];
 
   return (
     <>
+      {/* Floating trigger button */}
       <AnimatePresence>
         {!isOpen && (
           <motion.div
@@ -234,17 +347,18 @@ GUIDELINES:
           >
             <Button
               onClick={() => setIsOpen(true)}
-              className="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-2xl shadow-purple-500/40 transition-all duration-300 hover:scale-110 group"
+              className="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-2xl shadow-purple-500/40 transition-all duration-300 hover:scale-110"
             >
               <div className="relative">
                 <Bot className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse"></span>
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse" />
               </div>
             </Button>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Chat panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -252,26 +366,26 @@ GUIDELINES:
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ type: "spring", damping: 25 }}
-            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[400px] max-w-[400px]"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[420px] max-w-[420px]"
           >
             <Card className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700 shadow-2xl shadow-purple-500/20 rounded-2xl overflow-hidden">
-              {/* Header - Reduced padding */}
+              {/* Header */}
               <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 px-4 py-3 sm:px-5 sm:py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-white rounded-full blur-md opacity-30"></div>
+                      <div className="absolute inset-0 bg-white rounded-full blur-md opacity-30" />
                       <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                         <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                       </div>
                     </div>
                     <div>
                       <h3 className="text-white font-semibold text-sm sm:text-base">
-                        Romarick's AI
+                        Romarick's AI Assistant
                       </h3>
                       <p className="text-white/70 text-[10px] sm:text-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                        Grok AI
+                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block animate-pulse" />
+                        Online · LLaMA 3.3 70B via Groq
                       </p>
                     </div>
                   </div>
@@ -284,77 +398,24 @@ GUIDELINES:
                 </div>
               </div>
 
-              {/* Profile Preview - Reduced margin and padding */}
-              <div className="mx-3 sm:mx-4 -mt-5 sm:-mt-6 mb-2 sm:mb-3 relative z-10">
-                <div className="bg-slate-800/90 backdrop-blur rounded-xl p-2.5 sm:p-3 border border-slate-700 shadow-lg">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 ring-2 ring-purple-500/50">
-                      <AvatarImage src={profileData.avatar} />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xs sm:text-sm">
-                        {getInitials(profileData.fullName)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-xs sm:text-sm truncate">
-                        {profileData.name}
-                      </p>
-                      <p className="text-slate-400 text-[10px] sm:text-xs truncate">
-                        {profileData.title}
-                      </p>
-                    </div>
-                    <div className="flex gap-1">
-                      {profileData.socialLinks.github && (
-                        <a
-                          href={profileData.socialLinks.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
-                        >
-                          <Github className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 hover:text-white" />
-                        </a>
-                      )}
-                      {profileData.socialLinks.linkedin && (
-                        <a
-                          href={profileData.socialLinks.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
-                        >
-                          <Linkedin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 hover:text-blue-400" />
-                        </a>
-                      )}
-                      {profileData.socialLinks.twitter && (
-                        <a
-                          href={profileData.socialLinks.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-1.5 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
-                        >
-                          <Twitter className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400 hover:text-sky-400" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick Questions - Reduced padding */}
+              {/* Quick questions */}
               <div className="px-3 py-1.5 sm:px-4 sm:py-2">
-                <p className="text-[10px] sm:text-xs text-slate-400 mb-1.5 sm:mb-2 flex items-center gap-1">
+                <p className="text-[10px] sm:text-xs text-slate-400 mb-1.5 flex items-center gap-1">
                   <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-purple-400" />
-                  Try asking
+                  Quick questions
                 </p>
-                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   {quickQuestions.map((q, idx) => {
                     const Icon = q.icon;
                     return (
                       <button
                         key={idx}
                         onClick={() => handleQuickQuestion(q.question)}
-                        className="group flex items-center gap-1.5 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-slate-300 transition-all hover:scale-[1.02]"
+                        disabled={isTyping}
+                        className="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-800/50 hover:bg-slate-700/80 border border-slate-700 hover:border-purple-500/50 rounded-xl text-slate-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400" />
-                        <span className="text-[10px] sm:text-xs font-medium">
+                        <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400 shrink-0" />
+                        <span className="text-[10px] sm:text-xs font-medium truncate">
                           {q.text}
                         </span>
                       </button>
@@ -363,37 +424,32 @@ GUIDELINES:
                 </div>
               </div>
 
-              {/* Messages - Reduced height for mobile */}
-              <div className="h-[280px] sm:h-[250px] overflow-y-auto px-3 py-2 sm:px-4 sm:py-3 space-y-2 sm:space-y-3 custom-scrollbar">
-                {messages.map((message, idx) => (
+              {/* Messages */}
+              <div className="h-[250px] sm:h-[230px] overflow-y-auto px-3 py-2 sm:px-4 sm:py-3 space-y-2 sm:space-y-3 custom-scrollbar">
+                {messages.map((message) => (
                   <motion.div
                     key={message.id}
-                    initial={{
-                      opacity: 0,
-                      x: message.sender === "user" ? 20 : -20,
-                    }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
                     className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
-                    <div
-                      className={`max-w-[85%] ${message.sender === "user" ? "order-2" : "order-1"}`}
-                    >
+                    <div className="max-w-[88%]">
                       {message.sender === "ai" && (
                         <div className="flex items-center gap-1.5 mb-1 ml-1">
                           <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
                             <Bot className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" />
                           </div>
                           <span className="text-[8px] sm:text-[10px] text-slate-500 font-medium">
-                            Assistant
+                            AI Assistant
                           </span>
                         </div>
                       )}
                       <div
-                        className={`px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-2xl ${
+                        className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl ${
                           message.sender === "user"
                             ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-sm"
-                            : "bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-sm"
+                            : "bg-slate-800 border border-slate-700/80 text-slate-200 rounded-bl-sm"
                         }`}
                       >
                         <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
@@ -401,7 +457,7 @@ GUIDELINES:
                         </p>
                       </div>
                       {message.sender === "user" && (
-                        <div className="flex items-center gap-1.5 mt-1 mr-1 justify-end">
+                        <div className="flex items-center justify-end mt-1 mr-1">
                           <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-700 flex items-center justify-center">
                             <User className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-slate-400" />
                           </div>
@@ -413,24 +469,22 @@ GUIDELINES:
 
                 {isTyping && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
                     className="flex justify-start"
                   >
-                    <div className="bg-slate-800 px-4 py-2 sm:px-5 sm:py-3 rounded-2xl rounded-bl-sm">
-                      <div className="flex space-x-1">
-                        <div
-                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full animate-bounce"
-                          style={{ animationDelay: "0ms" }}
-                        ></div>
-                        <div
-                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full animate-bounce"
-                          style={{ animationDelay: "150ms" }}
-                        ></div>
-                        <div
-                          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full animate-bounce"
-                          style={{ animationDelay: "300ms" }}
-                        ></div>
+                    <div className="bg-slate-800 border border-slate-700/80 px-4 py-2.5 rounded-2xl rounded-bl-sm">
+                      <div className="flex space-x-1 items-center">
+                        {[0, 150, 300].map((delay) => (
+                          <div
+                            key={delay}
+                            className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-400 rounded-full animate-bounce"
+                            style={{ animationDelay: `${delay}ms` }}
+                          />
+                        ))}
+                        <span className="text-[9px] text-slate-500 ml-1.5">
+                          thinking...
+                        </span>
                       </div>
                     </div>
                   </motion.div>
@@ -438,36 +492,34 @@ GUIDELINES:
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Input Area - Reduced padding */}
+              {/* Input area */}
               <div className="p-3 sm:p-4 border-t border-slate-800 bg-slate-900/50">
                 <div className="flex gap-2">
-                  <div className="flex-1 relative">
-                    <input
-                      ref={inputRef}
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={(e) =>
-                        e.key === "Enter" && handleSendMessage()
-                      }
-                      placeholder="Ask me..."
-                      className="w-full bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-10 px-3 sm:px-4 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-                      disabled={isTyping}
-                    />
-                  </div>
+                  <input
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && !e.shiftKey && handleSendMessage()
+                    }
+                    placeholder="Ask me anything about Romarick..."
+                    className="flex-1 bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-4 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 disabled:opacity-50 transition-colors"
+                    disabled={isTyping}
+                  />
                   <Button
                     onClick={handleSendMessage}
                     disabled={!input.trim() || isTyping}
-                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50"
+                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-40 shrink-0"
                   >
                     {isTyping ? (
-                      <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
                     ) : (
-                      <Send className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     )}
                   </Button>
                 </div>
-                <p className="text-[8px] sm:text-[9px] text-slate-600 text-center mt-1.5 sm:mt-2">
-                  AI responses by Grok • Ask about Romarick
+                <p className="text-[8px] sm:text-[9px] text-slate-600 text-center mt-1.5">
+                  Powered by Groq LLaMA 3.3 70B · Smart AI about Romarick
                 </p>
               </div>
             </Card>
@@ -488,10 +540,8 @@ GUIDELINES:
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.7);
+          background: rgba(139, 92, 246, 0.8);
         }
-
-        /* Mobile optimizations */
         @media (max-width: 640px) {
           .custom-scrollbar::-webkit-scrollbar {
             width: 2px;
