@@ -102,27 +102,22 @@ export const postService = {
   },
 
   // Like/unlike a post
-async toggleLike(postId: string) {
-  console.log('toggleLike called with postId:', postId);
-  try {
-    const response = await apiRequest<{ liked: boolean; likesCount: number }>(
-      `/api/posts/${postId}/likes`,
-      {
-        method: 'POST',
-      }
-    );
-    console.log('toggleLike response:', response);
-    
-    // If your API returns nested data, extract it
-    if (response.data) {
-      return response.data;
+  async toggleLike(postId: string) {
+    console.log('toggleLike called with postId:', postId);
+    try {
+      const response = await apiRequest<{ liked: boolean; likesCount: number }>(
+        `/api/posts/${postId}/likes`,
+        {
+          method: 'POST',
+        }
+      );
+      console.log('toggleLike response:', response);
+      return response;
+    } catch (error) {
+      console.error('toggleLike error:', error);
+      throw error;
     }
-    return response;
-  } catch (error) {
-    console.error('toggleLike error:', error);
-    throw error;
-  }
-},
+  },
 
   // Get post likes count
   async getPostLikes(postId: string) {

@@ -95,48 +95,48 @@ export function Footer() {
       <AIAssistance />
 
       <footer className="border-t bg-slate-950/80 border-slate-800/50 mt-auto">
-        <div className="container mx-auto px-4 py-6 md:py-8">
-          {/* Newsletter Subscription Section - Reduced size */}
-          <div className="mb-6 pb-4 border-b border-slate-800/50">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-center md:text-left">
-                <h3 className="text-xs font-semibold text-white mb-0.5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+          {/* Newsletter Subscription Section - Row layout on all devices */}
+          <div className="mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b border-slate-800/50">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4">
+              <div className="text-center lg:text-left">
+                <h3 className="text-xs sm:text-sm font-bold text-white mb-0.5">
                   Subscribe to newsletter
                 </h3>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[9px] sm:text-[10px] text-slate-400">
                   Get latest posts delivered to your inbox
                 </p>
               </div>
 
               <form
                 onSubmit={handleSubscribe}
-                className="flex flex-col sm:flex-row gap-1.5 w-full max-w-sm"
+                className="flex flex-row gap-2 w-full max-w-md"
               >
                 <div className="flex-1 relative">
-                  <Mail className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500" />
+                  <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500" />
                   <Input
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-7 py-1 h-8 text-xs bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder-slate-500"
+                    className="pl-7 sm:pl-8 py-1.5 h-8 sm:h-9 text-[10px] sm:text-xs bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 rounded-lg"
                     required
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs h-8 px-3 whitespace-nowrap"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-[10px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg font-semibold whitespace-nowrap"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-1">
                       <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                      Sub...
+                      <span className="hidden sm:inline">Sub...</span>
                     </span>
                   ) : (
                     <span className="flex items-center gap-1">
                       <Send className="h-3 w-3" />
-                      Subscribe
+                      <span className="hidden sm:inline">Subscribe</span>
                     </span>
                   )}
                 </Button>
@@ -145,45 +145,46 @@ export function Footer() {
 
             {/* Success/Error Messages */}
             {isSuccess && (
-              <div className="mt-2 flex items-center justify-center gap-1 text-[10px] text-green-400 bg-green-500/10 p-1.5 rounded-lg">
+              <div className="mt-2 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] text-green-400 bg-green-500/10 p-1.5 rounded-lg">
                 <CheckCircle className="h-3 w-3" />
                 <span>Subscribed successfully!</span>
               </div>
             )}
             {error && (
-              <div className="mt-2 flex items-center justify-center gap-1 text-[10px] text-red-400 bg-red-500/10 p-1.5 rounded-lg">
+              <div className="mt-2 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] text-red-400 bg-red-500/10 p-1.5 rounded-lg">
                 <AlertCircle className="h-3 w-3" />
                 <span>{error}</span>
               </div>
             )}
           </div>
 
-          {/* Main Footer Content - Reduced size */}
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          {/* Main Footer Content */}
+          <div className="flex flex-col items-center justify-between gap-4 sm:gap-5 md:flex-row">
             {/* Brand & Copyright */}
             <div className="flex flex-col items-center md:items-start gap-1 text-center md:text-left">
               <div className="flex items-center gap-1.5">
                 <div className="p-1 rounded-md bg-gradient-to-br from-purple-500/20 to-pink-500/20">
                   <Code className="h-3 w-3 text-purple-400" />
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
                   &copy; {new Date().getFullYear()} Bongnteh Romarick
                 </p>
               </div>
-              <p className="text-[9px] text-slate-500 flex items-center gap-0.5">
-                Made with <Heart className="h-2 w-2 text-pink-400" /> using
+              <p className="text-[8px] sm:text-[9px] text-slate-500 flex items-center gap-0.5">
+                Made with{" "}
+                <Heart className="h-2 w-2 text-pink-400 fill-pink-400" /> using
                 Next.js
               </p>
             </div>
 
-            {/* Social Links - Reduced size */}
+            {/* Social Links */}
             <div className="flex flex-wrap items-center justify-center gap-0.5">
               <Link href={`mailto:${contactInfo.email}`} passHref>
                 <Button
                   variant="ghost"
                   size="icon"
                   aria-label="Email"
-                  className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
                   title="Send me an email"
                 >
                   <Mail className="h-3 w-3" />
@@ -194,7 +195,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="Phone"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg"
                   title="Call me"
                 >
                   <Phone className="h-3 w-3" />
@@ -210,7 +211,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="WhatsApp"
-                  className="h-7 w-7 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg"
                   title="Message me on WhatsApp"
                 >
                   <WhatsAppIcon className="h-3 w-3" />
@@ -226,7 +227,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="GitHub"
-                  className="h-7 w-7 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg"
                   title="View my GitHub profile"
                 >
                   <Github className="h-3 w-3" />
@@ -242,7 +243,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="LinkedIn"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg"
                   title="Connect on LinkedIn"
                 >
                   <Linkedin className="h-3 w-3" />
@@ -258,7 +259,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="Twitter"
-                  className="h-7 w-7 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10"
+                  className="h-7 w-7 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg"
                   title="Follow me on X"
                 >
                   <Twitter className="h-3 w-3" />
@@ -274,7 +275,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="Facebook"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-600 hover:bg-blue-600/10"
+                  className="h-7 w-7 text-slate-400 hover:text-blue-600 hover:bg-blue-600/10 rounded-lg"
                   title="Connect on Facebook"
                 >
                   <Facebook className="h-3 w-3" />
@@ -283,45 +284,26 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Contact Info - Reduced size */}
-          <div className="mt-4 pt-3 border-t border-slate-800/30">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-2 text-[9px] text-slate-500">
-              <div className="flex items-center gap-1">
-                <Mail className="h-2.5 w-2.5" />
-                <a
-                  href={`mailto:${contactInfo.email}`}
-                  className="hover:text-purple-400 transition-colors"
-                >
-                  {contactInfo.email}
-                </a>
-              </div>
-              <div className="hidden md:block text-slate-600">•</div>
-              <div className="flex items-center gap-1">
-                <Phone className="h-2.5 w-2.5" />
-                <a
-                  href={`tel:${telNumber}`}
-                  className="hover:text-purple-400 transition-colors"
-                >
-                  {contactInfo.phone}
-                </a>
-              </div>
-              <div className="hidden md:block text-slate-600">•</div>
-              <div className="flex items-center gap-1">
-                <Code className="h-2.5 w-2.5" />
-                <a
-                  href={`https://github.com/${contactInfo.github}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-purple-400 transition-colors"
-                >
-                  @{contactInfo.github.split("-")[0]}
-                </a>
-              </div>
-            </div>
-          </div>
-
+          
         </div>
       </footer>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(51, 65, 85, 0.3);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(139, 92, 246, 0.5);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(139, 92, 246, 0.7);
+        }
+      `}</style>
     </>
   );
 }

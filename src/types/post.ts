@@ -13,6 +13,7 @@ export interface Post {
   updatedAt: string;
   readTime: number;
   views: number;
+  userHasLiked?: boolean;
   authorId: string;
   author?: {
     id: string;

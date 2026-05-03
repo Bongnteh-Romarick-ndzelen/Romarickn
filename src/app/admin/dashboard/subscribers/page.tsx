@@ -56,6 +56,7 @@ import {
   Filter,
   Calendar,
 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 import { adminService } from "@/lib/services/admin.service";
 import { subscriptionService } from "@/lib/services/subscription.service";
 import { useToast } from "@/hooks/use-toast";
@@ -529,11 +530,9 @@ export default function AdminSubscribersPage() {
                             <XCircle className="h-4 w-4 text-yellow-400" />
                           )}
                         </TableCell>
-                        <TableCell className="text-slate-300 text-sm">
-                          {new Date(
-                            subscriber.subscribedAt,
-                          ).toLocaleDateString()}
-                        </TableCell>
+                         <TableCell className="text-slate-300 text-sm">
+                           {formatDate(subscriber.subscribedAt)}
+                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

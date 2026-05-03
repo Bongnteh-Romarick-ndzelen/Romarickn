@@ -53,12 +53,9 @@ export default function LikeButton({
       const result = await postService.toggleLike(postId);
       console.log("Result:", result);
 
-      // IMPORTANT: Extract data from the response structure
-      // Your API returns: { success: true, message: '...', data: { liked: true, likesCount: 5 } }
-      const responseData = result.data || result;
-
-      setLikes(responseData.likesCount);
-      setIsLiked(responseData.liked);
+      // API returns: { liked: boolean, likesCount: number }
+      setLikes(result.likesCount);
+      setIsLiked(result.liked);
     } catch (error: any) {
       console.error("Error updating like:", error);
       // Revert on error
