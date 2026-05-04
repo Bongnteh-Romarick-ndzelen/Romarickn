@@ -15,7 +15,6 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "postinstall": "prisma generate && patch-package",
     "reset": "rimraf .next node_modules/.cache && npm install"
   },
   "dependencies": {
