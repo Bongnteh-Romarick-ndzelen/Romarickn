@@ -221,13 +221,13 @@ export function Header() {
               <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-all duration-500 group-hover:scale-110"></div>
 
               {/* Logo container with gradient border */}
-              <div className="relative p-2 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 group-hover:border-purple-500/50 transition-all duration-300">
+              <div className="relative  duration-300">
                 <Image
                   src="/logo.png"
                   alt="Logo"
                   width={40}
                   height={40}
-                  className="h-10 w-10 md:h-12 md:w-12 object-contain transition-transform duration-300 group-hover:scale-110"
+                  className="h-8 w-8 md:h-10 md:w-10 object-contain transition-transform duration-300 group-hover:scale-110"
                 />
               </div>
             </div>

@@ -311,13 +311,19 @@ export default function BlogPostPage() {
   const handleBookmark = () => {
     setBookmarked(!bookmarked);
     toast({
+      variant: "default",
       title: bookmarked ? "Removed from bookmarks" : "Added to bookmarks",
+      description: bookmarked ? "Post removed from bookmarks" : "Post added to bookmarks",
     });
   };
 
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
-    toast({ title: "Link copied!" });
+    toast({
+      variant: "default",
+      title: "Link copied!",
+      description: "Post URL copied to clipboard",
+    });
   };
 
   const handleCommentSubmitted = (newComment: any) => {
@@ -326,7 +332,7 @@ export default function BlogPostPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-[#111D3A]">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
           <div className="animate-pulse space-y-6">
             <div className="h-6 bg-slate-800 rounded w-32"></div>
@@ -350,8 +356,9 @@ export default function BlogPostPage() {
   if (!post) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-[#111D3A]">
       {/* Reading Progress Bar */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
       <div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 z-50 transition-all duration-200"
         style={{ width: `${scrollProgress}%` }}
@@ -375,14 +382,14 @@ export default function BlogPostPage() {
             {/* Header */}
             <header className="mb-8">
               <div className="flex flex-wrap gap-2 mb-4">
-                 {(post.categories || []).map((cat: any, index: number) => (
-                   <Badge
-                     key={cat.slug || index}
-                     className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs px-3 py-1"
-                   >
-                     {cat.name}
-                   </Badge>
-                 ))}
+                {(post.categories || []).map((cat: any, index: number) => (
+                  <Badge
+                    key={cat.slug || index}
+                    className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-xs px-3 py-1"
+                  >
+                    {cat.name}
+                  </Badge>
+                ))}
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
@@ -435,11 +442,11 @@ export default function BlogPostPage() {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-800">
-               <LikeButton 
-                  postId={post.id} 
-                  initialLikes={post._count?.likes || 0}
-                  userHasLiked={post.userHasLiked || false}
-                  />
+              <LikeButton
+                postId={post.id}
+                initialLikes={post._count?.likes || 0}
+                userHasLiked={post.userHasLiked || false}
+              />
 
               <Button
                 variant="ghost"
@@ -453,13 +460,16 @@ export default function BlogPostPage() {
                 <span>Save</span>
               </Button>
 
-               <ShareButtons 
-                  title={post.title}
-                  description={post.excerpt || post.content?.substring(0, 160).replace(/<[^>]*>/g, '')}
-                  imageUrl={post.coverImage}
-                  url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
-                  slug={post.slug}
-                />
+              <ShareButtons
+                title={post.title}
+                description={
+                  post.excerpt ||
+                  post.content?.substring(0, 160).replace(/<[^>]*>/g, "")
+                }
+                imageUrl={post.coverImage}
+                url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
+                slug={post.slug}
+              />
             </div>
 
             {/* Post Content with Syntax Highlighting */}
@@ -467,32 +477,30 @@ export default function BlogPostPage() {
               <RenderContent html={renderedContent} />
             </div>
 
-             {/* Tags */}
-             {(post.tags || []).length > 0 && (
-               <div className="mt-8 pt-4 flex flex-wrap gap-2">
-                 {(post.tags || []).map((tag: any, index: number) => (
-                   <Badge
-                     key={tag.slug || index}
-                     variant="outline"
-                     className="text-slate-400 border-slate-700 text-xs px-3 py-1"
-                   >
-                     #{tag.name}
-                   </Badge>
-                 ))}
-               </div>
-             )}
+            {/* Tags */}
+            {(post.tags || []).length > 0 && (
+              <div className="mt-8 pt-4 flex flex-wrap gap-2">
+                {(post.tags || []).map((tag: any, index: number) => (
+                  <Badge
+                    key={tag.slug || index}
+                    variant="outline"
+                    className="text-slate-400 border-slate-700 text-xs px-3 py-1"
+                  >
+                    #{tag.name}
+                  </Badge>
+                ))}
+              </div>
+            )}
 
             {/* Comments Section */}
             <div className="mt-12 pt-8 border-t border-slate-800">
               <div className="flex items-center gap-2 mb-6">
-                <h3 className="text-xl font-semibold text-white">
-                  Comments
-                </h3>
+                <h3 className="text-xl font-semibold text-white">Comments</h3>
                 <span className="text-sm text-slate-400">
                   ({comments.length})
                 </span>
               </div>
-              
+
               {/* Comment Form */}
               <div className="mb-8">
                 <CommentForm

@@ -1,584 +1,421 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Briefcase,
-  Code,
-  Cpu,
-  PenTool,
-  Server,
-  Database,
-  Cloud,
-  Rocket,
-  Heart,
-  MapPin,
-  Calendar,
-  Award,
-  Sparkles,
-  Mail,
-  Github,
-  Linkedin,
-  Twitter,
-  Coffee,
-  Music,
-  BookOpen,
-  Gamepad2,
-  Camera,
-  Globe,
-  Users,
-  Zap,
-  Star,
-  Film,
-  Plane,
-  Dumbbell,
-  Palette,
-  Mic,
-  Headphones,
-  Trophy,
-  Smile,
-  ThumbsUp,
-  Mountain,
-  Bike,
-  Volume2,
-} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const skills = {
-  frontend: [
-    "React",
-    "Next.js",
-    "TypeScript",
-    "Tailwind CSS",
-    "Redux",
-    "Framer Motion",
-  ],
-  backend: [
-    "Node.js",
-    "Express",
-    "Prisma",
-    "PostgreSQL",
-    "REST APIs",
-    "GraphQL",
-  ],
-  tools: ["Git", "Docker", "Vercel", "Firebase", "Stripe", "AWS"],
-  design: [
-    "Figma",
-    "Adobe XD",
-    "Responsive Design",
-    "UI/UX Principles",
-    "Prototyping",
-  ],
-};
+const skills = [
+  {
+    name: "Frontend",
+    icon: "💻",
+    desc: "React, Next.js, TypeScript, Tailwind CSS",
+    level: 95,
+    barColor: "from-teal-400 to-cyan-400",
+  },
+  {
+    name: "Backend",
+    icon: "⚡",
+    desc: "Node.js, Express, Prisma, GraphQL",
+    level: 92,
+    barColor: "from-teal-400 to-cyan-400",
+  },
+  {
+    name: "Database",
+    icon: "🗄️",
+    desc: "PostgreSQL, MongoDB, Redis",
+    level: 88,
+    barColor: "from-teal-400 to-cyan-400",
+  },
+  {
+    name: "Cloud & DevOps",
+    icon: "☁️",
+    desc: "AWS, Docker, Vercel, Firebase",
+    level: 85,
+    barColor: "from-teal-400 to-cyan-400",
+  },
+];
 
 const stats = [
-  { label: "Years Experience", value: "5+", icon: Briefcase },
-  { label: "Projects Completed", value: "50+", icon: Rocket },
-  { label: "Happy Clients", value: "40+", icon: Heart },
-  { label: "Tech Articles", value: "25+", icon: BookOpen },
+  { label: "Years Experience", value: "5+", icon: "💼" },
+  { label: "Projects Completed", value: "50+", icon: "🚀" },
+  { label: "Happy Clients", value: "40+", icon: "❤️" },
+  { label: "Tech Articles", value: "25+", icon: "📚" },
 ];
 
 const hobbies = [
   {
     name: "Reading Tech Blogs",
-    icon: BookOpen,
-    color: "from-blue-500 to-cyan-500",
-    description: "Always learning new tech",
+    desc: "Always learning new tech",
+    icon: "📖",
+    color: "blue",
   },
   {
     name: "Open Source",
-    icon: Github,
-    color: "from-gray-500 to-slate-500",
-    description: "Contributing to community",
+    desc: "Contributing to community",
+    icon: "🐙",
+    color: "gray",
   },
-  {
-    name: "Gaming",
-    icon: Gamepad2,
-    color: "from-purple-500 to-pink-500",
-    description: "Strategy & RPG games",
-  },
+  { name: "Gaming", desc: "Strategy & RPG games", icon: "🎮", color: "purple" },
   {
     name: "Music Production",
-    icon: Music,
-    color: "from-green-500 to-emerald-500",
-    description: "Creating beats",
+    desc: "Creating beats",
+    icon: "🎵",
+    color: "green",
   },
-  {
-    name: "Photography",
-    icon: Camera,
-    color: "from-amber-500 to-orange-500",
-    description: "Street & nature",
-  },
+  { name: "Photography", desc: "Street & nature", icon: "📷", color: "amber" },
   {
     name: "Traveling",
-    icon: Plane,
-    color: "from-indigo-500 to-blue-500",
-    description: "Exploring new places",
+    desc: "Exploring new places",
+    icon: "✈️",
+    color: "indigo",
   },
-  {
-    name: "Fitness",
-    icon: Dumbbell,
-    color: "from-red-500 to-orange-500",
-    description: "Staying active",
-  },
-  {
-    name: "Digital Art",
-    icon: Palette,
-    color: "from-pink-500 to-rose-500",
-    description: "Creative design",
-  },
-];
-
-const likes = [
-  { name: "Coffee", icon: Coffee, emoji: "☕" },
-  { name: "Podcasts", icon: Headphones, emoji: "🎧" },
-  { name: "Sci-Fi Movies", icon: Film, emoji: "🎬" },
-  { name: "Chess", icon: Trophy, emoji: "♟️" },
-  { name: "Nature", icon: Mountain, emoji: "⛰️" },
-  { name: "Coding", icon: Code, emoji: "💻" },
+  { name: "Fitness", desc: "Staying active", icon: "💪", color: "red" },
+  { name: "Digital Art", desc: "Creative design", icon: "🎨", color: "pink" },
 ];
 
 const achievements = [
   {
     title: "Open Source Contributor",
-    description: "Contributed to 10+ open source projects",
-    icon: Github,
+    desc: "Contributed to 10+ projects",
+    icon: "🐙",
   },
-  {
-    title: "Tech Speaker",
-    description: "Spoke at 5+ tech conferences",
-    icon: Mic,
-  },
-  { title: "Hackathon Winner", description: "Won 3 hackathons", icon: Trophy },
-  {
-    title: "Certified Developer",
-    description: "AWS & MongoDB certified",
-    icon: Award,
-  },
+  { title: "Tech Speaker", desc: "Spoke at 5+ conferences", icon: "🎤" },
+  { title: "Hackathon Winner", desc: "Won 3 hackathons", icon: "🏆" },
+  { title: "Certified Developer", desc: "AWS & MongoDB certified", icon: "🎓" },
+];
+
+const techStack = [
+  "React",
+  "Next.js",
+  "Node.js",
+  "TypeScript",
+  "Tailwind CSS",
+  "MongoDB",
+  "PostgreSQL",
+  "Docker",
+  "AWS",
+  "GraphQL",
+];
+
+// Dark gradient with high opacity
+const cardBgVariants = [
+  "bg-gradient-to-br from-slate-900/95 to-slate-900/85",
+  "bg-gradient-to-br from-slate-900/90 to-slate-900/80",
+  "bg-gradient-to-br from-slate-900/100 to-slate-900/90",
+  "bg-gradient-to-br from-slate-900/85 to-slate-900/75",
+  "bg-gradient-to-br from-slate-900/95 to-slate-900/85",
 ];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#080b12]">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        {/* Header Section */}
-        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20">
-            <Sparkles className="h-3 w-3 text-purple-400" />
-            <span className="text-[10px] sm:text-xs font-medium text-purple-300">
-              Get to Know Me
-            </span>
+    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
+      {/* Grid overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+
+      {/* Glow orbs */}
+      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
+
+      <div className="relative z-10">
+        {/* ── HERO SECTION ─────────────────────────────── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 mb-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-[10px] font-semibold tracking-wide text-teal-400 uppercase">
+                Get to Know Me
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3">
+              About{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
+                Me
+              </span>
+            </h1>
+            <p className="text-sm text-slate-400 max-w-2xl mx-auto">
+              A passionate developer dedicated to creating impactful digital
+              experiences
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-3">
-            About{" "}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Me
-            </span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
-            A passionate developer dedicated to creating impactful digital
-            experiences
-          </p>
-        </div>
+        </section>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-8 sm:mb-10 lg:mb-12 max-w-3xl mx-auto">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
+        {/* ── STATS ROW ─────────────────────────────────── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {stats.map((stat, idx) => (
               <div
-                key={index}
-                className="text-center p-2 sm:p-3 rounded-xl bg-slate-800/30 border border-slate-700/50"
+                key={idx}
+                className="bg-slate-800/20 border border-slate-700/30 rounded-xl p-3 text-center hover:border-teal-500/30 transition-all backdrop-blur-sm"
               >
-                <div className="inline-flex p-1.5 rounded-lg bg-purple-500/10 mb-1">
-                  <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
-                </div>
-                <div className="text-base sm:text-lg font-black text-white">
-                  {stat.value}
-                </div>
-                <div className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
-                  {stat.label}
-                </div>
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className="text-lg font-bold text-white">{stat.value}</div>
+                <div className="text-[10px] text-slate-400">{stat.label}</div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        </section>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
-          {/* Left Column: Profile & Info */}
-          <div className="lg:col-span-1 space-y-4 lg:space-y-5">
-            {/* Profile Card */}
-            <Card className="bg-slate-800/30 border border-slate-700/50 overflow-hidden">
-              <CardContent className="p-4 sm:p-5 text-center">
-                <div className="relative inline-block mx-auto">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur opacity-30"></div>
-                  <Avatar className="h-20 w-20 sm:h-24 sm:w-24 mx-auto border-4 border-slate-800 relative">
-                    <AvatarImage src="/romarick.jpeg" alt="Bongnteh Romarick" />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-lg sm:text-xl font-black">
-                      BR
-                    </AvatarFallback>
-                  </Avatar>
+        {/* ── MAIN CONTENT ───────────────────────────────── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            {/* Left Column - Profile & Info */}
+            <div className="space-y-5">
+              {/* Profile Card */}
+              <div
+                className={`bg-gradient-to-br ${cardBgVariants[0]} border border-slate-700/30 rounded-xl p-6 text-center hover:border-teal-500/40 transition-all backdrop-blur-sm`}
+              >
+                <div className="relative inline-block mx-auto mb-4">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full blur opacity-30" />
+                  <div className="relative w-28 h-28 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 p-1">
+                    <Image
+                      src="/romarick.jpeg"
+                      alt="Bongnteh Romarick"
+                      width={108}
+                      height={108}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
                 </div>
-
-                <h2 className="text-base sm:text-lg font-black text-white mt-3">
+                <h2 className="text-lg font-bold text-white">
                   Bongnteh Romarick
                 </h2>
-                <p className="text-xs sm:text-sm text-purple-400 font-semibold">
+                <p className="text-sm text-teal-400 font-semibold">
                   Full-Stack Developer
                 </p>
-
-                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mt-2">
-                  <MapPin className="h-3 w-3" />
-                  <span>Cameroon</span>
-                  <span className="w-1 h-1 rounded-full bg-slate-600"></span>
-                  <Calendar className="h-3 w-3" />
-                  <span>5+ Years</span>
+                <div className="flex items-center justify-center gap-2 text-xs text-slate-400 mt-2">
+                  <span>📍 Cameroon</span>
+                  <span>•</span>
+                  <span>📅 5+ Years</span>
                 </div>
-
-                <div className="flex justify-center gap-2 mt-4">
+                <div className="flex gap-3 justify-center mt-4">
                   <Link href="/contact">
-                    <Button
-                      size="sm"
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs h-8 px-3 sm:px-4 font-semibold"
-                    >
-                      <Mail className="mr-1.5 h-3 w-3" />
-                      Contact
+                    <Button className="px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-xs font-semibold rounded-lg">
+                      ✉ Contact
                     </Button>
                   </Link>
                   <Link href="/experience">
                     <Button
                       variant="outline"
-                      size="sm"
-                      className="border-slate-700 text-slate-300 text-xs h-8 px-3 sm:px-4 font-medium"
+                      className="border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-medium rounded-lg"
                     >
                       Experience
                     </Button>
                   </Link>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Availability Card */}
-            <Card className="bg-slate-800/30 border border-slate-700/50">
-              <CardContent className="p-3 sm:p-4 text-center">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="text-[10px] sm:text-xs font-semibold text-green-400">
+              {/* Availability */}
+              <div className="bg-slate-800/20 border border-slate-700/30 rounded-xl p-4 text-center backdrop-blur-sm">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+                  <span className="text-xs font-semibold text-teal-400">
                     Available for Work
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-400">
                   Open to freelance opportunities and collaborations
                 </p>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Hobbies Card - New */}
-            <Card className="bg-slate-800/30 border border-slate-700/50">
-              <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                  <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-pink-400" />
-                  Hobbies & Interests
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                  {hobbies.map((hobby, index) => {
-                    const Icon = hobby.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="group p-1.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-all duration-300"
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <div
-                            className={`p-1 rounded bg-gradient-to-r ${hobby.color} bg-opacity-10`}
-                          >
-                            <Icon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[9px] sm:text-[10px] font-semibold text-slate-300 truncate">
-                              {hobby.name}
-                            </p>
-                            <p className="text-[7px] sm:text-[8px] text-slate-500 truncate">
-                              {hobby.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Likes Card - New */}
-            <Card className="bg-slate-800/30 border border-slate-700/50">
-              <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                  <ThumbsUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-400" />
-                  Things I Love
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {likes.map((like, index) => {
-                    const Icon = like.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-800/50"
-                      >
-                        <Icon className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-purple-400" />
-                        <span className="text-[9px] sm:text-[10px] text-slate-300 font-medium">
-                          {like.name}
-                        </span>
-                        <span className="text-[8px] sm:text-[9px]">
-                          {like.emoji}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column: Bio & Skills */}
-          <div className="lg:col-span-2 space-y-4 lg:space-y-5">
-            {/* Bio Section */}
-            <Card className="bg-slate-800/30 border border-slate-700/50">
-              <CardContent className="p-4 sm:p-5">
-                <h3 className="text-sm sm:text-base font-black text-white mb-3 flex items-center gap-2">
-                  <Rocket className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
-                  My Journey
+              {/* Hobbies */}
+              <div
+                className={`bg-gradient-to-br ${cardBgVariants[1]} border border-slate-700/30 rounded-xl p-5 backdrop-blur-sm`}
+              >
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                  <span>❤️</span> Hobbies & Interests
                 </h3>
-                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <div className="grid grid-cols-2 gap-2">
+                  {hobbies.map((hobby, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 hover:bg-slate-800/60 transition-all"
+                    >
+                      <span className="text-lg">{hobby.icon}</span>
+                      <div>
+                        <p className="text-[11px] font-semibold text-white">
+                          {hobby.name}
+                        </p>
+                        <p className="text-[8px] text-slate-400">
+                          {hobby.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Achievements */}
+              <div
+                className={`bg-gradient-to-br ${cardBgVariants[2]} border border-slate-700/30 rounded-xl p-5 backdrop-blur-sm`}
+              >
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                  <span>🏆</span> Achievements
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {achievements.map((ach, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/40 hover:bg-slate-800/60 transition-all"
+                    >
+                      <span className="text-lg">{ach.icon}</span>
+                      <div>
+                        <p className="text-[11px] font-semibold text-white">
+                          {ach.title}
+                        </p>
+                        <p className="text-[8px] text-slate-400">{ach.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Bio & Skills */}
+            <div className="space-y-5">
+              {/* Bio */}
+              <div
+                className={`bg-gradient-to-br ${cardBgVariants[3]} border border-slate-700/30 rounded-xl p-6 backdrop-blur-sm`}
+              >
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                  <span>🚀</span> My Journey
+                </h3>
+                <div className="space-y-3 text-sm text-slate-300 leading-relaxed">
                   <p>
                     Hello! I'm a full-stack developer with a deep-seated passion
                     for building things for the web. My journey into programming
                     started with a simple "Hello, World!" and has since evolved
-                    into a career where I get to solve complex problems and
-                    build applications that make a difference.
+                    into a career where I solve complex problems and build
+                    applications that make a difference.
                   </p>
                   <p>
-                    I thrive on the challenge of bridging the gap between an
-                    idea and a fully-realized product. Whether it's architecting
-                    a robust backend, crafting a pixel-perfect UI, or optimizing
-                    database performance, I'm always eager to learn and apply
-                    new technologies to create efficient, scalable, and
-                    user-friendly solutions.
+                    I thrive on bridging the gap between an idea and a
+                    fully-realized product. Whether it's architecting a robust
+                    backend, crafting a pixel-perfect UI, or optimizing database
+                    performance, I'm always eager to learn and apply new
+                    technologies.
                   </p>
                   <p>
-                    Beyond the code, I am a firm believer in the power of
-                    community and knowledge sharing. My blog serves as a
-                    platform where I document my learnings, share insights, and
-                    connect with fellow developers.
+                    Beyond the code, I believe in the power of community and
+                    knowledge sharing. My blog serves as a platform where I
+                    document my learnings and connect with fellow developers.
                   </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Achievements Section - New */}
-            <Card className="bg-slate-800/30 border border-slate-700/50">
-              <CardContent className="p-4 sm:p-5">
-                <h3 className="text-sm sm:text-base font-black text-white mb-3 flex items-center gap-2">
-                  <Award className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-400" />
-                  Achievements
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  {achievements.map((achievement, index) => {
-                    const Icon = achievement.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 p-2 rounded-lg bg-slate-800/50"
-                      >
-                        <div className="p-1.5 rounded-lg bg-purple-500/10">
-                          <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] sm:text-xs font-semibold text-white">
-                            {achievement.title}
-                          </p>
-                          <p className="text-[8px] sm:text-[9px] text-slate-500">
-                            {achievement.description}
-                          </p>
-                        </div>
+              {/* Skills Cards */}
+              {skills.map((skill, idx) => (
+                <div
+                  key={idx}
+                  className={`bg-gradient-to-br ${cardBgVariants[idx % cardBgVariants.length]} border border-slate-700/30 rounded-xl p-4 hover:border-teal-500/40 transition-all backdrop-blur-sm`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                        <span className="text-lg">{skill.icon}</span>
                       </div>
-                    );
-                  })}
+                      <div>
+                        <p className="text-sm font-semibold text-white">
+                          {skill.name}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {skill.desc}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-teal-400">
+                      {skill.level}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full transition-all duration-700`}
+                      style={{ width: `${skill.level}%` }}
+                    />
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
 
-            {/* Skills Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {/* Frontend Skills */}
-              <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-                <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                  <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                    <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400" />
-                    Frontend
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {skills.frontend.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="secondary"
-                        className="text-[9px] sm:text-[10px] bg-slate-700/50 text-slate-300 px-1.5 sm:px-2 py-0.5 font-medium"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Backend Skills */}
-              <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-                <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                  <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                    <Server className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400" />
-                    Backend
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {skills.backend.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="secondary"
-                        className="text-[9px] sm:text-[10px] bg-slate-700/50 text-slate-300 px-1.5 sm:px-2 py-0.5 font-medium"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Tools & Platforms */}
-              <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-                <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                  <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
-                    Tools & Platforms
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {skills.tools.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="secondary"
-                        className="text-[9px] sm:text-[10px] bg-slate-700/50 text-slate-300 px-1.5 sm:px-2 py-0.5 font-medium"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Design & UX */}
-              <Card className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-                <CardHeader className="pb-2 pt-3 sm:pt-4 px-3 sm:px-4">
-                  <CardTitle className="text-xs sm:text-sm font-black text-white flex items-center gap-2">
-                    <PenTool className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
-                    Design & UX
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pb-3 sm:pb-4 px-3 sm:px-4">
-                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                    {skills.design.map((skill) => (
-                      <Badge
-                        key={skill}
-                        variant="secondary"
-                        className="text-[9px] sm:text-[10px] bg-slate-700/50 text-slate-300 px-1.5 sm:px-2 py-0.5 font-medium"
-                      >
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Quote Section - New */}
-        <div className="mt-8 sm:mt-10 lg:mt-12">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20 p-5 sm:p-6 text-center">
-            <div className="relative z-10">
-              <div className="inline-flex p-2 rounded-full bg-purple-500/20 mb-3">
-                <Quote className="h-4 w-4 text-purple-400" />
-              </div>
-              <p className="text-xs sm:text-sm text-slate-300 italic max-w-2xl mx-auto">
-                "Code is not just about solving problems, it's about creating
-                solutions that make people's lives better."
-              </p>
-              <p className="text-[10px] sm:text-xs text-purple-400 mt-2 font-semibold">
-                - Bongnteh Romarick
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-8 sm:mt-10 lg:mt-12">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20 p-4 sm:p-6 text-center">
-            <div className="relative z-10">
-              <h3 className="text-sm sm:text-base font-black text-white mb-2">
-                Want to know more?
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mb-3 sm:mb-4 max-w-md mx-auto">
-                Check out my projects or get in touch to discuss potential
-                collaboration.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
-                <Link href="/projects">
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-semibold">
-                    View My Work
-                  </Button>
-                </Link>
-                <Link href="/contact">
-                  <Button
-                    variant="outline"
-                    className="border-slate-700 text-slate-300 hover:bg-slate-800 text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-medium"
-                  >
-                    Contact Me
-                  </Button>
-                </Link>
+              {/* Tech Stack Tags */}
+              <div
+                className={`bg-gradient-to-br ${cardBgVariants[4]} border border-slate-700/30 rounded-xl p-5 backdrop-blur-sm`}
+              >
+                <h3 className="text-sm font-bold text-white mb-3">
+                  🛠️ Technologies I Work With
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {techStack.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 rounded-lg bg-teal-500/10 border border-teal-500/20 text-[10px] font-medium text-teal-400"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* ── QUOTE SECTION ─────────────────────────────── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 rounded-xl p-6 text-center">
+            <div className="inline-flex p-2 rounded-full bg-teal-500/20 mb-3">
+              <svg
+                className="w-5 h-5 text-teal-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 11h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z"
+                />
+                <path d="M3 9.5L10 3" />
+                <path d="M18 11h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z" />
+                <path d="M11 9.5L18 3" />
+              </svg>
+            </div>
+            <p className="text-sm text-slate-300 italic max-w-2xl mx-auto">
+              "Code is not just about solving problems, it's about creating
+              solutions that make people's lives better."
+            </p>
+            <p className="text-xs text-teal-400 mt-2 font-semibold">
+              - Bongnteh Romarick
+            </p>
+          </div>
+        </section>
+
+        {/* ── CTA SECTION ───────────────────────────────── */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 rounded-xl p-6 text-center">
+            <h3 className="text-base font-bold text-white mb-2">
+              Want to know more?
+            </h3>
+            <p className="text-xs text-slate-300 mb-4 max-w-md mx-auto">
+              Check out my projects or get in touch to discuss potential
+              collaboration.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/projects">
+                <Button className="px-5 py-2 bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-sm font-semibold rounded-lg">
+                  View My Work →
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button
+                  variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium rounded-lg"
+                >
+                  ✉ Contact Me
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
-  );
-}
-
-// Quote icon component
-function Quote(props: any) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M10 11h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z" />
-      <path d="M3 9.5L10 3" />
-      <path d="M18 11h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1z" />
-      <path d="M11 9.5L18 3" />
-    </svg>
   );
 }

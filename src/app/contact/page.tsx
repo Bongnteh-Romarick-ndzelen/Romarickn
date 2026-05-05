@@ -67,26 +67,36 @@ export default function ContactPage() {
     }
   };
 
+  // Card background variants
+  const cardBgVariants = [
+    "bg-slate-800/85",
+    "bg-slate-800/80",
+    "bg-slate-800/90",
+    "bg-slate-800/75",
+    "bg-slate-800/85",
+  ];
+
   return (
-    <div
-      className="min-h-screen bg-[#080b12]"
-      style={{
-        fontFamily:
-          "'Noto Sans', 'Roboto', system-ui, -apple-system, sans-serif",
-      }}
-    >
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
+      {/* Grid overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+
+      {/* Glow orbs */}
+      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
+
+      <div className="relative z-10 container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20">
-            <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400" />
-            <span className="text-[10px] sm:text-xs font-medium text-purple-300">
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
+            <MessageSquare className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
+            <span className="text-[10px] sm:text-xs font-medium text-teal-300">
               Get in Touch
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white mb-3">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
             Contact{" "}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
               Me
             </span>
           </h1>
@@ -98,17 +108,17 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-4 sm:space-y-5">
-            <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl overflow-hidden">
+            <Card className={`${cardBgVariants[0]} border border-slate-700/40 backdrop-blur-sm rounded-xl overflow-hidden`}>
               <CardHeader className="pb-3 pt-4 sm:pt-5 px-4 sm:px-5">
-                <CardTitle className="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
+                <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-white flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-teal-400" />
                   Contact Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4 pb-4 sm:pb-5 px-4 sm:px-5">
                 <div className="flex items-start gap-3 p-2 rounded-lg transition-all hover:bg-slate-700/30">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/10">
-                    <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-teal-500/10">
+                    <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-white text-xs sm:text-sm">
@@ -121,8 +131,8 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-3 p-2 rounded-lg transition-all hover:bg-slate-700/30">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/10">
-                    <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-teal-500/10">
+                    <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-white text-xs sm:text-sm">
@@ -135,8 +145,8 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start gap-3 p-2 rounded-lg transition-all hover:bg-slate-700/30">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/10">
-                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-teal-500/10">
+                    <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-white text-xs sm:text-sm">
@@ -150,10 +160,10 @@ export default function ContactPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-slate-800/30 border border-slate-700/50 rounded-xl">
+            <Card className={`${cardBgVariants[1]} border border-slate-700/40 rounded-xl backdrop-blur-sm`}>
               <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-400" />
+                  <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-teal-400" />
                   <span className="text-[10px] sm:text-xs font-semibold text-white">
                     Response Time
                   </span>
@@ -168,10 +178,10 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl overflow-hidden">
+            <Card className={`${cardBgVariants[2]} border border-slate-700/40 backdrop-blur-sm rounded-xl overflow-hidden`}>
               <CardHeader className="pb-3 pt-4 sm:pt-5 px-4 sm:px-5">
-                <CardTitle className="text-sm sm:text-base md:text-lg font-black text-white flex items-center gap-2">
-                  <Send className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
+                <CardTitle className="text-sm sm:text-base md:text-lg font-bold text-white flex items-center gap-2">
+                  <Send className="h-4 w-4 sm:h-5 sm:w-5 text-teal-400" />
                   Send a Message
                 </CardTitle>
                 <CardDescription className="text-[11px] sm:text-sm text-slate-400">
@@ -202,16 +212,10 @@ export default function ContactPage() {
                   </div>
                 )}
 
-                <form
-                  onSubmit={handleSubmit}
-                  className="space-y-3 sm:space-y-4"
-                >
+                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="name"
-                        className="text-[10px] sm:text-xs text-slate-300 font-semibold"
-                      >
+                      <Label htmlFor="name" className="text-[10px] sm:text-xs text-slate-300 font-semibold">
                         Your Name *
                       </Label>
                       <Input
@@ -220,14 +224,11 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
+                        className="bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="email"
-                        className="text-[10px] sm:text-xs text-slate-300 font-semibold"
-                      >
+                      <Label htmlFor="email" className="text-[10px] sm:text-xs text-slate-300 font-semibold">
                         Email Address *
                       </Label>
                       <Input
@@ -237,16 +238,13 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
+                        className="bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="subject"
-                      className="text-[10px] sm:text-xs text-slate-300 font-semibold"
-                    >
+                    <Label htmlFor="subject" className="text-[10px] sm:text-xs text-slate-300 font-semibold">
                       Subject *
                     </Label>
                     <Input
@@ -255,15 +253,12 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
+                      className="bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 text-xs sm:text-sm h-8 sm:h-9 rounded-lg"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="message"
-                      className="text-[10px] sm:text-xs text-slate-300 font-semibold"
-                    >
+                    <Label htmlFor="message" className="text-[10px] sm:text-xs text-slate-300 font-semibold">
                       Message *
                     </Label>
                     <Textarea
@@ -273,7 +268,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 text-xs sm:text-sm rounded-lg resize-none"
+                      className="bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 text-xs sm:text-sm rounded-lg resize-none"
                     />
                     <p className="text-[8px] sm:text-[10px] text-slate-500 text-right">
                       {formData.message.length}/5000 characters
@@ -283,7 +278,7 @@ export default function ContactPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs sm:text-sm h-9 sm:h-10 font-semibold rounded-lg"
+                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-xs sm:text-sm h-9 sm:h-10 font-semibold rounded-lg"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center gap-2">

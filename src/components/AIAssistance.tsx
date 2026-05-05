@@ -19,6 +19,9 @@ import {
   X,
   MapPin,
   Code2,
+  GraduationCap,
+  Award,
+  Calendar,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
@@ -47,65 +50,104 @@ export function AIAssistance() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Complete profile data based on the experience page
   const profileData = {
     name: "Romarick",
     fullName: "Bongnteh Romarick Ndzelen",
     title: "Full-Stack Developer",
-    bio: "Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Next.js, Node.js, and cloud technologies. I love creating innovative solutions that make a difference.",
+    bio: "Passionate full-stack developer with experience building scalable web applications. Specialized in React, Next.js, Node.js, Django, and cloud technologies. Currently pursuing Software Engineering at University of Bamenda.",
     avatar: "/romarick.jpeg",
     skills: {
-      frontend: [
-        "React",
-        "Next.js",
-        "TypeScript",
-        "Tailwind CSS",
-        "Framer Motion",
-      ],
-      backend: ["Node.js", "Express", "Python", "GraphQL", "REST APIs"],
-      database: ["MongoDB", "PostgreSQL", "Redis"],
-      devops: ["Docker", "AWS", "CI/CD", "Linux"],
+      frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "JavaScript", "HTML/CSS", "Bootstrap"],
+      backend: ["Node.js", "Express", "Django", "Python", "PHP Laravel", "GraphQL", "REST APIs"],
+      database: ["MongoDB", "PostgreSQL", "Prisma", "MySQL"],
+      devops: ["Docker", "AWS", "CI/CD", "Git", "Cloudinary"],
     },
-    experience: [
+    workExperience: [
       {
-        role: "Senior Full-Stack Developer",
-        company: "Tech Solutions Inc.",
-        period: "2021–Present",
+        role: "Full-Stack Developer",
+        company: "TiC Foundation",
+        location: "Remote",
+        period: "March 2025 - September 2025",
         highlights: [
-          "Led development of 10+ successful web applications",
-          "Architected microservices reducing latency by 40%",
-          "Mentored a team of 5 junior developers",
+          "Built an all-in-one online course management platform with mentorship and internship tracking",
+          "Used Next.js, Node.js, MongoDB, PostgreSQL, and Prisma",
+          "Developed 15+ features and collaborated with team members",
         ],
       },
       {
         role: "Full-Stack Developer",
-        company: "Digital Innovations",
-        period: "2019–2021",
+        company: "Suscam",
+        location: "Remote",
+        period: "January 2024 - March 2024",
         highlights: [
-          "Built scalable e-commerce platforms serving 50k+ users",
-          "Improved site performance by 60% through optimization",
+          "Worked on online course management and cybersecurity startup",
+          "Implemented secure authentication with Next.js and Node.js",
+          "Integrated Cloudinary for media management",
         ],
       },
       {
-        role: "Freelance Developer",
-        company: "Self-employed",
-        period: "2018–Present",
+        role: "Intern Developer",
+        company: "A&T Humanitarian Legacy",
+        location: "Douala, Cameroon",
+        period: "June 2023 - August 2023",
         highlights: [
-          "Worked with 20+ clients worldwide",
-          "Delivered projects across fintech, edtech, and healthcare",
+          "Built web applications using Django and Bootstrap",
+          "Worked with PHP Laravel for backend services",
+          "Completed 3+ successful projects during internship",
+        ],
+      },
+      {
+        role: "Microsoft Office Certification Student",
+        company: "Giddis Computer Training Center",
+        location: "Yaounde, Cameroon",
+        period: "2020",
+        highlights: [
+          "Gained proficiency in Excel (advanced formulas, pivot tables)",
+          "Mastered Word, PowerPoint, and Publisher",
+          "Earned Microsoft Office certification",
         ],
       },
     ],
     education: [
       {
-        degree: "B.S. in Computer Science",
-        school: "University of Buea",
-        year: "2018",
+        degree: "BEng in Software Engineering",
+        school: "University of Bamenda / NAHPI",
+        location: "Bamenda, Cameroon",
+        period: "2022 - Present",
+        highlights: [
+          "Mastered MERN stack and Next.js",
+          "Built projects with Django and Python",
+          "Gained expertise in TypeScript and Prisma",
+        ],
+      },
+      {
+        degree: "GCE Advanced Level",
+        school: "GHS Buea",
+        location: "Buea, Cameroon",
+        period: "2020 - 2021",
+        highlights: ["Passed 5 subjects including Mathematics and Sciences"],
+      },
+      {
+        degree: "Secondary Education",
+        school: "GBHS Tatum",
+        location: "Tatum, Cameroon",
+        period: "2016 - 2017",
+        highlights: ["Persevered through Anglophone Crisis disruption"],
+      },
+      {
+        degree: "GCE Ordinary Level",
+        school: "GHS Nseh",
+        location: "Nseh, Cameroon",
+        period: "2010 - 2015",
+        highlights: ["Earned O-Level Certificate", "Built foundation for advanced studies"],
       },
     ],
-    projects: [
-      "Built a real-time collaborative platform using WebSockets and React",
-      "Developed an AI-powered job matching platform with 10k+ users",
-      "Created an e-learning management system used by 3 universities",
+    notableProjects: [
+      "Built an all-in-one online course management platform with mentorship and internship tracking",
+      "Developed a real-time collaborative platform using WebSockets and React",
+      "Created an e-learning management system used by multiple universities",
+      "Built portfolio website with AI chatbot assistant",
     ],
     contact: {
       email: "ndzelenromarick@gmail.com",
@@ -117,15 +159,9 @@ export function AIAssistance() {
       linkedin: "https://linkedin.com/in/bongnteh-romarick-ndzelen",
       twitter: "https://twitter.com/BongntehNdzelen",
     },
-    availability:
-      "Available for freelance, contract, and full-time remote opportunities",
+    availability: "Available for freelance, contract, and full-time remote opportunities",
     languages: ["English (Fluent)", "French (Conversational)"],
-    softSkills: [
-      "Team leadership",
-      "Problem-solving",
-      "Agile/Scrum",
-      "Client communication",
-    ],
+    softSkills: ["Team leadership", "Problem-solving", "Agile/Scrum", "Client communication", "Resilience", "Adaptability"],
   };
 
   const systemPrompt = `You are an intelligent, friendly, and professional AI assistant for Romarick (${profileData.fullName}), a ${profileData.title} based in Cameroon.
@@ -145,12 +181,15 @@ TECHNICAL SKILLS:
 - DevOps: ${profileData.skills.devops.join(", ")}
 
 WORK EXPERIENCE:
-${profileData.experience.map((e) => `• ${e.role} @ ${e.company} (${e.period})\n  - ${e.highlights.join("\n  - ")}`).join("\n\n")}
+${profileData.workExperience.map((e) => `• ${e.role} @ ${e.company} (${e.period})\n  Location: ${e.location}\n  - ${e.highlights.join("\n  - ")}`).join("\n\n")}
+
+EDUCATION:
+${profileData.education.map((e) => `• ${e.degree} — ${e.school}\n  Period: ${e.period}\n  Location: ${e.location}\n  - ${e.highlights.join("\n  - ")}`).join("\n\n")}
+
+RESILIENCE NOTE: Romarick's education at GBHS Tatum was disrupted by the Anglophone Crisis (2016-2017), yet he persevered and continued his studies, demonstrating remarkable resilience and determination.
 
 NOTABLE PROJECTS:
-${profileData.projects.map((p) => `• ${p}`).join("\n")}
-
-EDUCATION: ${profileData.education[0].degree} — ${profileData.education[0].school} (${profileData.education[0].year})
+${profileData.notableProjects.map((p) => `• ${p}`).join("\n")}
 
 CONTACT:
 - Email: ${profileData.contact.email}
@@ -175,7 +214,8 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
 6. PROACTIVITY: Occasionally suggest a related topic the visitor might find interesting.
 7. HIRING PITCH: If someone seems interested in hiring, highlight Romarick's strengths and encourage reaching out at ${profileData.contact.email}.
 8. FORMAT: Use short paragraphs and line breaks. Use bullet points only when listing 3+ items.
-9. PERSPECTIVE: Speak as Romarick's assistant, not as Romarick himself.`;
+9. PERSPECTIVE: Speak as Romarick's assistant, not as Romarick himself.
+10. RESILIENCE: Mention Romarick's perseverance through the Anglophone Crisis when relevant.`;
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -187,7 +227,7 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
     if (isOpen && messages.length === 0) {
       const welcomeMessage: Message = {
         id: "1",
-        content: `👋 Hi! I'm Romarick's AI assistant.\n\nI can tell you about his skills, experience, projects, or help you get in touch. What would you like to know?`,
+        content: `👋 Hi! I'm Romarick's AI assistant.\n\nI can tell you about his skills, work experience, education, projects, or help you get in touch. What would you like to know?`,
         sender: "ai",
         timestamp: new Date(),
       };
@@ -288,13 +328,23 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
     },
     {
       icon: Briefcase,
-      text: "Experience",
+      text: "Work Experience",
       question: "Tell me about Romarick's work experience.",
+    },
+    {
+      icon: GraduationCap,
+      text: "Education",
+      question: "What is Romarick's educational background?",
     },
     {
       icon: Code2,
       text: "Projects",
       question: "What notable projects has Romarick built?",
+    },
+    {
+      icon: Award,
+      text: "Resilience",
+      question: "How did Romarick overcome the Anglophone Crisis?",
     },
     {
       icon: Mail,
@@ -398,7 +448,7 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
                 </div>
               </div>
 
-              {/* Quick questions */}
+              {/* Quick questions - 2x3 grid */}
               <div className="px-3 py-1.5 sm:px-4 sm:py-2">
                 <p className="text-[10px] sm:text-xs text-slate-400 mb-1.5 flex items-center gap-1">
                   <Sparkles className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-purple-400" />
@@ -425,7 +475,7 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
               </div>
 
               {/* Messages */}
-              <div className="h-[250px] sm:h-[230px] overflow-y-auto px-3 py-2 sm:px-4 sm:py-3 space-y-2 sm:space-y-3 custom-scrollbar">
+              <div className="h-[280px] sm:h-[260px] overflow-y-auto px-3 py-2 sm:px-4 sm:py-3 space-y-2 sm:space-y-3 custom-scrollbar">
                 {messages.map((message) => (
                   <motion.div
                     key={message.id}
@@ -492,6 +542,23 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
                 <div ref={messagesEndRef} />
               </div>
 
+              {/* Social Links */}
+              <div className="px-3 py-1.5 border-t border-slate-800 bg-slate-900/30">
+                <div className="flex items-center justify-center gap-2">
+                  {socialButtons.map((social, idx) => (
+                    <a
+                      key={idx}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`p-1.5 rounded-lg bg-slate-800/50 transition-colors ${social.hoverBg}`}
+                    >
+                      <social.icon className={`h-3.5 w-3.5 text-slate-400 ${social.hoverText}`} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
               {/* Input area */}
               <div className="p-3 sm:p-4 border-t border-slate-800 bg-slate-900/50">
                 <div className="flex gap-2">
@@ -502,7 +569,7 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
                     onKeyDown={(e) =>
                       e.key === "Enter" && !e.shiftKey && handleSendMessage()
                     }
-                    placeholder="Ask me anything about Romarick..."
+                    placeholder="Ask me about Romarick's work, education, or skills..."
                     className="flex-1 bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-4 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 disabled:opacity-50 transition-colors"
                     disabled={isTyping}
                   />
@@ -519,7 +586,7 @@ SOFT SKILLS: ${profileData.softSkills.join(", ")}
                   </Button>
                 </div>
                 <p className="text-[8px] sm:text-[9px] text-slate-600 text-center mt-1.5">
-                  Powered by Groq LLaMA 3.3 70B · Smart AI about Romarick
+                  Powered by Groq LLaMA 3.3 70B · About Romarick's journey
                 </p>
               </div>
             </Card>

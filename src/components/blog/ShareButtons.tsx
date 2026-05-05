@@ -91,6 +91,7 @@ export function ShareButtons({
       window.open(`https://wa.me/?text=${encodedText}`, "_blank");
 
       toast({
+        variant: "default",
         title: "Share via WhatsApp",
         description: "Image URL included in message",
       });
@@ -131,6 +132,7 @@ export function ShareButtons({
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast({
+      variant: "success",
       title: "Link copied!",
       description: "Post URL copied to clipboard",
     });

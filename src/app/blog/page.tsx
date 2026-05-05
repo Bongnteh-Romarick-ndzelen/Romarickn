@@ -57,9 +57,15 @@ interface Pagination {
   pages: number;
 }
 
+// Card background variants
+const cardBgVariants = [
+  "bg-black",
+ 
+];
+
 function PostCard({ post }: { post: Post }) {
   return (
-    <Card className="group flex flex-col overflow-hidden bg-slate-800/40 border border-slate-700/50 transition-all duration-300 hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-900/20 hover:-translate-y-1 rounded-xl">
+    <Card className="group flex flex-col overflow-hidden bg-slate-900/85 border border-slate-700/40 transition-all duration-300 hover:border-teal-500/50 hover:shadow-xl hover:shadow-teal-900/20 hover:-translate-y-1 rounded-xl backdrop-blur-sm">
       <CardHeader className="p-0 relative">
         <Link href={`/blog/${post.slug}`}>
           <div className="relative aspect-video overflow-hidden">
@@ -76,7 +82,7 @@ function PostCard({ post }: { post: Post }) {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
             {post.categories && post.categories.length > 0 && (
               <div className="absolute top-2 left-2">
-                <Badge className="bg-purple-600/90 text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 font-medium">
+                <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 border-0 text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 font-medium">
                   {post.categories[0].name}
                 </Badge>
               </div>
@@ -94,7 +100,7 @@ function PostCard({ post }: { post: Post }) {
           <span>{post.readTime} min read</span>
         </div>
 
-        <CardTitle className="text-xs sm:text-sm font-bold text-white mb-1.5 sm:mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors leading-snug">
+        <CardTitle className="text-xs sm:text-sm font-bold text-white mb-1.5 sm:mb-2 line-clamp-2 group-hover:text-teal-300 transition-colors leading-snug">
           <Link href={`/blog/${post.slug}`}>{post.title}</Link>
         </CardTitle>
 
@@ -107,7 +113,7 @@ function PostCard({ post }: { post: Post }) {
             <Badge
               key={cat.slug || index}
               variant="outline"
-              className="text-[8px] sm:text-[9px] border-purple-500/30 text-purple-300 bg-purple-500/5 px-1 sm:px-1.5 py-0 font-medium"
+              className="text-[8px] sm:text-[9px] border-teal-500/30 text-teal-300 bg-teal-500/5 px-1 sm:px-1.5 py-0 font-medium"
             >
               {cat.name}
             </Badge>
@@ -118,9 +124,9 @@ function PostCard({ post }: { post: Post }) {
       <CardFooter className="p-3 sm:p-4 pt-0 flex items-center justify-between">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5">
-            <Avatar className="h-4 w-4 sm:h-5 sm:w-5 border border-purple-500/30">
+            <Avatar className="h-4 w-4 sm:h-5 sm:w-5 border border-teal-500/30">
               <AvatarImage src={post.author.avatar} alt={post.author.name} />
-              <AvatarFallback className="bg-purple-500/20 text-purple-300 text-[7px] sm:text-[8px] font-bold">
+              <AvatarFallback className="bg-teal-500/20 text-teal-300 text-[7px] sm:text-[8px] font-bold">
                 {post.author.name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
@@ -129,13 +135,13 @@ function PostCard({ post }: { post: Post }) {
             </span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-0.5 text-slate-400 hover:text-pink-400 transition-colors">
+            <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
               <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               <span className="text-[8px] sm:text-[9px] font-medium">
                 {post._count?.likes || 0}
               </span>
             </div>
-            <div className="flex items-center gap-0.5 text-slate-400 hover:text-blue-400 transition-colors">
+            <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
               <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               <span className="text-[8px] sm:text-[9px] font-medium">
                 {post._count?.comments || 0}
@@ -150,7 +156,7 @@ function PostCard({ post }: { post: Post }) {
 
 function PostCardSkeleton() {
   return (
-    <Card className="flex flex-col overflow-hidden bg-slate-800/40 border border-slate-700/50 rounded-xl">
+    <Card className="flex flex-col overflow-hidden bg-slate-800/85 border border-slate-700/40 rounded-xl backdrop-blur-sm">
       <CardHeader className="p-0">
         <Skeleton className="aspect-video w-full" />
       </CardHeader>
@@ -231,7 +237,6 @@ export default function BlogPage() {
     fetchPosts();
   }, [page]);
 
-  // Fixed filtering logic with null/undefined checks
   const filteredPosts = searchTerm
     ? posts.filter(
         (post) =>
@@ -248,30 +253,30 @@ export default function BlogPage() {
       )
     : posts;
 
-  // Get featured posts for hero section
   const featuredPosts = filteredPosts.slice(0, 4);
   const regularPosts = filteredPosts.slice(4);
 
   return (
-    <div
-      className="min-h-screen bg-[#080b12]"
-      style={{
-        fontFamily:
-          "'Noto Sans', 'Roboto', system-ui, -apple-system, sans-serif",
-      }}
-    >
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
+      {/* Grid overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+
+      {/* Glow orbs */}
+      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
+
+      <div className="relative z-10 container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* Hero Section */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20">
-            <Sparkles className="h-3 w-3 text-purple-400" />
-            <span className="text-[10px] sm:text-xs font-medium text-purple-300">
+          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
+            <Sparkles className="h-3 w-3 text-teal-400" />
+            <span className="text-[10px] sm:text-xs font-medium text-teal-300">
               Latest Articles
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
             From the{" "}
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
               Blog
             </span>
           </h1>
@@ -287,7 +292,7 @@ export default function BlogPage() {
             <Input
               type="search"
               placeholder="Search articles..."
-              className="pl-8 sm:pl-9 py-1.5 h-8 sm:h-9 text-xs sm:text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 text-slate-300 rounded-full"
+              className="pl-8 sm:pl-9 py-1.5 h-8 sm:h-9 text-xs sm:text-sm bg-slate-800/50 border-slate-700 focus:border-teal-500 text-slate-300 rounded-full"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -299,7 +304,7 @@ export default function BlogPage() {
         {!loading && featuredPosts.length > 0 && !searchTerm && (
           <div className="mb-8 sm:mb-12">
             <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400" />
+              <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
               <h2 className="text-xs sm:text-sm font-bold text-white">
                 Featured Articles
               </h2>
@@ -316,7 +321,7 @@ export default function BlogPage() {
         <div>
           {!loading && regularPosts.length > 0 && !searchTerm && (
             <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-400" />
+              <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
               <h2 className="text-xs sm:text-sm font-bold text-white">
                 Recent Posts
               </h2>
@@ -369,7 +374,7 @@ export default function BlogPage() {
                 size="sm"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="border-slate-700 text-slate-300 hover:border-purple-500 hover:text-purple-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
+                className="border-slate-700 text-slate-300 hover:border-teal-500 hover:text-teal-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
               >
                 <ArrowLeft className="mr-0.5 sm:mr-1 h-2.5 w-2.5 sm:h-3 sm:w-3" />
                 Prev
@@ -397,8 +402,8 @@ export default function BlogPage() {
                         onClick={() => setPage(pageNum)}
                         className={`w-6 h-6 sm:w-7 sm:h-7 p-0 rounded-full text-[10px] sm:text-xs font-semibold ${
                           pageNum === page
-                            ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                            : "border-slate-700 text-slate-400 hover:border-purple-500 hover:text-purple-300"
+                            ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white"
+                            : "border-slate-700 text-slate-400 hover:border-teal-500 hover:text-teal-300"
                         }`}
                       >
                         {pageNum}
@@ -414,7 +419,7 @@ export default function BlogPage() {
                   setPage((p) => Math.min(pagination.pages, p + 1))
                 }
                 disabled={page === pagination.pages}
-                className="border-slate-700 text-slate-300 hover:border-purple-500 hover:text-purple-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
+                className="border-slate-700 text-slate-300 hover:border-teal-500 hover:text-teal-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
               >
                 Next
                 <ArrowRight className="ml-0.5 sm:ml-1 h-2.5 w-2.5 sm:h-3 sm:w-3" />
@@ -424,14 +429,14 @@ export default function BlogPage() {
 
         {/* Stats Footer */}
         {!loading && posts.length > 0 && pagination && (
-          <div className="mt-8 sm:mt-12 pt-4 sm:pt-5 border-t border-slate-800/50">
+          <div className="mt-8 sm:mt-12 pt-4 sm:pt-5 border-t border-slate-700/30">
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-center text-slate-400 text-[8px] sm:text-[10px] font-medium">
               <div className="flex items-center gap-1">
-                <Rss className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-purple-400" />
+                <Rss className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
                 <span>{pagination.total} articles published</span>
               </div>
               <div className="flex items-center gap-1">
-                <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-pink-400" />
+                <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.likes || 0),
@@ -441,7 +446,7 @@ export default function BlogPage() {
                 </span>
               </div>
               <div className="flex items-center gap-1">
-                <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-blue-400" />
+                <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.comments || 0),

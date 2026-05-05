@@ -40,7 +40,6 @@ import {
   Calendar,
   Edit,
   Save,
-  X,
   Camera,
   Trash2,
   AlertTriangle,
@@ -51,15 +50,13 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Bot,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { formatDate } from "@/lib/utils";
 import { authService } from "@/lib/services/auth.service";
 
 export default function ProfilePage() {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -89,12 +86,21 @@ export default function ProfilePage() {
     totalLikes: 0,
   });
 
-  // Redirect if not logged in
+  // Card background variants
+  const cardBgVariants = [
+    "bg-slate-800/85",
+    "bg-slate-800/80",
+    "bg-slate-800/90",
+    "bg-slate-800/75",
+    "bg-slate-800/85",
+  ];
+
+  // Redirect if not logged in - wait for auth to load first
   useEffect(() => {
-    if (!user && typeof window !== "undefined") {
+    if (!authLoading && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   // Initialize form data when user loads
   useEffect(() => {
@@ -121,10 +127,13 @@ export default function ProfilePage() {
   }, [editProfileOpen, user]);
 
   const fetchUserStats = async () => {
+    if (!user?._id) return;
+    
     try {
-      const response = await fetch(`/api/users/${user?._id}/stats`, {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`/api/users/${user._id}/stats`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -177,7 +186,6 @@ export default function ProfilePage() {
         }
       }
 
-      // Update user profile
       const response = await authService.updateProfile({
         name: formData.name,
         bio: formData.bio,
@@ -191,7 +199,7 @@ export default function ProfilePage() {
           avatar: avatarUrl,
         });
         toast({
-          variant: "success",
+          variant: 'success',
           title: "Profile updated",
           description: "Your profile has been successfully updated.",
         });
@@ -216,7 +224,6 @@ export default function ProfilePage() {
   };
 
   const handleChangePassword = async () => {
-    // Validate passwords
     if (passwordData.newPassword.length < 6) {
       setPasswordError("Password must be at least 6 characters");
       return;
@@ -265,7 +272,7 @@ export default function ProfilePage() {
 
       if (response.success) {
         toast({
-          variant: "success",
+          variant: 'success',
           title: "Account deleted",
           description: "Your account has been permanently deleted.",
         });
@@ -279,7 +286,7 @@ export default function ProfilePage() {
         });
       }
     } catch (error) {
-      toast({
+      ({
         variant: "destructive",
         title: "Error",
         description: "Something went wrong",
@@ -299,13 +306,32 @@ export default function ProfilePage() {
       .slice(0, 2);
   };
 
+  // Show loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-[#111D3A] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-teal-400 mx-auto mb-4" />
+          <p className="text-slate-400">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!user) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
+    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
+      {/* Grid overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+
+      {/* Glow orbs */}
+      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
+      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
+
+      <div className="relative z-10 container mx-auto max-w-4xl px-4 py-8 md:py-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-white">
@@ -319,41 +345,48 @@ export default function ProfilePage() {
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Sidebar - Profile Info */}
           <div className="lg:col-span-1">
-            <Card className="bg-slate-800/30 border border-slate-700/50">
+            <Card
+              className={`${cardBgVariants[0]} border border-slate-700/40 backdrop-blur-sm rounded-xl`}
+            >
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
                   {/* Avatar */}
                   <div className="relative group mb-4">
-                    <Avatar className="h-28 w-28 border-4 border-purple-500/30">
+                    <Avatar className="h-28 w-28 border-4 border-teal-500/30">
                       <AvatarImage src={avatarPreview || user.avatar} />
-                      <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-2xl">
+                      <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white text-2xl">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
+                    <label className="absolute bottom-0 right-0 p-1.5 rounded-full bg-teal-500 cursor-pointer hover:bg-teal-600 transition-all">
+                      <Camera className="h-4 w-4 text-white" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarChange}
+                      />
+                    </label>
                   </div>
 
                   {/* User Info */}
-                  <>
-                    <h2 className="text-xl font-bold text-white mb-1">
-                      {user.name}
-                    </h2>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Mail className="h-3.5 w-3.5 text-slate-400" />
-                      <p className="text-sm text-slate-400">{user.email}</p>
-                    </div>
-                    {user.bio && (
-                      <p className="text-sm text-slate-300 mt-2">
-                        {user.bio}
-                      </p>
-                    )}
-                  </>
+                  <h2 className="text-xl font-bold text-white mb-1">
+                    {user.name}
+                  </h2>
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Mail className="h-3.5 w-3.5 text-slate-400" />
+                    <p className="text-sm text-slate-400">{user.email}</p>
+                  </div>
+                  {user.bio && (
+                    <p className="text-sm text-slate-300 mt-2">{user.bio}</p>
+                  )}
 
                   {/* Role Badge */}
                   <Badge
                     className={`mt-3 ${
                       user.role === "admin"
-                        ? "bg-purple-500/20 text-purple-400"
-                        : "bg-blue-500/20 text-blue-400"
+                        ? "bg-teal-500/20 text-teal-400"
+                        : "bg-cyan-500/20 text-cyan-400"
                     }`}
                   >
                     {user.role === "admin" ? (
@@ -370,8 +403,8 @@ export default function ProfilePage() {
                   <div className="mt-2 flex items-center gap-1 text-xs">
                     {user.isEmailVerified ? (
                       <>
-                        <CheckCircle className="h-3 w-3 text-green-400" />
-                        <span className="text-green-400">Email verified</span>
+                        <CheckCircle className="h-3 w-3 text-teal-400" />
+                        <span className="text-teal-400">Email verified</span>
                       </>
                     ) : (
                       <>
@@ -384,7 +417,7 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 w-full mt-4 pt-4 border-t border-slate-700/50">
+                  <div className="grid grid-cols-3 gap-3 w-full mt-4 pt-4 border-t border-slate-700/30">
                     <div className="text-center">
                       <div className="text-lg font-bold text-white">
                         {userStats.postCount}
@@ -410,7 +443,7 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       onClick={() => setEditProfileOpen(true)}
-                      className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+                      className="w-full border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit Profile
@@ -419,7 +452,7 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       onClick={() => setChangePasswordOpen(true)}
-                      className="w-full border-slate-700 text-slate-300 hover:border-yellow-500/30 hover:text-yellow-400"
+                      className="w-full border-slate-700 text-slate-300 hover:border-teal-500/30 hover:text-teal-400"
                     >
                       <Lock className="h-4 w-4 mr-2" />
                       Change Password
@@ -436,8 +469,8 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Member Since */}
-                  <div className="mt-4 pt-4 border-t border-slate-700/50 w-full">
-                    <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+                  <div className="mt-4 pt-4 border-t border-slate-700/30 w-full">
+                    <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
                       <Calendar className="h-3 w-3" />
                       <span>
                         Joined{" "}
@@ -457,7 +490,9 @@ export default function ProfilePage() {
 
           {/* Main Content - Account Information */}
           <div className="lg:col-span-2">
-            <Card className="bg-slate-800/30 border border-slate-700/50">
+            <Card
+              className={`${cardBgVariants[1]} border border-slate-700/40 backdrop-blur-sm rounded-xl`}
+            >
               <CardHeader>
                 <CardTitle className="text-white">
                   Account Information
@@ -468,9 +503,9 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4">
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
                     <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-purple-400" />
+                      <User className="h-5 w-5 text-teal-400" />
                       <div>
                         <p className="text-xs text-slate-400">Full Name</p>
                         <p className="text-white font-medium">{user.name}</p>
@@ -478,9 +513,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
                     <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-purple-400" />
+                      <Mail className="h-5 w-5 text-teal-400" />
                       <div>
                         <p className="text-xs text-slate-400">Email Address</p>
                         <p className="text-white font-medium">{user.email}</p>
@@ -490,16 +525,16 @@ export default function ProfilePage() {
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-purple-400 text-xs"
+                        className="text-teal-400 text-xs"
                       >
                         Resend verification
                       </Button>
                     )}
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
                     <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-purple-400" />
+                      <Shield className="h-5 w-5 text-teal-400" />
                       <div>
                         <p className="text-xs text-slate-400">Account Role</p>
                         <p className="text-white font-medium capitalize">
@@ -509,9 +544,9 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
                     <div className="flex items-center gap-3">
-                      <Calendar className="h-5 w-5 text-purple-400" />
+                      <Calendar className="h-5 w-5 text-teal-400" />
                       <div>
                         <p className="text-xs text-slate-400">
                           Account Created
@@ -532,7 +567,7 @@ export default function ProfilePage() {
 
                   <div className="flex justify-between items-center py-3">
                     <div className="flex items-center gap-3">
-                      <LogOut className="h-5 w-5 text-purple-400" />
+                      <LogOut className="h-5 w-5 text-teal-400" />
                       <div>
                         <p className="text-xs text-slate-400">Last Login</p>
                         <p className="text-white font-medium">
@@ -548,7 +583,7 @@ export default function ProfilePage() {
             </Card>
 
             {/* Danger Zone */}
-            <Card className="mt-6 border-red-500/30 bg-red-500/5">
+            <Card className="mt-6 border-red-500/30 bg-red-500/5 rounded-xl">
               <CardHeader>
                 <CardTitle className="text-red-400 flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
@@ -582,10 +617,10 @@ export default function ProfilePage() {
 
         {/* Edit Profile Modal */}
         <Dialog open={editProfileOpen} onOpenChange={setEditProfileOpen}>
-          <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
+          <DialogContent className="bg-slate-900 border-slate-700 max-w-md rounded-xl">
             <DialogHeader>
               <DialogTitle className="text-white flex items-center gap-2">
-                <Edit className="h-5 w-5 text-purple-400" />
+                <Edit className="h-5 w-5 text-teal-400" />
                 Edit Profile
               </DialogTitle>
               <DialogDescription className="text-slate-400">
@@ -595,13 +630,13 @@ export default function ProfilePage() {
             <div className="space-y-4 py-4">
               <div className="flex justify-center">
                 <div className="relative group">
-                  <Avatar className="h-24 w-24 border-4 border-purple-500/30">
+                  <Avatar className="h-24 w-24 border-4 border-teal-500/30">
                     <AvatarImage src={avatarPreview || user.avatar} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl">
+                    <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white text-xl">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <label className="absolute bottom-0 right-0 p-1.5 rounded-full bg-purple-600 cursor-pointer hover:bg-purple-700 transition-all">
+                  <label className="absolute bottom-0 right-0 p-1.5 rounded-full bg-teal-500 cursor-pointer hover:bg-teal-600 transition-all">
                     <Camera className="h-4 w-4 text-white" />
                     <input
                       type="file"
@@ -624,7 +659,7 @@ export default function ProfilePage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="Your name"
-                    className="bg-slate-800/50 border-slate-700 text-white mt-1"
+                    className="bg-slate-800/50 border-slate-700 text-white mt-1 rounded-lg"
                   />
                 </div>
                 <div>
@@ -639,7 +674,7 @@ export default function ProfilePage() {
                     }
                     placeholder="Tell us about yourself..."
                     rows={3}
-                    className="bg-slate-800/50 border-slate-700 text-white mt-1 resize-none"
+                    className="bg-slate-800/50 border-slate-700 text-white mt-1 resize-none rounded-lg"
                   />
                 </div>
               </div>
@@ -656,14 +691,14 @@ export default function ProfilePage() {
                   setAvatarPreview(user.avatar || "");
                   setAvatarFile(null);
                 }}
-                className="border-slate-700 text-slate-300"
+                className="border-slate-700 text-slate-300 rounded-lg"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="bg-gradient-to-r from-purple-600 to-pink-600"
+                className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-lg"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -678,10 +713,10 @@ export default function ProfilePage() {
 
         {/* Change Password Modal */}
         <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
-          <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
+          <DialogContent className="bg-slate-900 border-slate-700 max-w-md rounded-xl">
             <DialogHeader>
               <DialogTitle className="text-white flex items-center gap-2">
-                <Lock className="h-5 w-5 text-yellow-400" />
+                <Lock className="h-5 w-5 text-teal-400" />
                 Change Password
               </DialogTitle>
               <DialogDescription className="text-slate-400">
@@ -712,7 +747,7 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Enter current password"
-                      className="bg-slate-800/50 border-slate-700 text-white pr-10"
+                      className="bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg"
                     />
                     <button
                       type="button"
@@ -743,7 +778,7 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Enter new password"
-                      className="bg-slate-800/50 border-slate-700 text-white pr-10"
+                      className="bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg"
                     />
                     <button
                       type="button"
@@ -774,7 +809,7 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Confirm new password"
-                      className={`bg-slate-800/50 border-slate-700 text-white pr-10 ${
+                      className={`bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg ${
                         passwordData.confirmPassword &&
                         passwordData.newPassword !== passwordData.confirmPassword
                           ? "border-red-500"
@@ -814,14 +849,14 @@ export default function ProfilePage() {
                   });
                   setPasswordError("");
                 }}
-                className="border-slate-700 text-slate-300"
+                className="border-slate-700 text-slate-300 rounded-lg"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleChangePassword}
                 disabled={isChangingPassword}
-                className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white"
+                className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-lg"
               >
                 {isChangingPassword ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -836,7 +871,7 @@ export default function ProfilePage() {
 
         {/* Delete Account Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent className="bg-slate-900 border-slate-700">
+          <AlertDialogContent className="bg-slate-900 border-slate-700 rounded-xl">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-white flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-red-400" />
@@ -844,18 +879,18 @@ export default function ProfilePage() {
               </AlertDialogTitle>
               <AlertDialogDescription className="text-slate-400">
                 Are you absolutely sure? This action cannot be undone. This will
-                permanently delete your account and remove all your data from our
-                servers.
+                permanently delete your account and remove all your data from
+                our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700">
+              <AlertDialogCancel className="bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 rounded-lg">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-red-600 hover:bg-red-700 text-white rounded-lg"
               >
                 {isDeleting ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
