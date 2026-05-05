@@ -52,7 +52,12 @@ export default function CommentForm({ postId, parentId, onCommentSubmitted, user
         parentCommentId: parentId,
         userId,
       };
-      const newComment = await commentService.createComment(commentData);
+      
+      // Use createReply if this is a reply, otherwise use createComment
+      const newComment = parentId
+        ? await commentService.createReply(parentId, commentData)
+        : await commentService.createComment(commentData);
+      
       toast({
         variant: 'success',
         title: 'Comment Submitted!',

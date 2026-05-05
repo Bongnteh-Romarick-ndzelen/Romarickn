@@ -18,6 +18,14 @@ export const commentService = {
     });
   },
 
+  // Create reply to a comment
+  async createReply(commentId: string, data: CreateCommentData) {
+    return apiRequest<Comment>(`/api/comments/${commentId}/replies`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
   // Update comment
   async updateComment(id: string, data: Partial<Comment>) {
     return apiRequest<Comment>(`/api/comments/${id}`, {
