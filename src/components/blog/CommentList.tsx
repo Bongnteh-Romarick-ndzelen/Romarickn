@@ -12,7 +12,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, ChevronRight, Calendar, Heart, X, Reply } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import CommentForm from "./CommentForm";
+import ReplyForm from "./ReplyForm";
+import LikeButton from "./LikeButton";
 
 interface User {
   name: string | null;
@@ -27,6 +28,7 @@ interface Comment {
   user: User | null;
   replies: Comment[];
   likes?: number;
+  userHasLiked?: boolean;
   postId: string;
   userId?: string;
   parentCommentId?: string;
@@ -50,19 +52,7 @@ function CommentItem({
 }) {
   const authorName = comment.user?.name || comment.authorName || "Anonymous";
   const authorAvatar = comment.user?.avatar;
-  const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(comment.likes || 0);
   const [showReplyForm, setShowReplyForm] = useState(false);
-
-  const handleLike = () => {
-    if (liked) {
-      setLikesCount(likesCount - 1);
-      setLiked(false);
-    } else {
-      setLikesCount(likesCount + 1);
-      setLiked(true);
-    }
-  };
 
   const handleReplySubmitted = (newReply: Comment) => {
     setShowReplyForm(false);
@@ -95,15 +85,12 @@ function CommentItem({
             <Calendar className="h-2.5 w-2.5" />
             {formatDate(comment.createdAt)}
           </span>
-          <button
-            onClick={handleLike}
-            className="text-xs text-slate-500 hover:text-pink-400 transition-colors flex items-center gap-1 ml-2"
-          >
-            <Heart
-              className={`h-3 w-3 ${liked ? "fill-pink-400 text-pink-400" : ""}`}
-            />
-            <span>{likesCount}</span>
-          </button>
+          <LikeButton
+            postId={comment.postId}
+            initialLikes={comment.likes || 0}
+            userHasLiked={comment.userHasLiked || false}
+            showDetails={false}
+          />
           <button
             onClick={() => setShowReplyForm(!showReplyForm)}
             className="text-xs text-slate-400 hover:text-purple-400 transition-colors flex items-center gap-1 ml-2"
@@ -120,12 +107,12 @@ function CommentItem({
         {/* Reply Form */}
         {showReplyForm && (
           <div className="mt-3">
-          <CommentForm
-            postId={comment.postId}
-            parentId={comment.id}
-            onCommentSubmitted={handleReplySubmitted}
-            userId={currentUserId}
-          />
+            <ReplyForm
+              postId={comment.postId}
+              parentId={comment.id}
+              onCommentSubmitted={handleReplySubmitted}
+              userId={currentUserId}
+            />
           </div>
         )}
 

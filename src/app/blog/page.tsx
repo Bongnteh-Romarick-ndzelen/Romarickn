@@ -30,6 +30,8 @@ import {
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { postService } from "@/lib/services/post.service";
+import LikeButton from "@/components/blog/LikeButton";
+import { useAuth } from "@/context/AuthContext";
 
 interface Post {
   id: string;
@@ -39,6 +41,7 @@ interface Post {
   coverImage: string;
   publishedAt: string;
   readTime: number;
+  userHasLiked?: boolean;
   author: {
     name: string;
     avatar: string;
@@ -64,6 +67,8 @@ const cardBgVariants = [
 ];
 
 function PostCard({ post }: { post: Post }) {
+  const { user } = useAuth();
+  
   return (
     <Card className="group flex flex-col overflow-hidden bg-slate-900/85 border border-slate-700/40 transition-all duration-300 hover:border-teal-500/50 hover:shadow-xl hover:shadow-teal-900/20 hover:-translate-y-1 rounded-xl backdrop-blur-sm">
       <CardHeader className="p-0 relative">
@@ -134,19 +139,19 @@ function PostCard({ post }: { post: Post }) {
               {post.author.name?.split(" ")[0]}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
-              <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              <span className="text-[8px] sm:text-[9px] font-medium">
-                {post._count?.likes || 0}
-              </span>
-            </div>
-            <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
-              <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              <span className="text-[8px] sm:text-[9px] font-medium">
-                {post._count?.comments || 0}
-              </span>
-            </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <LikeButton
+            postId={post.id}
+            initialLikes={post._count?.likes || 0}
+            userHasLiked={post.userHasLiked || false}
+            showDetails={true}
+          />
+          <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
+            <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            <span className="text-[8px] sm:text-[9px] font-medium">
+              {post._count?.comments || 0}
+            </span>
           </div>
         </div>
       </CardFooter>
@@ -180,9 +185,12 @@ function PostCardSkeleton() {
             <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded-full" />
             <Skeleton className="h-2 sm:h-2.5 w-10 sm:w-12" />
           </div>
-          <div className="flex gap-1.5 sm:gap-2">
-            <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
-            <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
+          <div className="flex gap-2">
+            <Skeleton className="h-7 w-16" />
+            <div className="flex items-center gap-0.5">
+              <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
+              <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
+            </div>
           </div>
         </div>
       </CardFooter>

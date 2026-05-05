@@ -1,0 +1,26 @@
+{
+  "name": "Bongnteh Romarick Ndzelen - Full-Stack Developer",
+  "short_name": "Romarick Personal site",
+  "description": "Full-Stack Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111D3A",
+  "theme_color": "#111D3A",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

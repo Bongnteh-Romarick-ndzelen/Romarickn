@@ -17,6 +17,7 @@ export interface Comment {
   createdAt: string;
   updatedAt: string;
   likes: number;
+  userHasLiked?: boolean;
 }
 
 export interface CreateCommentData {

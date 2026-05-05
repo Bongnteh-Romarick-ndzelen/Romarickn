@@ -468,10 +468,12 @@ export default function BlogPostPage() {
 
             {/* Action Buttons */}
             <div className="flex items-center gap-3 mb-8 pb-4 border-b border-slate-800">
+              {/* LikeButton Component */}
               <LikeButton
                 postId={post.id}
                 initialLikes={post._count?.likes || 0}
                 userHasLiked={post.userHasLiked || false}
+                showDetails={true}
               />
 
               <Button
@@ -544,7 +546,7 @@ export default function BlogPostPage() {
                     <div className="h-20 bg-slate-800/30 rounded-lg animate-pulse"></div>
                   </div>
                 ) : (
-                   <CommentList comments={comments} currentUserId={user?._id} />
+                  <CommentList comments={comments} currentUserId={user?._id} />
                 )}
               </div>
             </div>

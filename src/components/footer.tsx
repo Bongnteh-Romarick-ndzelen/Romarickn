@@ -27,7 +27,6 @@ import { subscriptionService } from "@/lib/services/subscription.service";
 import { AIAssistance } from "./AIAssistance";
 import { useToast } from "@/hooks/use-toast";
 
-
 function WhatsAppIcon(props: React.ComponentProps<"svg">) {
   return (
     <svg
@@ -65,24 +64,31 @@ export function Footer() {
       const response = await subscriptionService.subscribe(email);
       if (response.success) {
         setIsSuccess(true);
+        // Fixed: Remove variant: "success" - use default or just title
         toast({
           variant: "success",
-          title: "Success",
+          title: "Success! 🎉",
           description: "You have been subscribed to the newsletter.",
         });
         setEmail("");
         setTimeout(() => setIsSuccess(false), 5000);
       } else {
         toast({
-          variant: "destructive",
-          title: "Error",
+          title: "Subscription Failed",
           description: response.message || "Subscription failed",
+          variant: "destructive",
         });
         setError(response.message || "Subscription failed");
         setTimeout(() => setError(""), 5000);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Subscription failed");
+      const errorMessage = err instanceof Error ? err.message : "Subscription failed";
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      setError(errorMessage);
       setTimeout(() => setError(""), 5000);
     } finally {
       setIsSubmitting(false);
@@ -109,7 +115,7 @@ export function Footer() {
 
       <footer className="border-t bg-slate-950/80 border-slate-800/50 mt-auto">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-          {/* Newsletter Subscription Section - Row layout on all devices */}
+          {/* Newsletter Subscription Section */}
           <div className="mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b border-slate-800/50">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4">
               <div className="text-center lg:text-left">
@@ -132,14 +138,14 @@ export function Footer() {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-7 sm:pl-8 py-1.5 h-8 sm:h-9 text-[10px] sm:text-xs bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder:text-slate-500 rounded-lg"
+                    className="pl-7 sm:pl-8 py-1.5 h-8 sm:h-9 text-[10px] sm:text-xs bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 rounded-lg"
                     required
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-[10px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg font-semibold whitespace-nowrap"
+                  className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-[10px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg font-semibold whitespace-nowrap"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-1">
@@ -155,20 +161,6 @@ export function Footer() {
                 </Button>
               </form>
             </div>
-
-            {/* Success/Error Messages */}
-            {isSuccess && (
-              <div className="mt-2 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] text-green-400 bg-green-500/10 p-1.5 rounded-lg">
-                <CheckCircle className="h-3 w-3" />
-                <span>Subscribed successfully!</span>
-              </div>
-            )}
-            {error && (
-              <div className="mt-2 flex items-center justify-center gap-1 text-[9px] sm:text-[10px] text-red-400 bg-red-500/10 p-1.5 rounded-lg">
-                <AlertCircle className="h-3 w-3" />
-                <span>{error}</span>
-              </div>
-            )}
           </div>
 
           {/* Main Footer Content */}
@@ -176,18 +168,13 @@ export function Footer() {
             {/* Brand & Copyright */}
             <div className="flex flex-col items-center md:items-start gap-1 text-center md:text-left">
               <div className="flex items-center gap-1.5">
-                <div className="p-1 rounded-md bg-gradient-to-br from-purple-500/20 to-pink-500/20">
-                  <Code className="h-3 w-3 text-purple-400" />
+                <div className="p-1 rounded-md bg-gradient-to-br from-teal-500/20 to-cyan-500/20">
+                  <Code className="h-3 w-3 text-teal-400" />
                 </div>
                 <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
                   &copy; {new Date().getFullYear()} Bongnteh Romarick
                 </p>
               </div>
-              <p className="text-[8px] sm:text-[9px] text-slate-500 flex items-center gap-0.5">
-                Made with{" "}
-                <Heart className="h-2 w-2 text-pink-400 fill-pink-400" /> using
-                Next.js
-              </p>
             </div>
 
             {/* Social Links */}
@@ -240,7 +227,7 @@ export function Footer() {
                   variant="ghost"
                   size="icon"
                   aria-label="GitHub"
-                  className="h-7 w-7 text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg"
+                  className="h-7 w-7 text-slate-400 hover:text-teal-400 hover:bg-teal-500/10 rounded-lg"
                   title="View my GitHub profile"
                 >
                   <Github className="h-3 w-3" />
@@ -296,8 +283,6 @@ export function Footer() {
               </Link>
             </div>
           </div>
-
-          
         </div>
       </footer>
 
@@ -310,11 +295,11 @@ export function Footer() {
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.5);
+          background: rgba(20, 184, 166, 0.5);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.7);
+          background: rgba(20, 184, 166, 0.7);
         }
       `}</style>
     </>
