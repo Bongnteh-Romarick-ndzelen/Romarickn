@@ -34,6 +34,7 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { toast } = useToast();
   const [error, setError] = useState("");
 
   const handleChange = (
@@ -54,10 +55,20 @@ export default function ContactPage() {
       const response = await contactService.submitContact(formData);
 
       if (response.success) {
+        toast({
+          variant: 'success',
+          title: 'Success',
+          description: "Your Message has been sent successfully. Will get back to you soon.",
+        });
         setIsSuccess(true);
         setFormData({ name: "", email: "", subject: "", message: "" });
         setTimeout(() => setIsSuccess(false), 5000);
       } else {
+          toast({
+          variant: 'destructive',
+          title: 'Success',
+          description: "Your Message has not been sent. Please try again.",
+        });
         setError(response.message || "Failed to send message");
       }
     } catch (err) {
@@ -190,17 +201,6 @@ export default function ContactPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-4 sm:pb-5 px-4 sm:px-5">
-                {isSuccess && (
-                  <div className="mb-4 p-2.5 sm:p-3 rounded-xl bg-green-500/10 border border-green-500/20 animate-in fade-in duration-300">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-400" />
-                      <span className="text-[11px] sm:text-sm text-green-400">
-                        Message sent successfully! I'll get back to you soon.
-                      </span>
-                    </div>
-                  </div>
-                )}
-
                 {error && (
                   <div className="mb-4 p-2.5 sm:p-3 rounded-xl bg-red-500/10 border border-red-500/20">
                     <div className="flex items-center gap-2">

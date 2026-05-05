@@ -4,7 +4,20 @@ import type { PaginatedResponse } from '@/types/common';
 
 export const postService = {
   // Get all posts with pagination
-  async getPosts(page: number = 1, limit: number = 10) {
+  async getPosts(page: number = 1, limit: number = 8, search?: string) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    if (search) {
+      params.append('search', search);
+    }
+    return apiRequest<PaginatedResponse<Post>>(
+      `/api/posts?${params.toString()}`,
+    );
+  },
+
+   async get4Post(page: number = 1, limit: number = 4) {
     return apiRequest<PaginatedResponse<Post>>(
       `/api/posts?page=${page}&limit=${limit}`,
     );

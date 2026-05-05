@@ -201,7 +201,7 @@ export default function BlogPage() {
     async function fetchPosts() {
       setLoading(true);
       try {
-        const response = await postService.getPosts(page, 12);
+        const response = await postService.getPosts(page, 8, searchTerm);
         const responseData = response as any;
 
         let postsData = [];
@@ -235,26 +235,10 @@ export default function BlogPage() {
     }
 
     fetchPosts();
-  }, [page]);
+  }, [page, searchTerm]);
 
-  const filteredPosts = searchTerm
-    ? posts.filter(
-        (post) =>
-          (post.title &&
-            post.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (post.excerpt &&
-            post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          (post.categories &&
-            post.categories.some(
-              (cat) =>
-                cat?.name &&
-                cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
-            )),
-      )
-    : posts;
-
-  const featuredPosts = filteredPosts.slice(0, 4);
-  const regularPosts = filteredPosts.slice(4);
+  const featuredPosts = posts.slice(0, 4);
+  const regularPosts = posts.slice(4);
 
   return (
     <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
@@ -319,7 +303,7 @@ export default function BlogPage() {
 
         {/* All Posts Section */}
         <div>
-          {!loading && regularPosts.length > 0 && !searchTerm && (
+           {!loading && regularPosts.length > 0 && !searchTerm && (
             <div className="flex items-center gap-2 mb-3 sm:mb-4">
               <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
               <h2 className="text-xs sm:text-sm font-bold text-white">
@@ -328,11 +312,10 @@ export default function BlogPage() {
             </div>
           )}
 
-          {searchTerm && filteredPosts.length > 0 && (
+          {searchTerm && posts.length > 0 && (
             <div className="mb-4">
               <p className="text-[10px] sm:text-xs text-slate-400">
-                Found {filteredPosts.length} result
-                {filteredPosts.length !== 1 ? "s" : ""} for "{searchTerm}"
+                Found {posts.length} result{posts.length !== 1 ? "s" : ""} for "{searchTerm}"
               </p>
             </div>
           )}
@@ -343,8 +326,8 @@ export default function BlogPage() {
               Array.from({ length: 8 }).map((_, i) => (
                 <PostCardSkeleton key={i} />
               ))
-            ) : filteredPosts.length > 0 ? (
-              (searchTerm ? filteredPosts : regularPosts).map((post, index) => (
+            ) : posts.length > 0 ? (
+              (searchTerm ? posts : regularPosts).map((post, index) => (
                 <PostCard key={post.id || index} post={post} />
               ))
             ) : (
@@ -365,9 +348,9 @@ export default function BlogPage() {
 
         {/* Pagination */}
         {!loading &&
-          pagination &&
-          pagination.pages > 1 &&
-          filteredPosts.length > 0 && (
+           pagination &&
+           pagination.pages > 1 &&
+           posts.length > 0 && (
             <div className="mt-8 sm:mt-12 flex justify-center items-center gap-1.5 sm:gap-2">
               <Button
                 variant="outline"

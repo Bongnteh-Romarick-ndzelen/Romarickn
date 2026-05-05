@@ -327,7 +327,33 @@ export default function BlogPostPage() {
   };
 
   const handleCommentSubmitted = (newComment: any) => {
-    setComments((prev) => [newComment, ...prev]);
+    // Check if this is a reply (has parentCommentId)
+    if (newComment.parentCommentId) {
+      // Find the parent comment and add the reply
+      setComments((prev) => {
+        const updateComments = (commentsList: any[]): any[] => {
+          return commentsList.map((comment) => {
+            if (comment.id === newComment.parentCommentId) {
+              return {
+                ...comment,
+                replies: [...(comment.replies || []), newComment],
+              };
+            }
+            if (comment.replies && comment.replies.length > 0) {
+              return {
+                ...comment,
+                replies: updateComments(comment.replies),
+              };
+            }
+            return comment;
+          });
+        };
+        return updateComments(prev);
+      });
+    } else {
+      // Top-level comment
+      setComments((prev) => [newComment, ...prev]);
+    }
   };
 
   if (loading) {
@@ -518,7 +544,7 @@ export default function BlogPostPage() {
                     <div className="h-20 bg-slate-800/30 rounded-lg animate-pulse"></div>
                   </div>
                 ) : (
-                  <CommentList comments={comments} />
+                   <CommentList comments={comments} currentUserId={user?._id} />
                 )}
               </div>
             </div>

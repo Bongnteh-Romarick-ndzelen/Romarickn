@@ -10,8 +10,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, ChevronRight, Calendar, Heart, X } from "lucide-react";
+import { MessageCircle, ChevronRight, Calendar, Heart, X, Reply } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import CommentForm from "./CommentForm";
 
 interface User {
   name: string | null;
@@ -26,23 +27,32 @@ interface Comment {
   user: User | null;
   replies: Comment[];
   likes?: number;
+  postId: string;
+  userId?: string;
+  parentCommentId?: string;
 }
 
 interface CommentListProps {
   comments: Comment[];
+  currentUserId?: string;
 }
 
 function CommentItem({
   comment,
   isReply = false,
+  onReplySubmitted,
+  currentUserId,
 }: {
   comment: Comment;
   isReply?: boolean;
+  onReplySubmitted?: (newReply: Comment) => void;
+  currentUserId?: string;
 }) {
   const authorName = comment.user?.name || comment.authorName || "Anonymous";
   const authorAvatar = comment.user?.avatar;
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(comment.likes || 0);
+  const [showReplyForm, setShowReplyForm] = useState(false);
 
   const handleLike = () => {
     if (liked) {
@@ -51,6 +61,13 @@ function CommentItem({
     } else {
       setLikesCount(likesCount + 1);
       setLiked(true);
+    }
+  };
+
+  const handleReplySubmitted = (newReply: Comment) => {
+    setShowReplyForm(false);
+    if (onReplySubmitted) {
+      onReplySubmitted(newReply);
     }
   };
 
@@ -87,17 +104,41 @@ function CommentItem({
             />
             <span>{likesCount}</span>
           </button>
+          <button
+            onClick={() => setShowReplyForm(!showReplyForm)}
+            className="text-xs text-slate-400 hover:text-purple-400 transition-colors flex items-center gap-1 ml-2"
+          >
+            <Reply className="h-3 w-3" />
+            <span>Reply</span>
+          </button>
         </div>
 
         <p className="text-slate-300 text-sm leading-relaxed break-words">
           {comment.content}
         </p>
 
+        {/* Reply Form */}
+        {showReplyForm && (
+          <div className="mt-3">
+          <CommentForm
+            postId={comment.postId}
+            parentId={comment.id}
+            onCommentSubmitted={handleReplySubmitted}
+            userId={currentUserId}
+          />
+          </div>
+        )}
+
         {/* Render replies */}
         {comment.replies && comment.replies.length > 0 && (
           <div className="mt-3 space-y-3 pl-4 border-l-2 border-purple-500/30">
             {comment.replies.map((reply) => (
-              <CommentItem key={reply.id} comment={reply} isReply={true} />
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                isReply={true}
+                onReplySubmitted={onReplySubmitted}
+              />
             ))}
           </div>
         )}
@@ -111,10 +152,14 @@ function AllCommentsModal({
   comments,
   isOpen,
   onClose,
+  onReplySubmitted,
+  currentUserId,
 }: {
   comments: Comment[];
   isOpen: boolean;
   onClose: () => void;
+  onReplySubmitted?: (parentCommentId: string, newReply: Comment) => void;
+  currentUserId?: string;
 }) {
   const totalComments = comments.reduce(
     (acc, comment) => acc + 1 + (comment.replies?.length || 0),
@@ -144,11 +189,18 @@ function AllCommentsModal({
 
         {/* Scrollable content area */}
         <div className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
-          <div className="space-y-4">
-            {comments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} />
-            ))}
-          </div>
+        <div className="space-y-4">
+          {comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              onReplySubmitted={(newReply) =>
+                onReplySubmitted && onReplySubmitted(newReply.parentCommentId || '', newReply)
+              }
+              currentUserId={currentUserId}
+            />
+          ))}
+        </div>
         </div>
 
         {/* Footer with close button */}
@@ -166,8 +218,42 @@ function AllCommentsModal({
   );
 }
 
-export default function CommentList({ comments }: CommentListProps) {
+export default function CommentList({ comments: initialComments, currentUserId }: CommentListProps) {
   const [showAllComments, setShowAllComments] = useState(false);
+  const [comments, setComments] = useState(initialComments);
+
+  useEffect(() => {
+    setComments(initialComments);
+  }, [initialComments]);
+
+  const handleReplySubmitted = (parentCommentId: string, newReply: Comment) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) => {
+        // If the parent comment is at the root level
+        if (comment.id === parentCommentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply],
+          };
+        }
+        // Check if parent is in replies
+        if (comment.replies && comment.replies.length > 0) {
+          return {
+            ...comment,
+            replies: comment.replies.map((reply) =>
+              reply.id === parentCommentId
+                ? {
+                    ...reply,
+                    replies: [...(reply.replies || []), newReply],
+                  }
+                : reply,
+            ),
+          };
+        }
+        return comment;
+      }),
+    );
+  };
 
   if (!comments || comments.length === 0) {
     return (
@@ -201,7 +287,14 @@ export default function CommentList({ comments }: CommentListProps) {
       {/* Latest Comments */}
       <div className="space-y-4">
         {latestComments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+             onReplySubmitted={(newReply) =>
+               handleReplySubmitted(newReply.parentCommentId || '', newReply)
+             }
+            currentUserId={currentUserId}
+          />
         ))}
       </div>
 
@@ -224,6 +317,8 @@ export default function CommentList({ comments }: CommentListProps) {
         comments={comments}
         isOpen={showAllComments}
         onClose={() => setShowAllComments(false)}
+        onReplySubmitted={handleReplySubmitted}
+        currentUserId={currentUserId}
       />
 
       <style jsx global>{`

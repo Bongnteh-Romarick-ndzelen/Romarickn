@@ -12,7 +12,7 @@ export interface Comment {
     avatar: string;
   };
   postId: string;
-  parentId?: string;
+  parentCommentId?: string;
   isApproved: boolean;
   createdAt: string;
   updatedAt: string;
@@ -25,6 +25,6 @@ export interface CreateCommentData {
   authorEmail?: string;
   authorWebsite?: string;
   postId: string;
-  parentId?: string;
+  parentCommentId?: string;
   userId?: string;
 }

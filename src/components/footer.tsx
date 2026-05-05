@@ -25,6 +25,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { subscriptionService } from "@/lib/services/subscription.service";
 import { AIAssistance } from "./AIAssistance";
+import { useToast } from "@/hooks/use-toast";
+
 
 function WhatsAppIcon(props: React.ComponentProps<"svg">) {
   return (
@@ -46,6 +48,7 @@ function WhatsAppIcon(props: React.ComponentProps<"svg">) {
 }
 
 export function Footer() {
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -62,9 +65,19 @@ export function Footer() {
       const response = await subscriptionService.subscribe(email);
       if (response.success) {
         setIsSuccess(true);
+        toast({
+          variant: "success",
+          title: "Success",
+          description: "You have been subscribed to the newsletter.",
+        });
         setEmail("");
         setTimeout(() => setIsSuccess(false), 5000);
       } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: response.message || "Subscription failed",
+        });
         setError(response.message || "Subscription failed");
         setTimeout(() => setError(""), 5000);
       }

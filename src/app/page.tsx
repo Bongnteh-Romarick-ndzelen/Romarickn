@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { postService } from "@/lib/services/post.service";
 
 const projects = [
   {
@@ -22,7 +23,7 @@ const projects = [
     description:
       "Educational platform for CGCE exam preparation with quizzes, IQ tests, and performance analytics.",
     emoji: "🧠",
-    imageUrl: "/projects/Brainy-quiz.png",
+    imageUrl: "/projects/Brainy-qiz.png",
     imgBg: "linear-gradient(135deg, #0D1627, #1A1040)",
     tags: ["Firebase", "Genkit", "Node.js"],
     featured: false,
@@ -102,49 +103,6 @@ const testimonials = [
   },
 ];
 
-const blogPosts = [
-  {
-    id: 1,
-    emoji: "⚛️",
-    imgBg: "from-indigo-900/40 to-purple-900/40",
-    category: "Web Dev",
-    title: "Building Scalable React Apps with Next.js 14",
-    date: "Jan 15",
-    readTime: "8 min",
-    slug: "scalable-react-apps-nextjs-14",
-  },
-  {
-    id: 2,
-    emoji: "🚀",
-    imgBg: "from-blue-900/40 to-cyan-900/40",
-    category: "Performance",
-    title: "The Future of Web Performance",
-    date: "Jan 10",
-    readTime: "10 min",
-    slug: "future-web-performance",
-  },
-  {
-    id: 3,
-    emoji: "🔄",
-    imgBg: "from-purple-900/40 to-pink-900/40",
-    category: "React",
-    title: "Modern State Management in React",
-    date: "Jan 5",
-    readTime: "7 min",
-    slug: "state-management-react",
-  },
-  {
-    id: 4,
-    emoji: "🔷",
-    imgBg: "from-cyan-900/40 to-blue-900/40",
-    category: "TypeScript",
-    title: "TypeScript Mastery for Enterprise",
-    date: "Dec 28",
-    readTime: "9 min",
-    slug: "typescript-mastery",
-  },
-];
-
 const stats = [
   { val: "5+", lbl: "Yrs Exp" },
   { val: "50+", lbl: "Projects" },
@@ -163,9 +121,35 @@ const techStack = [
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     setMounted(true);
+    
+    // Fetch blog posts from backend
+    const fetchBlogPosts = async () => {
+      try {
+        console.log('Fetching blog posts from:', process.env.NEXT_PUBLIC_API_URL);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?page=1&limit=4`);
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Full response:', data);
+        console.log('Posts data:', data.data?.posts);
+        setBlogPosts(data.data?.posts || []);
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogPosts();
   }, []);
+
+  useEffect(() => {
+    console.log('blogPosts updated:', blogPosts);
+  }, [blogPosts]);
 
   return (
     <div className="min-h-screen bg-[#111D3A] font-['DM_Sans',system-ui] overflow-x-hidden relative">
@@ -476,53 +460,75 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── BLOG SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-px bg-gradient-to-r from-green-500 to-transparent" />
-            <span className="text-xs font-bold tracking-[0.2em] text-green-400 uppercase">
-              Latest Insights
-            </span>
-          </div>
-          <Link
-            href="/blog"
-            className="text-xs text-slate-400 hover:text-green-400 transition-colors"
-          >
-            All articles ↗
-          </Link>
-        </div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8">
-          From the Blog
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {blogPosts.map((post) => (
-            <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-              <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden hover:border-green-500/30 transition-all">
-                <div
-                  className={`h-20 flex items-center justify-center bg-gradient-to-br ${post.imgBg}`}
-                >
-                  <span className="text-2xl">{post.emoji}</span>
-                </div>
-                <div className="p-3">
-                  <span className="inline-block px-2 py-0.5 rounded bg-blue-500/10 text-[9px] text-blue-400 mb-2">
-                    {post.category}
-                  </span>
-                  <p className="text-xs font-semibold text-white mb-1 line-clamp-2 group-hover:text-green-400 transition-colors">
-                    {post.title}
-                  </p>
-                  <p className="text-[10px] text-slate-400 mb-2">
-                    {post.date} · {post.readTime}
-                  </p>
-                  <p className="text-[10px] text-green-400 group-hover:text-green-300">
-                    Read more →
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+       {/* ── BLOG SECTION ─────────────────────────────────────── */}
+       <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+         <div className="flex justify-between items-center mb-8">
+           <div className="flex items-center gap-3">
+             <div className="w-8 h-px bg-gradient-to-r from-green-500 to-transparent" />
+             <span className="text-xs font-bold tracking-[0.2em] text-green-400 uppercase">
+               Latest Insights
+             </span>
+           </div>
+           <Link
+             href="/blog"
+             className="text-xs text-slate-400 hover:text-green-400 transition-colors"
+           >
+             All articles ↗
+           </Link>
+         </div>
+         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8">
+           From the Blog
+         </h2>
+         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+           {loading ? (
+             // Loading skeletons
+             [...Array(4)].map((_, index) => (
+               <div key={index} className="bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden">
+                 <div className="h-20 bg-slate-700/50 animate-pulse" />
+                 <div className="p-3 space-y-2">
+                   <div className="h-3 bg-slate-700/50 rounded w-16 animate-pulse" />
+                   <div className="h-3 bg-slate-700/50 rounded w-3/4 animate-pulse" />
+                   <div className="h-3 bg-slate-700/50 rounded w-1/2 animate-pulse" />
+                 </div>
+               </div>
+             ))
+           ) : blogPosts.length === 0 ? (
+             <div className="col-span-full text-center py-8 text-slate-400">
+               No blog posts available
+             </div>
+           ) : (
+             blogPosts.map((post: any) => (
+               <Link key={post._id || post.id} href={`/blog/${post.slug}`} className="group">
+                 <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden hover:border-green-500/30 transition-all">
+                    <div className="h-20 relative overflow-hidden">
+                      <Image
+                        src={post.coverImage || '/placeholder-blog.png'}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    </div>
+                   <div className="p-3">
+                     <span className="inline-block px-2 py-0.5 rounded bg-blue-500/10 text-[9px] text-blue-400 mb-2">
+                       {post.categories?.[0]?.name || 'General'}
+                     </span>
+                     <p className="text-xs font-semibold text-white mb-1 line-clamp-2 group-hover:text-green-400 transition-colors">
+                       {post.title}
+                     </p>
+                     <p className="text-[10px] text-slate-400 mb-2">
+                       {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {post.readTime || '5 min'} read
+                     </p>
+                     <p className="text-[10px] text-green-400 group-hover:text-green-300">
+                       Read more →
+                     </p>
+                   </div>
+                 </div>
+               </Link>
+             ))
+           )}
+         </div>
+       </section>
 
       {/* ── TESTIMONIALS SECTION ─────────────────────────────────────── */}
       <section className="relative z-10 bg-slate-800/20 border-y border-slate-700/30 py-16">
