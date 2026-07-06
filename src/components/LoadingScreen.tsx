@@ -1,64 +1,50 @@
-// components/LoadingSpinner.tsx
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   className?: string;
   overlay?: boolean;
   message?: string;
-  children?: React.ReactNode;
-  minimumLoadTime?: number;
+  children?: ReactNode;
+  fullscreen?: boolean;
 }
 
-export default function LoadingSpinner({
+const LoadingSpinner = ({
   size = "md",
   className = "",
   overlay = false,
   message = "Loading...",
   children,
-  minimumLoadTime = 1500,
-}: LoadingSpinnerProps) {
-  const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  fullscreen = false,
+}: LoadingSpinnerProps) => {
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    const id = setTimeout(() => setShowSplash(false), 600);
+    return () => clearTimeout(id);
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, minimumLoadTime);
+  if (!children) {
+    const sizeClasses = {
+      sm: "h-6 w-6",
+      md: "h-12 w-12",
+      lg: "h-16 w-16",
+    };
 
-    return () => clearTimeout(timer);
-  }, [minimumLoadTime]);
+    const spinner = (
+      <div
+        className={`animate-spin rounded-full border-t-2 border-b-2 border-primary ${sizeClasses[size]}`}
+      />
+    );
 
-  if (!mounted) return null;
-
-  const sizeClasses = {
-    sm: "h-6 w-6 border-2",
-    md: "h-12 w-12 border-[3px]",
-    lg: "h-16 w-16 border-4",
-  };
-
-  const spinner = (
-    <div
-      className={`animate-spin rounded-full border-t-2 border-b-2 border-blue-600 ${sizeClasses[size]}`}
-    />
-  );
-
-  // If children are provided, show loading then children
-  if (children !== undefined) {
-    if (isLoading) {
+    if (overlay) {
       return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/90 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="flex flex-col items-center justify-center gap-4">
             {spinner}
             {message && (
-              <p className="text-sm font-semibold text-slate-600 animate-pulse">
+              <p className="text-sm font-medium text-white animate-pulse">
                 {message}
               </p>
             )}
@@ -66,17 +52,25 @@ export default function LoadingSpinner({
         </div>
       );
     }
-    return <>{children}</>;
+
+    return (
+      <div className={`flex items-center justify-center ${className}`}>
+        {spinner}
+      </div>
+    );
   }
 
-  // Standalone spinner
-  if (overlay) {
+  if (showSplash) {
     return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/90 backdrop-blur-sm">
+      <div
+        className={`fixed inset-0 z-[9999] flex items-center justify-center bg-white ${
+          fullscreen ? "" : ""
+        }`}
+      >
         <div className="flex flex-col items-center justify-center gap-4">
-          {spinner}
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary" />
           {message && (
-            <p className="text-sm font-semibold text-slate-600 animate-pulse">
+            <p className="text-sm font-medium text-slate-600 animate-pulse">
               {message}
             </p>
           )}
@@ -85,9 +79,7 @@ export default function LoadingSpinner({
     );
   }
 
-  return (
-    <div className={`flex items-center justify-center ${className}`}>
-      {spinner}
-    </div>
-  );
-}
+  return <>{children}</>;
+};
+
+export default LoadingSpinner;
