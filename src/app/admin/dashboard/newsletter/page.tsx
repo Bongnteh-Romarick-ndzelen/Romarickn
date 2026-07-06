@@ -28,6 +28,8 @@ import {
   RefreshCw,
   FileText,
   Sparkles,
+  ChevronRight,
+  X,
 } from 'lucide-react';
 import { adminService } from '@/lib/services/admin.service';
 import { useToast } from '@/hooks/use-toast';
@@ -43,6 +45,7 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
+import { motion } from 'framer-motion';
 
 interface NewsletterStats {
   totalSubscribers: number;
@@ -56,6 +59,22 @@ interface NewsletterStats {
     clicks: number;
   }>;
 }
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function AdminNewsletterPage() {
   const [subject, setSubject] = useState('');
@@ -81,7 +100,6 @@ export default function AdminNewsletterPage() {
       if (response.success && response.data) {
         setStats(response.data);
       } else {
-        // Mock data for development
         setMockStats();
       }
     } catch (error) {
@@ -181,7 +199,6 @@ export default function AdminNewsletterPage() {
 
     setIsTestSending(true);
     try {
-      // Send test email - you'll need to add this endpoint
       const response = await adminService.sendTestEmail?.({
         email: testEmail,
         subject,
@@ -190,6 +207,7 @@ export default function AdminNewsletterPage() {
       
       if (response.success) {
         toast({
+          variant: 'success',
           title: 'Test Email Sent!',
           description: `Test email sent to ${testEmail}`,
         });
@@ -212,28 +230,32 @@ export default function AdminNewsletterPage() {
       title: 'Total Subscribers',
       value: stats?.totalSubscribers || 0,
       icon: Users,
-      color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-600',
       trend: '+12%',
     },
     {
       title: 'New This Month',
       value: stats?.newSubscribersThisMonth || 0,
       icon: TrendingUp,
-      color: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-600',
       trend: '+8%',
     },
     {
       title: 'Open Rate',
       value: `${stats?.openRate || 0}%`,
       icon: Eye,
-      color: 'from-blue-500 to-cyan-500',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600',
       trend: '+5%',
     },
     {
       title: 'Click Rate',
       value: `${stats?.clickRate || 0}%`,
       icon: BarChart3,
-      color: 'from-amber-500 to-orange-500',
+      bgColor: 'bg-amber-50',
+      textColor: 'text-amber-600',
       trend: '+3%',
     },
   ];
@@ -241,270 +263,336 @@ export default function AdminNewsletterPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div>
-          <Skeleton className="h-8 w-48 bg-slate-800" />
-          <Skeleton className="h-4 w-64 mt-2 bg-slate-800" />
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-10 w-48 bg-slate-200" />
+            <Skeleton className="h-5 w-64 mt-2 bg-slate-200" />
+          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-32 bg-slate-800 rounded-xl" />
+            <Skeleton key={i} className="h-32 bg-slate-100 rounded-2xl" />
           ))}
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
-          <Skeleton className="h-96 bg-slate-800 rounded-xl" />
-          <Skeleton className="h-96 bg-slate-800 rounded-xl" />
+          <Skeleton className="h-96 bg-slate-100 rounded-2xl" />
+          <Skeleton className="h-96 bg-slate-100 rounded-2xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="space-y-6 pb-10"
+    >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Newsletter</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/80 border-2 border-blue-200 mb-3">
+            <Sparkles className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+              Newsletter Management
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight font-['Radley',serif]">
+            Newsletter
+          </h1>
+          <p className="text-lg text-slate-600 font-bold mt-1 font-['Lato',sans-serif]">
             Create and send email newsletters to your subscribers
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-            <Mail className="h-3 w-3 mr-1" />
+        <div className="flex items-center gap-3">
+          <Badge className="bg-blue-100 text-blue-700 border-2 border-blue-200 font-bold px-4 py-1.5 rounded-xl text-sm">
+            <Mail className="h-4 w-4 mr-1.5" />
             {stats?.totalSubscribers || 0} Subscribers
           </Badge>
           <Button
             variant="outline"
             size="sm"
             onClick={fetchStats}
-            className="border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800"
+            className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl px-4 py-2 hover:bg-slate-50 hover:border-slate-300 bg-white"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div variants={staggerContainer} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {statsCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
-                  {stat.title}
-                </CardTitle>
-                <div className={`p-2 rounded-lg bg-${stat.color.split('-')[1]}-500/10`}>
-                  <Icon className={`h-4 w-4 text-${stat.color.split('-')[1]}-400`} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-xs text-green-400">{stat.trend}</span>
-                  <span className="text-xs text-slate-500">from last month</span>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div key={index} variants={fadeInUp}>
+              <Card className="bg-white border-2 border-slate-200/80 hover:border-blue-300 transition-all duration-300 hover:shadow-xl rounded-2xl">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 px-6 pt-5">
+                  <CardTitle className="text-base font-bold text-slate-600 font-['Lato',sans-serif]">
+                    {stat.title}
+                  </CardTitle>
+                  <div className={`p-2.5 rounded-xl ${stat.bgColor}`}>
+                    <Icon className={`h-5 w-5 ${stat.textColor}`} />
+                  </div>
+                </CardHeader>
+                <CardContent className="px-6 pb-5">
+                  <div className="text-3xl font-black text-slate-900 font-['Lato',sans-serif]">
+                    {stat.value}
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-sm font-bold text-emerald-600">
+                      {stat.trend}
+                    </span>
+                    <span className="text-sm font-bold text-slate-400">
+                      from last month
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Create Newsletter Form */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-purple-400" />
-              Create Newsletter
-            </CardTitle>
-            <CardDescription className="text-slate-400">
-              Write your newsletter content and send to all subscribers
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="subject" className="text-slate-300 text-sm">
-                Subject Line
-              </Label>
-              <Input
-                id="subject"
-                placeholder="Your newsletter subject..."
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder-slate-500"
-              />
-            </div>
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-6 pt-6">
+              <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                Create Newsletter
+              </CardTitle>
+              <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                Write your newsletter content and send to all subscribers
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="subject" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
+                  Subject Line
+                </Label>
+                <Input
+                  id="subject"
+                  placeholder="Your newsletter subject..."
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="content" className="text-slate-300 text-sm">
-                Email Content
-              </Label>
-              <Textarea
-                id="content"
-                placeholder="Write your newsletter content here. You can use HTML for formatting..."
-                rows={10}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 focus:border-purple-500 text-white placeholder-slate-500 font-mono text-sm"
-              />
-              <p className="text-xs text-slate-500">
-                Tip: You can use HTML tags for formatting. The email will be sent as HTML.
-              </p>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="content" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
+                  Email Content
+                </Label>
+                <Textarea
+                  id="content"
+                  placeholder="Write your newsletter content here. You can use HTML for formatting..."
+                  rows={10}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none"
+                />
+                <p className="text-sm font-bold text-slate-400 font-['Lato',sans-serif]">
+                  Tip: You can use HTML tags for formatting. The email will be sent as HTML.
+                </p>
+              </div>
 
-            <div className="flex gap-3 pt-2">
-              <Button
-                onClick={handleSendNewsletter}
-                disabled={isSending || !subject.trim() || !content.trim()}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              >
-                {isSending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                    Send to All Subscribers
-                  </>
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowTestDialog(true)}
-                disabled={!subject.trim() || !content.trim()}
-                className="border-slate-700 text-slate-300 hover:bg-slate-800"
-              >
-                Send Test
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={handleSendNewsletter}
+                  disabled={isSending || !subject.trim() || !content.trim()}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl py-2.5 shadow-lg shadow-blue-600/25"
+                >
+                  {isSending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send to All Subscribers
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTestDialog(true)}
+                  disabled={!subject.trim() || !content.trim()}
+                  className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl px-5 py-2.5 hover:bg-slate-50 hover:border-slate-300 bg-white"
+                >
+                  Send Test
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Statistics Chart */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-green-400" />
-              Email Performance
-            </CardTitle>
-            <CardDescription className="text-slate-400">
-              Newsletter engagement over time
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats?.recentActivity || []}>
-                  <defs>
-                    <linearGradient id="sends" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="opens" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#ec4899" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
-                  />
-                  <Area type="monotone" dataKey="sends" stroke="#a855f7" fill="url(#sends)" name="Sends" />
-                  <Area type="monotone" dataKey="opens" stroke="#ec4899" fill="url(#opens)" name="Opens" />
-                  <Area type="monotone" dataKey="clicks" stroke="#f59e0b" fill="none" name="Clicks" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-center pt-4 border-t border-slate-700/50">
-              <div>
-                <p className="text-xs text-slate-400">Avg. Open Rate</p>
-                <p className="text-lg font-bold text-white">{stats?.openRate || 0}%</p>
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-6 pt-6">
+              <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+                <BarChart3 className="h-5 w-5 text-emerald-600" />
+                Email Performance
+              </CardTitle>
+              <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                Newsletter engagement over time
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6">
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={stats?.recentActivity || []}>
+                    <defs>
+                      <linearGradient id="sendsGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="opensGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <YAxis stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        border: "2px solid #e2e8f0",
+                        borderRadius: "12px",
+                        padding: "12px",
+                      }}
+                      labelStyle={{ color: "#0f172a", fontWeight: 700 }}
+                      itemStyle={{ color: "#475569", fontWeight: 600 }}
+                    />
+                    <Area type="monotone" dataKey="sends" stroke="#6366f1" strokeWidth={3} fill="url(#sendsGradient)" name="Sends" />
+                    <Area type="monotone" dataKey="opens" stroke="#8b5cf6" strokeWidth={3} fill="url(#opensGradient)" name="Opens" />
+                    <Area type="monotone" dataKey="clicks" stroke="#f59e0b" strokeWidth={3} fill="none" name="Clicks" />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
-              <div>
-                <p className="text-xs text-slate-400">Avg. Click Rate</p>
-                <p className="text-lg font-bold text-white">{stats?.clickRate || 0}%</p>
+              <div className="mt-4 grid grid-cols-3 gap-3 text-center pt-4 border-t-2 border-slate-200">
+                <div>
+                  <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Avg. Open Rate</p>
+                  <p className="text-2xl font-black text-slate-900">{stats?.openRate || 0}%</p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Avg. Click Rate</p>
+                  <p className="text-2xl font-black text-slate-900">{stats?.clickRate || 0}%</p>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Engagement</p>
+                  <p className="text-2xl font-black text-slate-900">
+                    {Math.round(((stats?.openRate || 0) + (stats?.clickRate || 0)) / 2)}%
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-slate-400">Engagement</p>
-                <p className="text-lg font-bold text-white">
-                  {Math.round(((stats?.openRate || 0) + (stats?.clickRate || 0)) / 2)}%
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Tips Card */}
+      <motion.div variants={fadeInUp}>
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl shadow-sm">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-blue-100">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-bold text-slate-900 font-['Lato',sans-serif]">
+                  Newsletter Tips
+                </h3>
+                <p className="text-sm font-semibold text-slate-600 font-['Lato',sans-serif]">
+                  • Keep your subject line short and engaging (under 50 characters)<br />
+                  • Use personalization like the subscriber's name<br />
+                  • Include clear call-to-action buttons<br />
+                  • Test your emails before sending to all subscribers
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Tips Card */}
-      <Card className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-500/20">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-500/20">
-              <Sparkles className="h-5 w-5 text-purple-400" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-white">Newsletter Tips</h3>
-              <p className="text-xs text-slate-400">
-                • Keep your subject line short and engaging (under 50 characters)<br />
-                • Use personalization like the subscriber's name<br />
-                • Include clear call-to-action buttons<br />
-                • Test your emails before sending to all subscribers
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      </motion.div>
 
       {/* Test Email Dialog */}
       {showTestDialog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <Card className="w-full max-w-md bg-slate-900 border-slate-700">
-            <CardHeader>
-              <CardTitle className="text-white">Send Test Email</CardTitle>
-              <CardDescription className="text-slate-400">
-                Enter an email address to send a test
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Input
-                type="email"
-                placeholder="test@example.com"
-                value={testEmail}
-                onChange={(e) => setTestEmail(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
-            </CardContent>
-            <CardFooter className="flex gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowTestDialog(false)}
-                className="flex-1 border-slate-700 text-slate-300"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSendTest}
-                disabled={isTestSending}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
-              >
-                {isTestSending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  'Send Test'
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="w-full max-w-md"
+          >
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-xl">
+              <CardHeader className="px-6 pt-6 pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl font-bold text-slate-900 font-['Radley',serif]">
+                    Send Test Email
+                  </CardTitle>
+                  <button
+                    onClick={() => setShowTestDialog(false)}
+                    className="p-1.5 rounded-xl hover:bg-slate-100 transition-all"
+                  >
+                    <X className="h-5 w-5 text-slate-500" />
+                  </button>
+                </div>
+                <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                  Enter an email address to send a test
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 pt-4">
+                <Input
+                  type="email"
+                  placeholder="test@example.com"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11"
+                />
+              </CardContent>
+              <div className="px-6 pb-6 flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowTestDialog(false)}
+                  className="flex-1 border-2 border-slate-200 text-slate-600 font-bold rounded-xl py-2.5 hover:bg-slate-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSendTest}
+                  disabled={isTestSending}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl py-2.5 shadow-lg shadow-blue-600/25"
+                >
+                  {isTestSending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Send Test'
+                  )}
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

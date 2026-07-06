@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import ConditionalHeader from "@/components/ConditionalHeader";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { AuthProvider } from "@/context/AuthContext";
-import { LoadingScreenSpinner } from "@/components/LoadingScreen";
+import  LoadingSpinner  from "@/components/LoadingScreen";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -127,14 +127,14 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-white text-gray-900 lato-regular">
-        <LoadingScreenSpinner>
+        <LoadingSpinner>
           <AuthProvider>
             <ConditionalHeader />
             {children}
             <ConditionalFooter />
             <Toaster />
           </AuthProvider>
-        </LoadingScreenSpinner>
+        </LoadingSpinner>
       </body>
     </html>
   );

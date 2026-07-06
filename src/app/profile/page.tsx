@@ -50,10 +50,29 @@ import {
   Lock,
   Eye,
   EyeOff,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/lib/services/auth.service";
+import { motion } from "framer-motion";
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function ProfilePage() {
   const { user, logout, updateUser, isLoading: authLoading } = useAuth();
@@ -85,15 +104,6 @@ export default function ProfilePage() {
     commentCount: 0,
     totalLikes: 0,
   });
-
-  // Card background variants
-  const cardBgVariants = [
-    "bg-slate-800/85",
-    "bg-slate-800/80",
-    "bg-slate-800/90",
-    "bg-slate-800/75",
-    "bg-slate-800/85",
-  ];
 
   // Redirect if not logged in - wait for auth to load first
   useEffect(() => {
@@ -309,10 +319,10 @@ export default function ProfilePage() {
   // Show loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#111D3A] flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50/50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-teal-400 mx-auto mb-4" />
-          <p className="text-slate-400">Loading profile...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-base font-bold text-slate-600">Loading profile...</p>
         </div>
       </div>
     );
@@ -323,42 +333,56 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
-      {/* Grid overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden"
+    >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
 
-      {/* Glow orbs */}
-      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
-
-      <div className="relative z-10 container mx-auto max-w-4xl px-4 py-8 md:py-12">
+      <div className="container mx-auto max-w-5xl px-4 py-8 md:py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
+        <motion.div variants={fadeInUp} className="mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/80 border-2 border-blue-200 mb-3">
+            <Sparkles className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+              My Profile
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight font-['Radley',serif]">
             My Profile
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-lg text-slate-600 font-bold mt-1 font-['Lato',sans-serif]">
             View and manage your account information
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Sidebar - Profile Info */}
-          <div className="lg:col-span-1">
-            <Card
-              className={`${cardBgVariants[0]} border border-slate-700/40 backdrop-blur-sm rounded-xl`}
-            >
+          <motion.div variants={fadeInUp} className="lg:col-span-1">
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
                   {/* Avatar */}
                   <div className="relative group mb-4">
-                    <Avatar className="h-28 w-28 border-4 border-teal-500/30">
+                    <Avatar className="h-32 w-32 border-4 border-blue-200">
                       <AvatarImage src={avatarPreview || user.avatar} />
-                      <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white text-2xl">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-3xl font-bold">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <label className="absolute bottom-0 right-0 p-1.5 rounded-full bg-teal-500 cursor-pointer hover:bg-teal-600 transition-all">
+                    <label className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-600 cursor-pointer hover:bg-blue-700 transition-all shadow-lg">
                       <Camera className="h-4 w-4 text-white" />
                       <input
                         type="file"
@@ -370,28 +394,30 @@ export default function ProfilePage() {
                   </div>
 
                   {/* User Info */}
-                  <h2 className="text-xl font-bold text-white mb-1">
+                  <h2 className="text-2xl font-bold text-slate-900 mb-1 font-['Radley',serif]">
                     {user.name}
                   </h2>
                   <div className="flex items-center justify-center gap-2 mb-2">
-                    <Mail className="h-3.5 w-3.5 text-slate-400" />
-                    <p className="text-sm text-slate-400">{user.email}</p>
+                    <Mail className="h-4 w-4 text-slate-400" />
+                    <p className="text-base font-bold text-slate-500">{user.email}</p>
                   </div>
                   {user.bio && (
-                    <p className="text-sm text-slate-300 mt-2">{user.bio}</p>
+                    <p className="text-base font-semibold text-slate-600 mt-2">
+                      {user.bio}
+                    </p>
                   )}
 
                   {/* Role Badge */}
                   <Badge
-                    className={`mt-3 ${
+                    className={`mt-3 text-sm font-bold px-4 py-1.5 rounded-xl border-2 ${
                       user.role === "admin"
-                        ? "bg-teal-500/20 text-teal-400"
-                        : "bg-cyan-500/20 text-cyan-400"
+                        ? "bg-purple-100 text-purple-700 border-purple-200"
+                        : "bg-blue-100 text-blue-700 border-blue-200"
                     }`}
                   >
                     {user.role === "admin" ? (
                       <>
-                        <Shield className="h-3 w-3 mr-1" />
+                        <Shield className="h-4 w-4 mr-1.5" />
                         Administrator
                       </>
                     ) : (
@@ -400,50 +426,48 @@ export default function ProfilePage() {
                   </Badge>
 
                   {/* Verification Status */}
-                  <div className="mt-2 flex items-center gap-1 text-xs">
+                  <div className="mt-2 flex items-center gap-1.5 text-sm font-bold">
                     {user.isEmailVerified ? (
                       <>
-                        <CheckCircle className="h-3 w-3 text-teal-400" />
-                        <span className="text-teal-400">Email verified</span>
+                        <CheckCircle className="h-4 w-4 text-emerald-500" />
+                        <span className="text-emerald-600">Email verified</span>
                       </>
                     ) : (
                       <>
-                        <AlertTriangle className="h-3 w-3 text-yellow-400" />
-                        <span className="text-yellow-400">
-                          Email not verified
-                        </span>
+                        <AlertTriangle className="h-4 w-4 text-amber-500" />
+                        <span className="text-amber-600">Email not verified</span>
                       </>
                     )}
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 w-full mt-4 pt-4 border-t border-slate-700/30">
+                  <div className="grid grid-cols-3 gap-3 w-full mt-4 pt-4 border-t-2 border-slate-200">
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white">
+                      <div className="text-2xl font-black text-slate-900">
                         {userStats.postCount}
                       </div>
-                      <div className="text-xs text-slate-400">Posts</div>
+                      <div className="text-sm font-bold text-slate-500">Posts</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white">
+                      <div className="text-2xl font-black text-slate-900">
                         {userStats.commentCount}
                       </div>
-                      <div className="text-xs text-slate-400">Comments</div>
+                      <div className="text-sm font-bold text-slate-500">Comments</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-white">
+                      <div className="text-2xl font-black text-slate-900">
                         {userStats.totalLikes}
                       </div>
-                      <div className="text-xs text-slate-400">Likes</div>
+                      <div className="text-sm font-bold text-slate-500">Likes</div>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="w-full mt-4 space-y-2">
+                  <div className="w-full mt-4 space-y-2.5">
                     <Button
                       variant="outline"
                       onClick={() => setEditProfileOpen(true)}
-                      className="w-full border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
+                      className="w-full border-2 border-blue-200 text-blue-600 font-bold rounded-xl hover:bg-blue-50 hover:border-blue-300 bg-white"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Edit Profile
@@ -452,7 +476,7 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       onClick={() => setChangePasswordOpen(true)}
-                      className="w-full border-slate-700 text-slate-300 hover:border-teal-500/30 hover:text-teal-400"
+                      className="w-full border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:border-slate-300 bg-white"
                     >
                       <Lock className="h-4 w-4 mr-2" />
                       Change Password
@@ -461,7 +485,7 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       onClick={() => setDeleteDialogOpen(true)}
-                      className="w-full border-red-500/30 text-red-400 hover:bg-red-500/10"
+                      className="w-full border-2 border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 hover:border-red-300 bg-white"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete Account
@@ -469,9 +493,9 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Member Since */}
-                  <div className="mt-4 pt-4 border-t border-slate-700/30 w-full">
-                    <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-                      <Calendar className="h-3 w-3" />
+                  <div className="mt-4 pt-4 border-t-2 border-slate-200 w-full">
+                    <div className="flex items-center justify-center gap-2 text-sm font-bold text-slate-500">
+                      <Calendar className="h-4 w-4" />
                       <span>
                         Joined{" "}
                         {new Date(
@@ -486,72 +510,76 @@ export default function ProfilePage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
           {/* Main Content - Account Information */}
-          <div className="lg:col-span-2">
-            <Card
-              className={`${cardBgVariants[1]} border border-slate-700/40 backdrop-blur-sm rounded-xl`}
-            >
-              <CardHeader>
-                <CardTitle className="text-white">
+          <motion.div variants={fadeInUp} className="lg:col-span-2 space-y-6">
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-2xl font-bold text-slate-900 font-['Radley',serif]">
                   Account Information
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
                   Detailed information about your account
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="px-6 pb-6 space-y-4">
                 <div className="grid gap-4">
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
+                  <div className="flex justify-between items-center py-3 border-b-2 border-slate-100">
                     <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-teal-400" />
+                      <div className="p-2 rounded-xl bg-blue-50">
+                        <User className="h-5 w-5 text-blue-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-slate-400">Full Name</p>
-                        <p className="text-white font-medium">{user.name}</p>
+                        <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Full Name</p>
+                        <p className="text-base font-bold text-slate-900">{user.name}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
+                  <div className="flex justify-between items-center py-3 border-b-2 border-slate-100">
                     <div className="flex items-center gap-3">
-                      <Mail className="h-5 w-5 text-teal-400" />
+                      <div className="p-2 rounded-xl bg-blue-50">
+                        <Mail className="h-5 w-5 text-blue-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-slate-400">Email Address</p>
-                        <p className="text-white font-medium">{user.email}</p>
+                        <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Email Address</p>
+                        <p className="text-base font-bold text-slate-900">{user.email}</p>
                       </div>
                     </div>
                     {!user.isEmailVerified && (
                       <Button
                         variant="link"
                         size="sm"
-                        className="text-teal-400 text-xs"
+                        className="text-blue-600 font-bold text-sm"
                       >
                         Resend verification
                       </Button>
                     )}
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
+                  <div className="flex justify-between items-center py-3 border-b-2 border-slate-100">
                     <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-teal-400" />
+                      <div className="p-2 rounded-xl bg-purple-50">
+                        <Shield className="h-5 w-5 text-purple-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-slate-400">Account Role</p>
-                        <p className="text-white font-medium capitalize">
+                        <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Account Role</p>
+                        <p className="text-base font-bold text-slate-900 capitalize">
                           {user.role}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center py-3 border-b border-slate-700/30">
+                  <div className="flex justify-between items-center py-3 border-b-2 border-slate-100">
                     <div className="flex items-center gap-3">
-                      <Calendar className="h-5 w-5 text-teal-400" />
+                      <div className="p-2 rounded-xl bg-emerald-50">
+                        <Calendar className="h-5 w-5 text-emerald-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-slate-400">
-                          Account Created
-                        </p>
-                        <p className="text-white font-medium">
+                        <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Account Created</p>
+                        <p className="text-base font-bold text-slate-900">
                           {new Date(
                             user.createdAt || Date.now(),
                           ).toLocaleDateString("en-US", {
@@ -567,10 +595,12 @@ export default function ProfilePage() {
 
                   <div className="flex justify-between items-center py-3">
                     <div className="flex items-center gap-3">
-                      <LogOut className="h-5 w-5 text-teal-400" />
+                      <div className="p-2 rounded-xl bg-slate-50">
+                        <LogOut className="h-5 w-5 text-slate-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-slate-400">Last Login</p>
-                        <p className="text-white font-medium">
+                        <p className="text-sm font-bold text-slate-500 font-['Lato',sans-serif]">Last Login</p>
+                        <p className="text-base font-bold text-slate-900">
                           {user.lastLogin
                             ? new Date(user.lastLogin).toLocaleString()
                             : "Never"}
@@ -583,28 +613,28 @@ export default function ProfilePage() {
             </Card>
 
             {/* Danger Zone */}
-            <Card className="mt-6 border-red-500/30 bg-red-500/5 rounded-xl">
-              <CardHeader>
-                <CardTitle className="text-red-400 flex items-center gap-2">
+            <Card className="border-2 border-red-200/80 bg-red-50/30 rounded-2xl shadow-sm">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-red-600 flex items-center gap-2 font-['Lato',sans-serif]">
                   <AlertTriangle className="h-5 w-5" />
                   Danger Zone
                 </CardTitle>
-                <CardDescription className="text-red-400/70">
+                <CardDescription className="text-base font-bold text-red-500/80 font-['Lato',sans-serif]">
                   Irreversible actions for your account
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between">
+              <CardContent className="px-6 pb-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <p className="text-white font-medium">Delete Account</p>
-                    <p className="text-sm text-slate-400">
+                    <p className="text-base font-bold text-slate-900">Delete Account</p>
+                    <p className="text-sm font-semibold text-slate-500">
                       Permanently delete your account and all associated data
                     </p>
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setDeleteDialogOpen(true)}
-                    className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                    className="border-2 border-red-200 text-red-600 font-bold rounded-xl hover:bg-red-50 hover:border-red-300 bg-white"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete Account
@@ -612,31 +642,31 @@ export default function ProfilePage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </div>
 
         {/* Edit Profile Modal */}
         <Dialog open={editProfileOpen} onOpenChange={setEditProfileOpen}>
-          <DialogContent className="bg-slate-900 border-slate-700 max-w-md rounded-xl">
+          <DialogContent className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-xl max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-white flex items-center gap-2">
-                <Edit className="h-5 w-5 text-teal-400" />
+            <DialogTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+                <Edit className="h-5 w-5 text-blue-600" />
                 Edit Profile
               </DialogTitle>
-              <DialogDescription className="text-slate-400">
+              <DialogDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
                 Update your profile information
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="flex justify-center">
                 <div className="relative group">
-                  <Avatar className="h-24 w-24 border-4 border-teal-500/30">
+                  <Avatar className="h-28 w-28 border-4 border-blue-200">
                     <AvatarImage src={avatarPreview || user.avatar} />
-                    <AvatarFallback className="bg-gradient-to-br from-teal-500 to-cyan-500 text-white text-xl">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-2xl font-bold">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <label className="absolute bottom-0 right-0 p-1.5 rounded-full bg-teal-500 cursor-pointer hover:bg-teal-600 transition-all">
+                  <label className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-600 cursor-pointer hover:bg-blue-700 transition-all shadow-lg">
                     <Camera className="h-4 w-4 text-white" />
                     <input
                       type="file"
@@ -649,7 +679,7 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="edit-name" className="text-slate-300">
+                  <Label htmlFor="edit-name" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
                     Full Name
                   </Label>
                   <Input
@@ -659,11 +689,11 @@ export default function ProfilePage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="Your name"
-                    className="bg-slate-800/50 border-slate-700 text-white mt-1 rounded-lg"
+                    className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11 mt-1"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="edit-bio" className="text-slate-300">
+                  <Label htmlFor="edit-bio" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
                     Bio
                   </Label>
                   <Textarea
@@ -674,12 +704,12 @@ export default function ProfilePage() {
                     }
                     placeholder="Tell us about yourself..."
                     rows={3}
-                    className="bg-slate-800/50 border-slate-700 text-white mt-1 resize-none rounded-lg"
+                    className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none mt-1"
                   />
                 </div>
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-3">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -691,14 +721,14 @@ export default function ProfilePage() {
                   setAvatarPreview(user.avatar || "");
                   setAvatarFile(null);
                 }}
-                className="border-slate-700 text-slate-300 rounded-lg"
+                className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-lg"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl px-6 shadow-lg shadow-blue-600/25"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -713,26 +743,26 @@ export default function ProfilePage() {
 
         {/* Change Password Modal */}
         <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
-          <DialogContent className="bg-slate-900 border-slate-700 max-w-md rounded-xl">
+          <DialogContent className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-xl max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-white flex items-center gap-2">
-                <Lock className="h-5 w-5 text-teal-400" />
+              <DialogTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+                <Lock className="h-5 w-5 text-blue-600" />
                 Change Password
               </DialogTitle>
-              <DialogDescription className="text-slate-400">
+              <DialogDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
                 Update your account password
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               {passwordError && (
-                <div className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
-                  <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm font-bold text-red-700 bg-red-50 p-3 rounded-xl border-2 border-red-200">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                   <span>{passwordError}</span>
                 </div>
               )}
               <div className="space-y-3">
                 <div>
-                  <Label htmlFor="current-password" className="text-slate-300">
+                  <Label htmlFor="current-password" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
                     Current Password
                   </Label>
                   <div className="relative mt-1">
@@ -747,12 +777,12 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Enter current password"
-                      className="bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg"
+                      className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11 pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showCurrentPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -763,7 +793,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="new-password" className="text-slate-300">
+                  <Label htmlFor="new-password" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
                     New Password
                   </Label>
                   <div className="relative mt-1">
@@ -778,12 +808,12 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Enter new password"
-                      className="bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg"
+                      className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11 pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showNewPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -794,7 +824,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="confirm-password" className="text-slate-300">
+                  <Label htmlFor="confirm-password" className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
                     Confirm New Password
                   </Label>
                   <div className="relative mt-1">
@@ -809,17 +839,17 @@ export default function ProfilePage() {
                         })
                       }
                       placeholder="Confirm new password"
-                      className={`bg-slate-800/50 border-slate-700 text-white pr-10 rounded-lg ${
+                      className={`bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100 h-11 pr-10 ${
                         passwordData.confirmPassword &&
                         passwordData.newPassword !== passwordData.confirmPassword
-                          ? "border-red-500"
+                          ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                           : ""
                       }`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -830,14 +860,14 @@ export default function ProfilePage() {
                   </div>
                   {passwordData.confirmPassword &&
                     passwordData.newPassword !== passwordData.confirmPassword && (
-                      <p className="text-[10px] text-red-400 mt-1">
+                      <p className="text-sm font-bold text-red-600 mt-1">
                         Passwords do not match
                       </p>
                     )}
                 </div>
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-3">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -849,14 +879,14 @@ export default function ProfilePage() {
                   });
                   setPasswordError("");
                 }}
-                className="border-slate-700 text-slate-300 rounded-lg"
+                className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleChangePassword}
                 disabled={isChangingPassword}
-                className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 rounded-lg"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl px-6 shadow-lg shadow-blue-600/25"
               >
                 {isChangingPassword ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -871,26 +901,26 @@ export default function ProfilePage() {
 
         {/* Delete Account Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent className="bg-slate-900 border-slate-700 rounded-xl">
+          <AlertDialogContent className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-xl">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-white flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-400" />
+              <AlertDialogTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
                 Delete Account
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-slate-400">
+              <AlertDialogDescription className="text-base font-bold text-slate-600 font-['Lato',sans-serif]">
                 Are you absolutely sure? This action cannot be undone. This will
                 permanently delete your account and remove all your data from
                 our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 rounded-lg">
+            <AlertDialogFooter className="gap-3">
+              <AlertDialogCancel className="border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 bg-white">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl px-6"
               >
                 {isDeleting ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -903,6 +933,6 @@ export default function ProfilePage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </div>
+    </motion.div>
   );
 }

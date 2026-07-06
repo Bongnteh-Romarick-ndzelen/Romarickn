@@ -38,7 +38,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-purple-400 hover:text-purple-300 underline",
+          class: "text-blue-600 hover:text-blue-700 underline",
         },
       }),
       Underline,
@@ -47,7 +47,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
     editorProps: {
       attributes: {
         class:
-          "prose prose-invert prose-sm max-w-none focus:outline-none min-h-[300px] p-4",
+          "prose prose-sm max-w-none focus:outline-none min-h-[300px] p-4 text-slate-800",
       },
     },
     onUpdate: ({ editor }) => {
@@ -117,8 +117,8 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "h-8 px-2 text-slate-400 hover:text-white",
-        isActive && "bg-purple-500/20 text-purple-400",
+        "h-8 px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50",
+        isActive && "bg-blue-100 text-blue-700 border-2 border-blue-200",
       )}
     >
       <Icon className="h-4 w-4" />
@@ -126,9 +126,9 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
   );
 
   return (
-    <div className="border border-slate-700 rounded-lg overflow-hidden bg-slate-800/30">
+    <div className="border-2 border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 p-2 border-b border-slate-700 bg-slate-800/50">
+      <div className="flex flex-wrap gap-1 p-2 border-b-2 border-slate-200 bg-slate-50/50">
         <ToolbarButton
           isActive={editor.isActive("bold")}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -150,7 +150,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
           icon={UnderlineIcon}
         />
 
-        <div className="w-px h-6 bg-slate-700 mx-1" />
+        <div className="w-px h-6 bg-slate-200 mx-1" />
 
         <ToolbarButton
           isActive={editor.isActive("bulletList")}
@@ -168,13 +168,13 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
           icon={Code}
         />
 
-        <div className="w-px h-6 bg-slate-700 mx-1" />
+        <div className="w-px h-6 bg-slate-200 mx-1" />
 
         <Button
           size="sm"
           variant="ghost"
           onClick={addLink}
-          className="h-8 px-2 text-slate-400 hover:text-white"
+          className="h-8 px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50"
         >
           <LinkIcon className="h-4 w-4" />
         </Button>
@@ -182,19 +182,19 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
           size="sm"
           variant="ghost"
           onClick={addImage}
-          className="h-8 px-2 text-slate-400 hover:text-white"
+          className="h-8 px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50"
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
 
-        <div className="w-px h-6 bg-slate-700 mx-1" />
+        <div className="w-px h-6 bg-slate-200 mx-1" />
 
         <Button
           size="sm"
           variant="ghost"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
-          className="h-8 px-2 text-slate-400 hover:text-white disabled:opacity-50"
+          className="h-8 px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-50"
         >
           <Undo className="h-4 w-4" />
         </Button>
@@ -203,7 +203,7 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
           variant="ghost"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
-          className="h-8 px-2 text-slate-400 hover:text-white disabled:opacity-50"
+          className="h-8 px-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-50"
         >
           <Redo className="h-4 w-4" />
         </Button>
