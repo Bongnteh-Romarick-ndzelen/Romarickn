@@ -161,14 +161,6 @@ const staggerContainer = {
   }
 };
 
-const statCardHover = {
-  rest: { scale: 1 },
-  hover: { 
-    scale: 1.05,
-    transition: { duration: 0.3 }
-  }
-};
-
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -242,7 +234,7 @@ export default function ProjectsPage() {
           </p>
         </motion.div>
 
-        {/* Stats Row with Animation */}
+        {/* Stats Row with Animation - Fixed shaking issue */}
         <motion.div
           ref={ref}
           initial="hidden"
@@ -261,24 +253,17 @@ export default function ProjectsPage() {
               <motion.div
                 key={idx}
                 variants={fadeInUp}
-                whileHover="hover"
-                initial="rest"
-                animate="rest"
+                className="bg-white border-2 border-slate-200/80 rounded-2xl p-3 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <motion.div
-                  variants={statCardHover}
-                  className="bg-white border-2 border-slate-200/80 rounded-2xl p-3 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
-                >
-                  <div className="inline-flex p-2 sm:p-3 rounded-xl bg-blue-50 text-blue-600 mb-1 sm:mb-2">
-                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <div className="text-2xl sm:text-4xl font-black text-slate-900">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">
-                    {stat.label}
-                  </div>
-                </motion.div>
+                <div className="inline-flex p-2 sm:p-3 rounded-xl bg-blue-50 text-blue-600 mb-1 sm:mb-2">
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                </div>
+                <div className="text-2xl sm:text-4xl font-black text-slate-900">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">
+                  {stat.label}
+                </div>
               </motion.div>
             );
           })}
@@ -360,7 +345,7 @@ export default function ProjectsPage() {
                     </Badge>
                   </div>
 
-                  {/* Hover Overlay - Only show on desktop or when tapped on mobile */}
+                  {/* Hover Overlay */}
                   <div
                     className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-3 sm:gap-5 transition-all duration-300 ${
                       (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
