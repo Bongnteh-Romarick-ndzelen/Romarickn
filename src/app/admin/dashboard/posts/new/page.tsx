@@ -30,12 +30,30 @@ import {
   Loader2,
   X,
   Plus,
+  Sparkles,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import Link from "next/link";
 import { postService } from "@/lib/services/post.service";
 import TiptapEditor from "@/components/admin/TiptapEditor";
+import { motion } from "framer-motion";
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function CreatePostPage() {
   const router = useRouter();
@@ -130,7 +148,6 @@ export default function CreatePostPage() {
 
     setIsLoading(true);
 
-    // Debug log
     console.log("Sending post data:");
     console.log("title:", title.trim());
     console.log("excerpt:", excerpt.trim());
@@ -172,35 +189,66 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="space-y-6 pb-10"
+    >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+        
+        /* Fix for dark text visibility */
+        .text-visible {
+          color: #0f172a !important;
+        }
+        .text-visible-muted {
+          color: #475569 !important;
+        }
+      `}</style>
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Link href="/admin/dashboard/posts">
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-slate-400 hover:text-white"
+                className="text-slate-600 hover:text-blue-600 font-bold hover:bg-blue-50"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to Posts
               </Button>
             </Link>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/80 border-2 border-blue-200 mb-3">
+            <Sparkles className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+              Create New Post
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight font-['Radley',serif]">
             Create New Post
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-lg text-slate-600 font-bold mt-1 font-['Lato',sans-serif]">
             Write and publish new content for your blog
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button
             variant="outline"
             onClick={(e) => handleSubmit(e, false)}
             disabled={isLoading}
-            className="border-slate-700 text-slate-300"
+            className="border-2 border-slate-200 text-slate-700 font-bold rounded-xl px-6 py-2.5 hover:bg-slate-50 hover:border-slate-300 transition-all bg-white"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -212,7 +260,7 @@ export default function CreatePostPage() {
           <Button
             onClick={(e) => handleSubmit(e, true)}
             disabled={isLoading}
-            className="bg-gradient-to-r from-purple-600 to-pink-600"
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-lg shadow-blue-600/25"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -222,219 +270,253 @@ export default function CreatePostPage() {
             Publish
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardContent className="p-6">
-              <Input
-                placeholder="Enter post title..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-2xl font-bold bg-transparent border-slate-700 focus:border-purple-500 text-white"
-              />
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardContent className="p-6">
+                <Input
+                  placeholder="Enter post title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="text-2xl font-bold bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl py-6 font-['Lato',sans-serif]"
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Cover Image */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Cover Image</CardTitle>
-              <CardDescription className="text-slate-400">
-                Upload a featured image for your post
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {coverImagePreview ? (
-                <div className="relative">
-                  <Image
-                    src={coverImagePreview}
-                    alt="Cover preview"
-                    width={600}
-                    height={315}
-                    className="w-full rounded-lg object-cover"
-                  />
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Cover Image
+                </CardTitle>
+                <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                  Upload a featured image for your post
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-6 pb-6">
+                {coverImagePreview ? (
+                  <div className="relative">
+                    <Image
+                      src={coverImagePreview}
+                      alt="Cover preview"
+                      width={600}
+                      height={315}
+                      className="w-full rounded-xl object-cover border-2 border-slate-200"
+                    />
+                    <button
+                      onClick={() => {
+                        setCoverImage(null);
+                        setCoverImagePreview("");
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                      }}
+                      className="absolute top-3 right-3 p-1.5 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-all"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
                   <button
-                    onClick={() => {
-                      setCoverImage(null);
-                      setCoverImagePreview("");
-                      if (fileInputRef.current) fileInputRef.current.value = "";
-                    }}
-                    className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white hover:bg-red-600"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-48 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50/50 transition-all"
                   >
-                    <X className="h-4 w-4" />
+                    <ImagePlus className="h-10 w-10 text-slate-400" />
+                    <span className="text-base font-bold text-slate-600">
+                      Click to upload cover image
+                    </span>
+                    <span className="text-sm font-semibold text-slate-400">
+                      PNG, JPG, WEBP up to 5MB
+                    </span>
                   </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full h-48 border-2 border-dashed border-slate-700 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-purple-500 transition-colors"
-                >
-                  <ImagePlus className="h-8 w-8 text-slate-500" />
-                  <span className="text-sm text-slate-400">
-                    Click to upload cover image
-                  </span>
-                  <span className="text-xs text-slate-500">
-                    PNG, JPG, WEBP up to 5MB
-                  </span>
-                </button>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageSelect}
-                className="hidden"
-              />
-            </CardContent>
-          </Card>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Content Editor */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Content</CardTitle>
-              <CardDescription className="text-slate-400">
-                Write your post content using the rich text editor
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <TiptapEditor content={content} onChange={setContent} />
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Content
+                </CardTitle>
+                <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                  Write your post content using the rich text editor
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-6 pb-6">
+                <TiptapEditor content={content} onChange={setContent} />
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Excerpt */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Excerpt</CardTitle>
-              <CardDescription className="text-slate-400">
-                Short description (max 500 characters)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                placeholder="Write a compelling excerpt..."
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value.slice(0, 500))}
-                rows={4}
-                className="bg-slate-800/50 border-slate-700 text-white"
-              />
-              <p className="text-xs text-slate-500 mt-2 text-right">
-                {excerpt.length}/500
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Excerpt
+                </CardTitle>
+                <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                  Short description (max 500 characters)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-6 pb-6">
+                <Textarea
+                  placeholder="Write a compelling excerpt..."
+                  value={excerpt}
+                  onChange={(e) => setExcerpt(e.target.value.slice(0, 500))}
+                  rows={4}
+                  className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
+                <p className="text-sm font-bold text-slate-400 mt-2 text-right">
+                  {excerpt.length}/500
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Settings */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Post Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label className="text-slate-300 text-sm mb-2 block">
-                  Status
-                </Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="bg-slate-800/50 border-slate-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-700">
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between">
-                <Label className="text-slate-300 text-sm">Featured Post</Label>
-                <Switch checked={featured} onCheckedChange={setFeatured} />
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Post Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6 space-y-4">
+                <div>
+                  <Label className="text-base font-bold text-slate-700 block mb-2 font-['Lato',sans-serif]">
+                    Status
+                  </Label>
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="bg-white border-2 border-slate-200 text-slate-800 font-semibold rounded-xl focus:border-blue-400">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-2 border-slate-200 rounded-xl shadow-lg">
+                      <SelectItem value="draft" className="font-bold text-slate-700">Draft</SelectItem>
+                      <SelectItem value="published" className="font-bold text-slate-700">Published</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-bold text-slate-700 font-['Lato',sans-serif]">
+                    Featured Post
+                  </Label>
+                  <Switch 
+                    checked={featured} 
+                    onCheckedChange={setFeatured}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Categories */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Categories</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2 mb-3">
-                <Input
-                  placeholder="Add category..."
-                  value={categoryInput}
-                  onChange={(e) => setCategoryInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && addCategory()}
-                  className="bg-slate-800/50 border-slate-700 text-white"
-                />
-                <Button
-                  type="button"
-                  onClick={addCategory}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                  <Badge key={cat} className="bg-purple-500/20 text-purple-400">
-                    {cat}{" "}
-                    <button
-                      onClick={() => removeCategory(cat)}
-                      className="ml-2 hover:text-purple-200"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Categories
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6">
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="Add category..."
+                    value={categoryInput}
+                    onChange={(e) => setCategoryInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && addCategory()}
+                    className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  />
+                  <Button
+                    type="button"
+                    onClick={addCategory}
+                    size="sm"
+                    variant="outline"
+                    className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 bg-white"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((cat) => (
+                    <Badge key={cat} className="bg-blue-100 text-blue-700 border-2 border-blue-200 font-bold px-3 py-1.5 rounded-xl text-sm">
+                      {cat}
+                      <button
+                        onClick={() => removeCategory(cat)}
+                        className="ml-2 hover:text-blue-900 font-bold"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Tags */}
-          <Card className="bg-slate-800/30 border border-slate-700/50">
-            <CardHeader>
-              <CardTitle className="text-white">Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2 mb-3">
-                <Input
-                  placeholder="Add tag..."
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && addTag()}
-                  className="bg-slate-800/50 border-slate-700 text-white"
-                />
-                <Button
-                  type="button"
-                  onClick={addTag}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-slate-300">
-                    #{tag}{" "}
-                    <button
-                      onClick={() => removeTag(tag)}
-                      className="ml-2 hover:text-slate-200"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <motion.div variants={fadeInUp}>
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+              <CardHeader className="px-6 pt-6">
+                <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                  Tags
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-6 pb-6">
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="Add tag..."
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && addTag()}
+                    className="bg-white border-2 border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  />
+                  <Button
+                    type="button"
+                    onClick={addTag}
+                    size="sm"
+                    variant="outline"
+                    className="border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 bg-white"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <Badge key={tag} variant="outline" className="border-2 border-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-sm bg-white">
+                      #{tag}
+                      <button
+                        onClick={() => removeTag(tag)}
+                        className="ml-2 hover:text-slate-900 font-bold"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

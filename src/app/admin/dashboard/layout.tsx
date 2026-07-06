@@ -10,11 +10,11 @@ export default function AdminLayout({
 }) {
   return (
     <AdminGuard>
-      <div className="h-screen flex flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+      <div className="h-screen flex flex-col bg-slate-50/50 overflow-hidden">
         <AdminHeader />
         <div className="flex flex-1 overflow-hidden">
           <AdminSidebar />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-slate-50/50">
             <div className="p-6 lg:p-8">
               <div className="max-w-7xl mx-auto">{children}</div>
             </div>

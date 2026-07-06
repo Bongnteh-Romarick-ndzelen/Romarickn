@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import {
@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowUp,
   ArrowDown,
@@ -31,6 +30,8 @@ import {
   Activity,
   Zap,
   Award,
+  Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import {
   LineChart,
@@ -53,6 +54,7 @@ import { adminService } from '@/lib/services/admin.service';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
 
 interface AnalyticsData {
   overview: {
@@ -139,12 +141,28 @@ interface TrafficStats {
   };
 }
 
-const categoryColors = ['#a855f7', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444', '#06b6d4'];
+const categoryColors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4'];
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function AdminAnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [traffic, setTraffic] = useState<TrafficStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [trafficLoading, setTrafficLoading] = useState(true);
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('week');
   const { toast } = useToast();
@@ -155,6 +173,7 @@ export default function AdminAnalyticsPage() {
   }, [period]);
 
   const fetchAnalytics = async () => {
+    setAnalyticsLoading(true);
     try {
       const response = await adminService.getDashboardAnalytics();
       console.log('Analytics response:', response);
@@ -170,7 +189,7 @@ export default function AdminAnalyticsPage() {
         variant: 'destructive',
       });
     } finally {
-      setLoading(false);
+      setAnalyticsLoading(false);
     }
   };
 
@@ -191,7 +210,7 @@ export default function AdminAnalyticsPage() {
   };
 
   const handleRefresh = () => {
-    setLoading(true);
+    setAnalyticsLoading(true);
     setTrafficLoading(true);
     fetchAnalytics();
     fetchTrafficStats();
@@ -203,28 +222,32 @@ export default function AdminAnalyticsPage() {
       value: analytics?.overview.totalUsers || 0,
       icon: Users,
       color: 'from-blue-500 to-cyan-500',
-      bgColor: 'bg-blue-500/10',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600',
     },
     {
       title: 'Total Views',
       value: analytics?.overview.totalViews || 0,
       icon: Eye,
       color: 'from-purple-500 to-pink-500',
-      bgColor: 'bg-purple-500/10',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-600',
     },
     {
       title: 'Total Comments',
       value: analytics?.overview.totalComments || 0,
       icon: MessageSquare,
       color: 'from-green-500 to-emerald-500',
-      bgColor: 'bg-green-500/10',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-600',
     },
     {
       title: 'Total Likes',
       value: analytics?.overview.totalLikes || 0,
       icon: Heart,
       color: 'from-red-500 to-pink-500',
-      bgColor: 'bg-red-500/10',
+      bgColor: 'bg-red-50',
+      textColor: 'text-red-600',
     },
   ];
 
@@ -260,337 +283,444 @@ export default function AdminAnalyticsPage() {
     views: item.views,
   })) || [];
 
-  if (loading) {
+  if (analyticsLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <Skeleton className="h-8 w-48 bg-slate-800" />
-            <Skeleton className="h-4 w-64 mt-2 bg-slate-800" />
+            <Skeleton className="h-10 w-56 bg-slate-200" />
+            <Skeleton className="h-5 w-72 mt-2 bg-slate-200" />
           </div>
-          <Skeleton className="h-10 w-32 bg-slate-800" />
+          <Skeleton className="h-12 w-40 bg-slate-200 rounded-xl" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-32 bg-slate-800 rounded-xl" />
+            <Skeleton key={i} className="h-36 bg-slate-200 rounded-2xl" />
           ))}
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Skeleton className="h-96 bg-slate-800 rounded-xl" />
-          <Skeleton className="h-96 bg-slate-800 rounded-xl" />
+        <div className="grid gap-5 md:grid-cols-2">
+          <Skeleton className="h-96 bg-slate-200 rounded-2xl" />
+          <Skeleton className="h-96 bg-slate-200 rounded-2xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="space-y-7 pb-10"
+    >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Analytics Dashboard</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/80 border-2 border-blue-200 mb-3">
+            <Sparkles className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-bold text-blue-700 uppercase tracking-wide">
+              Analytics Dashboard
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
+            Analytics <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">Overview</span>
+          </h1>
+          <p className="text-lg text-slate-600 font-bold mt-1">
             Track your platform's performance and growth metrics
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Select value={period} onValueChange={(v: any) => setPeriod(v)}>
-            <SelectTrigger className="w-36 bg-slate-800/50 border-slate-700 text-white">
+            <SelectTrigger className="w-40 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl px-4 py-2.5 h-11">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-slate-700">
-              <SelectItem value="day">Last 24 Hours</SelectItem>
-              <SelectItem value="week">Last 7 Days</SelectItem>
-              <SelectItem value="month">Last 30 Days</SelectItem>
-              <SelectItem value="year">Last 12 Months</SelectItem>
+            <SelectContent className="bg-white border-2 border-slate-200 rounded-xl shadow-lg">
+              <SelectItem value="day" className="font-bold">Last 24 Hours</SelectItem>
+              <SelectItem value="week" className="font-bold">Last 7 Days</SelectItem>
+              <SelectItem value="month" className="font-bold">Last 30 Days</SelectItem>
+              <SelectItem value="year" className="font-bold">Last 12 Months</SelectItem>
             </SelectContent>
           </Select>
           <Button
             variant="outline"
             size="icon"
             onClick={handleRefresh}
-            className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
+            className="h-11 w-11 rounded-xl border-2 border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-all"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-5 w-5" />
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div variants={staggerContainer} className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         {statsCards.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="bg-slate-800/30 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
-                  {stat.title}
-                </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 text-${stat.color.split('-')[1]}-400`} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-white">{stat.value.toLocaleString()}</div>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-xs text-green-400 flex items-center gap-0.5">
-                    <ArrowUp className="h-3 w-3" />
-                    +12%
-                  </span>
-                  <span className="text-xs text-slate-500">from last month</span>
-                </div>
-              </CardContent>
-            </Card>
+            <motion.div key={index} variants={fadeInUp}>
+              <Card className="bg-white border-2 border-slate-200/80 hover:border-blue-300 transition-all duration-300 hover:shadow-xl rounded-2xl">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 px-6 pt-5">
+                  <CardTitle className="text-base font-bold text-slate-600 font-['Lato',sans-serif]">
+                    {stat.title}
+                  </CardTitle>
+                  <div className={`p-2.5 rounded-xl ${stat.bgColor}`}>
+                    <Icon className={`h-5 w-5 ${stat.textColor}`} />
+                  </div>
+                </CardHeader>
+                <CardContent className="px-6 pb-5">
+                  <div className="text-3xl font-black text-slate-900 font-['Lato',sans-serif]">
+                    {stat.value.toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-sm font-bold text-emerald-600 flex items-center gap-0.5">
+                      <ArrowUp className="h-4 w-4" />
+                      +12%
+                    </span>
+                    <span className="text-sm font-bold text-slate-400">from last month</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Today's Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <motion.div variants={staggerContainer} className="grid gap-4 md:grid-cols-4">
         {todayStats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="bg-slate-800/20 border border-slate-700/50">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-400">{stat.label}</p>
-                    <p className="text-xl font-bold text-white mt-1">{stat.value}</p>
+            <motion.div key={index} variants={fadeInUp}>
+              <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-slate-500 uppercase tracking-wider font-['Lato',sans-serif]">
+                        {stat.label}
+                      </p>
+                      <p className="text-2xl font-black text-slate-900 mt-1 font-['Lato',sans-serif]">
+                        {stat.value}
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-blue-50">
+                      <Icon className="h-5 w-5 text-blue-600" />
+                    </div>
                   </div>
-                  <div className="p-2 rounded-lg bg-purple-500/10">
-                    <Icon className="h-4 w-4 text-purple-400" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Traffic Overview Chart */}
-      <Card className="bg-slate-800/30 border border-slate-700/50">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-purple-400" />
-            Traffic Overview
-          </CardTitle>
-          <CardDescription className="text-slate-400">
-            Page views and user activity over time
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {trafficLoading ? (
-            <div className="h-[300px] flex items-center justify-center">
-              <Skeleton className="h-full w-full bg-slate-800" />
-            </div>
-          ) : (
-            <div className="h-[350px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trafficChartData}>
-                  <defs>
-                    <linearGradient id="views" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
-                  />
-                  <Area type="monotone" dataKey="views" stroke="#a855f7" fill="url(#views)" name="Page Views" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-          
-          {traffic?.summary && (
-            <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t border-slate-700/50">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white">{traffic.summary.totalPageViews.toLocaleString()}</p>
-                <p className="text-xs text-slate-400">Total Page Views</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white">{traffic.summary.avgDailyViews}</p>
-                <p className="text-xs text-slate-400">Avg Daily Views</p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Weekly Activity */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white">Weekly Activity</CardTitle>
-            <CardDescription className="text-slate-400">
-              User engagement over the last 7 days
+      <motion.div variants={fadeInUp}>
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+          <CardHeader className="px-6 pt-6">
+            <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+              Traffic Overview
+            </CardTitle>
+            <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+              Page views and user activity over time
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
-                  />
-                  <Bar dataKey="newUsers" fill="#a855f7" name="New Users" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="newPosts" fill="#ec4899" name="New Posts" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <CardContent className="px-6 pb-6">
+            {trafficLoading ? (
+              <div className="h-[350px] flex items-center justify-center">
+                <Skeleton className="h-full w-full bg-slate-100 rounded-xl" />
+              </div>
+            ) : (
+              <div className="h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={trafficChartData}>
+                    <defs>
+                      <linearGradient id="viewsGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <YAxis stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        border: "2px solid #e2e8f0",
+                        borderRadius: "12px",
+                        padding: "12px",
+                      }}
+                      labelStyle={{ color: "#0f172a", fontWeight: 700 }}
+                      itemStyle={{ color: "#475569", fontWeight: 600 }}
+                    />
+                    <Area type="monotone" dataKey="views" stroke="#6366f1" strokeWidth={3} fill="url(#viewsGradient)" name="Page Views" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+            
+            {traffic?.summary && (
+              <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t-2 border-slate-200">
+                <div className="text-center">
+                  <p className="text-3xl font-black text-slate-900">{traffic.summary.totalPageViews.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-slate-500">Total Page Views</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-black text-slate-900">{traffic.summary.avgDailyViews}</p>
+                  <p className="text-sm font-bold text-slate-500">Avg Daily Views</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
+      </motion.div>
+
+      {/* Charts Row */}
+      <motion.div variants={staggerContainer} className="grid gap-6 lg:grid-cols-2">
+        {/* Weekly Activity */}
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-6 pt-6">
+              <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                Weekly Activity
+              </CardTitle>
+              <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                User engagement over the last 7 days
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6">
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <YAxis stroke="#94a3b8" fontSize={12} fontWeight={600} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        border: "2px solid #e2e8f0",
+                        borderRadius: "12px",
+                        padding: "12px",
+                      }}
+                      labelStyle={{ color: "#0f172a", fontWeight: 700 }}
+                      itemStyle={{ color: "#475569", fontWeight: 600 }}
+                    />
+                    <Bar dataKey="newUsers" fill="#6366f1" name="New Users" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="newPosts" fill="#8b5cf6" name="New Posts" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Popular Categories */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white">Content Categories</CardTitle>
-            <CardDescription className="text-slate-400">
-              Distribution of content by category
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-6 pt-6">
+              <CardTitle className="text-xl font-bold text-slate-900 font-['Radley',serif]">
+                Content Categories
+              </CardTitle>
+              <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+                Distribution of content by category
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6">
+              <div className="h-[300px]">
+                {analytics?.popularCategories && analytics.popularCategories.length > 0 ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={analytics.popularCategories}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={5}
+                        dataKey="count"
+                        nameKey="_id"
+                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                        labelLine={false}
+                      >
+                        {analytics.popularCategories.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={categoryColors[index % categoryColors.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#ffffff",
+                          border: "2px solid #e2e8f0",
+                          borderRadius: "12px",
+                          padding: "12px",
+                        }}
+                        labelStyle={{ color: "#0f172a", fontWeight: 700 }}
+                        itemStyle={{ color: "#475569", fontWeight: 600 }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <p className="text-base font-bold text-slate-400">No category data available</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+
+      {/* Top Referrers */}
+      <motion.div variants={fadeInUp}>
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+          <CardHeader className="px-6 pt-6">
+            <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-2 font-['Radley',serif]">
+              <Zap className="h-5 w-5 text-amber-500" />
+              Top Referrers
+            </CardTitle>
+            <CardDescription className="text-base font-bold text-slate-500 font-['Lato',sans-serif]">
+              Where your traffic is coming from
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              {analytics?.popularCategories && analytics.popularCategories.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={analytics.popularCategories}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={5}
-                      dataKey="count"
-                      nameKey="_id"
-                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                      labelLine={false}
-                    >
-                      {analytics.popularCategories.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={categoryColors[index % categoryColors.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                      labelStyle={{ color: '#fff' }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-slate-400">No category data available</p>
+          <CardContent className="px-6 pb-6">
+            <div className="space-y-4">
+              {(traffic?.topReferrers || []).map((referrer, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`flex items-center justify-center w-9 h-9 rounded-xl font-black text-sm ${
+                      index === 0 ? "bg-amber-100 text-amber-700 border-2 border-amber-200" :
+                      index === 1 ? "bg-slate-100 text-slate-700 border-2 border-slate-200" :
+                      index === 2 ? "bg-orange-100 text-orange-700 border-2 border-orange-200" :
+                      "bg-slate-50 text-slate-500 border-2 border-slate-200"
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <span className="text-base font-bold text-slate-900 font-['Lato',sans-serif]">
+                      {referrer.source}
+                    </span>
+                  </div>
+                  <Badge className="bg-blue-100 text-blue-700 border-2 border-blue-200 text-sm font-bold px-4 py-1.5 rounded-xl">
+                    {referrer.count.toLocaleString()} visits
+                  </Badge>
+                </motion.div>
+              ))}
+              {(!traffic?.topReferrers || traffic.topReferrers.length === 0) && (
+                <div className="text-center py-12">
+                  <Zap className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-base font-bold text-slate-500">No referrer data available</p>
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Top Referrers */}
-      <Card className="bg-slate-800/30 border border-slate-700/50">
-        <CardHeader>
-          <CardTitle className="text-white">Top Referrers</CardTitle>
-          <CardDescription className="text-slate-400">
-            Where your traffic is coming from
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {(traffic?.topReferrers || []).map((referrer, index) => (
-              <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 font-bold text-sm">
-                    {index + 1}
-                  </div>
-                  <span className="text-white font-medium">{referrer.source}</span>
-                </div>
-                <Badge className="bg-purple-500/20 text-purple-400">
-                  {referrer.count.toLocaleString()} visits
-                </Badge>
-              </div>
-            ))}
-            {(!traffic?.topReferrers || traffic.topReferrers.length === 0) && (
-              <p className="text-center text-slate-400 py-8">No referrer data available</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      </motion.div>
 
       {/* Activity Summary */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <motion.div variants={staggerContainer} className="grid gap-6 lg:grid-cols-3">
         {/* Recent Users */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Users className="h-4 w-4 text-blue-400" />
-              Recent Users
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {(analytics?.recentActivity?.users || []).slice(0, 5).map((user, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-300">{user.name}</span>
-                  <span className="text-xs text-slate-500">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-5 pt-5">
+              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2 font-['Lato',sans-serif]">
+                <Users className="h-4 w-4 text-blue-600" />
+                Recent Users
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              <div className="space-y-3">
+                {(analytics?.recentActivity?.users || []).slice(0, 5).map((user, index) => (
+                  <div key={index} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-all">
+                    <span className="text-sm font-bold text-slate-700 font-['Lato',sans-serif]">
+                      {user.name}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))}
+                {(!analytics?.recentActivity?.users || analytics.recentActivity.users.length === 0) && (
+                  <p className="text-center text-sm font-bold text-slate-400 py-4">No recent users</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        {/* Recent Posts */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Eye className="h-4 w-4 text-purple-400" />
-              Top Posts
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {(analytics?.topPosts || []).slice(0, 5).map((post, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-300 line-clamp-1 flex-1">{post.title}</span>
-                  <span className="text-xs text-slate-500">{post.views} views</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Top Posts */}
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-5 pt-5">
+              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2 font-['Lato',sans-serif]">
+                <Eye className="h-4 w-4 text-purple-600" />
+                Top Posts
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              <div className="space-y-3">
+                {(analytics?.topPosts || []).slice(0, 5).map((post, index) => (
+                  <div key={index} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-slate-50 transition-all">
+                    <span className="text-sm font-bold text-slate-700 font-['Lato',sans-serif] line-clamp-1 flex-1 mr-2">
+                      {post.title}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400 whitespace-nowrap">
+                      {post.views} views
+                    </span>
+                  </div>
+                ))}
+                {(!analytics?.topPosts || analytics.topPosts.length === 0) && (
+                  <p className="text-center text-sm font-bold text-slate-400 py-4">No posts data</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Recent Comments */}
-        <Card className="bg-slate-800/30 border border-slate-700/50">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-green-400" />
-              Recent Comments
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {(analytics?.recentActivity?.comments || []).slice(0, 5).map((comment, index) => (
-                <div key={index} className="text-sm">
-                  <p className="text-slate-300 line-clamp-1">{comment.content}</p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    by {comment.author?.name || 'Anonymous'}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+        <motion.div variants={fadeInUp}>
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all">
+            <CardHeader className="px-5 pt-5">
+              <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2 font-['Lato',sans-serif]">
+                <MessageSquare className="h-4 w-4 text-green-600" />
+                Recent Comments
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-5 pb-5">
+              <div className="space-y-3">
+                {(analytics?.recentActivity?.comments || []).slice(0, 5).map((comment, index) => (
+                  <div key={index} className="p-2.5 rounded-lg hover:bg-slate-50 transition-all">
+                    <p className="text-sm font-bold text-slate-700 font-['Lato',sans-serif] line-clamp-1">
+                      {comment.content}
+                    </p>
+                    <p className="text-xs font-bold text-slate-400 mt-0.5">
+                      by {comment.author?.name || 'Anonymous'}
+                    </p>
+                  </div>
+                ))}
+                {(!analytics?.recentActivity?.comments || analytics.recentActivity.comments.length === 0) && (
+                  <p className="text-center text-sm font-bold text-slate-400 py-4">No recent comments</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
