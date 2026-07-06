@@ -22,8 +22,10 @@ import {
   RefreshCw,
   Shield,
   Clock,
+  Sparkles,
 } from "lucide-react";
 import { authService } from "@/lib/services/auth.service";
+import { motion } from "framer-motion";
 
 function VerifyEmailContent() {
   const [verificationCode, setVerificationCode] = useState([
@@ -159,37 +161,42 @@ function VerifyEmailContent() {
 
   if (isVerified) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[400px] animate-in fade-in zoom-in duration-500">
-          <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl">
+      <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[420px]"
+        >
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-4 pt-6 px-6 text-center">
-              <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/25">
-                <CheckCircle className="h-7 w-7 text-white" />
+              <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/25">
+                <CheckCircle className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-white">
+              <CardTitle className="text-3xl font-bold text-slate-900">
                 Email Verified!
               </CardTitle>
-              <CardDescription className="text-slate-300 text-sm">
+              <CardDescription className="text-base text-slate-600 font-semibold">
                 Your email has been successfully verified
               </CardDescription>
             </CardHeader>
 
             <CardContent className="px-6 pb-4 text-center">
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-base text-slate-600 font-semibold mb-4">
                 Thank you for verifying your email address.
               </p>
-              <div className="bg-slate-800/50 rounded-xl p-4 mb-4">
-                <p className="text-xs text-slate-400">
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-4 mb-4">
+                <p className="text-sm font-bold text-slate-700 mb-2">
                   You now have full access to:
                 </p>
-                <div className="flex flex-wrap justify-center gap-3 mt-2">
-                  <span className="text-xs text-purple-400">
+                <div className="flex flex-wrap justify-center gap-4">
+                  <span className="text-sm font-semibold text-blue-600">
                     ✓ Comment on posts
                   </span>
-                  <span className="text-xs text-purple-400">
+                  <span className="text-sm font-semibold text-blue-600">
                     ✓ Like content
                   </span>
-                  <span className="text-xs text-purple-400">
+                  <span className="text-sm font-semibold text-blue-600">
                     ✓ Get newsletter updates
                   </span>
                 </div>
@@ -197,21 +204,23 @@ function VerifyEmailContent() {
             </CardContent>
 
             <CardFooter className="flex flex-col gap-3 pb-6 px-6">
-              <Button
+              <motion.button
                 onClick={() => router.push("/login")}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/25"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
               >
                 Sign In to Your Account
-              </Button>
+              </motion.button>
               <Link
                 href="/"
-                className="text-xs text-slate-400 hover:text-white text-center transition-colors"
+                className="text-base font-bold text-slate-600 hover:text-blue-600 text-center transition-colors"
               >
                 ← Back to Home
               </Link>
             </CardFooter>
           </Card>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -219,25 +228,43 @@ function VerifyEmailContent() {
   const codeComplete = verificationCode.every((digit) => digit !== "");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[400px]">
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-[440px]"
+      >
         <Link
           href="/signup"
-          className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white text-sm mb-4 transition-colors group"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-bold mb-4 transition-colors group"
         >
-          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Back to Signup
         </Link>
 
-        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl">
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-4 pt-6 px-6 text-center">
-            <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <Mail className="h-7 w-7 text-white" />
+            <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-600/25">
+              <Mail className="h-8 w-8 text-white" />
             </div>
-            <CardTitle className="text-2xl font-bold text-white">
+            <CardTitle className="text-2xl font-bold text-slate-900">
               Verify Your Email
             </CardTitle>
-            <CardDescription className="text-slate-300 text-sm">
+            <CardDescription className="text-base text-slate-600 font-semibold">
               Enter the 5-digit code sent to your email
             </CardDescription>
           </CardHeader>
@@ -245,44 +272,50 @@ function VerifyEmailContent() {
           <form onSubmit={handleVerify}>
             <CardContent className="space-y-5 px-6 pb-5">
               {error && (
-                <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 p-3 rounded-xl border border-red-500/20">
-                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center gap-2 text-base font-bold text-red-700 bg-red-50 p-3 rounded-xl border-2 border-red-200"
+                >
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
                   <span>{error}</span>
-                </div>
+                </motion.div>
               )}
 
               {resendMessage && (
-                <div
-                  className={`flex items-center gap-2 text-sm p-3 rounded-xl ${
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex items-center gap-2 text-base font-bold p-3 rounded-xl border-2 ${
                     resendMessage.includes("sent")
-                      ? "text-green-400 bg-green-500/10 border border-green-500/20"
-                      : "text-red-400 bg-red-500/10 border border-red-500/20"
+                      ? "text-green-700 bg-green-50 border-green-200"
+                      : "text-red-700 bg-red-50 border-red-200"
                   }`}
                 >
                   {resendMessage.includes("sent") ? (
-                    <CheckCircle className="h-4 w-4 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 flex-shrink-0" />
                   ) : (
-                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
                   )}
                   <span>{resendMessage}</span>
-                </div>
+                </motion.div>
               )}
 
               <div className="text-center">
-                <p className="text-sm text-slate-300 mb-1">
+                <p className="text-base font-semibold text-slate-600 mb-1">
                   We sent a code to:
                 </p>
-                <p className="text-base font-medium text-white bg-slate-700/50 inline-block px-4 py-1 rounded-full">
+                <p className="text-lg font-bold text-slate-800 bg-slate-100 border-2 border-slate-200 inline-block px-4 py-1.5 rounded-xl">
                   {email}
                 </p>
               </div>
 
               <div className="space-y-3">
-                <Label className="text-slate-300 text-sm text-center block">
+                <Label className="text-base font-bold text-slate-700 text-center block">
                   Verification Code
                 </Label>
                 <div
-                  className="flex justify-center gap-2"
+                  className="flex justify-center gap-3"
                   onPaste={handlePaste}
                 >
                   {verificationCode.map((digit, index) => (
@@ -300,49 +333,51 @@ function VerifyEmailContent() {
                         )
                       }
                       onKeyDown={(e) => handleKeyDown(index, e)}
-                      className="w-12 h-12 text-center text-2xl font-bold bg-slate-800/50 border border-slate-600 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-white transition-all"
+                      className="w-14 h-14 text-center text-2xl font-bold bg-white border-2 border-slate-200 rounded-xl focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-slate-800 transition-all"
                       autoFocus={index === 0}
                     />
                   ))}
                 </div>
-                <p className="text-[10px] text-slate-400 text-center flex items-center justify-center gap-1">
-                  <Shield className="h-3 w-3" />
+                <p className="text-sm font-semibold text-slate-500 text-center flex items-center justify-center gap-1.5">
+                  <Shield className="h-4 w-4" />
                   Enter the 5-digit code from your email
                 </p>
               </div>
 
-              <Button
+              <motion.button
                 type="submit"
                 disabled={isLoading || !codeComplete}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed h-11 text-base"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  <span className="flex items-center justify-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                     Verifying...
                   </span>
                 ) : (
                   "Verify Email"
                 )}
-              </Button>
+              </motion.button>
             </CardContent>
           </form>
 
           <CardFooter className="flex flex-col gap-3 pb-6 px-6">
             <div className="text-center">
-              <p className="text-sm text-slate-400">
+              <p className="text-base text-slate-600 font-semibold">
                 Didn't receive the code?{" "}
                 <button
                   type="button"
                   onClick={handleResendCode}
                   disabled={resendLoading || countdown > 0}
-                  className="text-purple-400 hover:text-purple-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1"
+                  className="text-blue-600 hover:text-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
                 >
                   {resendLoading ? (
-                    <RefreshCw className="h-3 w-3 animate-spin" />
+                    <RefreshCw className="h-4 w-4 animate-spin" />
                   ) : countdown > 0 ? (
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="h-4 w-4" />
                       Resend in {countdown}s
                     </span>
                   ) : (
@@ -352,13 +387,21 @@ function VerifyEmailContent() {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-[11px] text-slate-500">
+              <p className="text-sm font-semibold text-slate-500">
                 Check your spam folder if you don't see the email in your inbox
               </p>
             </div>
           </CardFooter>
         </Card>
-      </div>
+
+        {/* Decorative elements */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-500 font-semibold flex items-center justify-center gap-2">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            Secure email verification
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -367,12 +410,12 @@ export default function VerifyEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-          <div className="w-full max-w-[360px]">
-            <Card className="bg-slate-800/30 border border-slate-700/50 rounded-xl">
+        <div className="min-h-screen bg-slate-50/50 flex items-center justify-center px-4 py-8">
+          <div className="w-full max-w-[400px]">
+            <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg">
               <CardContent className="py-12 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div>
-                <p className="text-sm text-slate-400 mt-4">Loading...</p>
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent mx-auto"></div>
+                <p className="text-base font-bold text-slate-600 mt-4">Loading...</p>
               </CardContent>
             </Card>
           </div>

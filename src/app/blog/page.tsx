@@ -32,6 +32,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { postService } from "@/lib/services/post.service";
 import LikeButton from "@/components/blog/LikeButton";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 interface Post {
   id: string;
@@ -60,136 +62,196 @@ interface Pagination {
   pages: number;
 }
 
-// Card background variants
-const cardBgVariants = [
-  "bg-black",
- 
-];
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
 
-function PostCard({ post }: { post: Post }) {
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const cardHover = {
+  rest: { scale: 1 },
+  hover: { 
+    scale: 1.02,
+    transition: { duration: 0.3 }
+  }
+};
+
+function PostCard({ post, index }: { post: Post; index: number }) {
   const { user } = useAuth();
-  
+  const [imgError, setImgError] = useState(false);
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // Check if image is from Cloudinary
+  const isCloudinaryImage = (url: string) => {
+    return url?.includes('res.cloudinary.com') || false;
+  };
+
+  const imageUrl = post.coverImage || '/placeholder-blog.png';
+  const isCloudinary = isCloudinaryImage(imageUrl);
+
   return (
-    <Card className="group flex flex-col overflow-hidden bg-slate-900/85 border border-slate-700/40 transition-all duration-300 hover:border-teal-500/50 hover:shadow-xl hover:shadow-teal-900/20 hover:-translate-y-1 rounded-xl backdrop-blur-sm">
-      <CardHeader className="p-0 relative">
-        <Link href={`/blog/${post.slug}`}>
-          <div className="relative aspect-video overflow-hidden">
-            <Image
-              src={
-                post.coverImage ||
-                "https://picsum.photos/seed/blog-fallback/600/400"
-              }
-              alt={post.title}
-              width={600}
-              height={400}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={fadeInUp}
+      whileHover="hover"
+      initial="rest"
+      animate="rest"
+    >
+      <motion.div
+        variants={cardHover}
+        className="group bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-300 transition-all duration-300 flex flex-col"
+      >
+        <CardHeader className="p-0 relative">
+          <Link href={`/blog/${post.slug}`}>
+            <div className="relative aspect-video overflow-hidden bg-slate-100">
+              {!imgError ? (
+                isCloudinary ? (
+                  // Use regular img tag for Cloudinary images to avoid Next.js optimization issues
+                  <img
+                    src={imageUrl}
+                    alt={post.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={() => setImgError(true)}
+                    loading="lazy"
+                  />
+                ) : (
+                  <Image
+                    src={imageUrl}
+                    alt={post.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={() => setImgError(true)}
+                    priority={index < 4}
+                  />
+                )
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <span className="text-4xl opacity-50">📝</span>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+              {post.categories && post.categories.length > 0 && (
+                <div className="absolute top-3 left-3">
+                  <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl shadow-lg">
+                    {post.categories[0].name}
+                  </Badge>
+                </div>
+              )}
+            </div>
+          </Link>
+        </CardHeader>
+
+        <CardContent className="p-5 flex-grow">
+          <div className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-2">
+            <Calendar className="h-4 w-4" />
+            <span>{formatDate(post.publishedAt)}</span>
+            <span>•</span>
+            <Clock className="h-4 w-4" />
+            <span>{post.readTime} min read</span>
+          </div>
+
+          <CardTitle className="text-xl font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">
+            <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+          </CardTitle>
+
+          <p className="text-base text-slate-600 font-semibold line-clamp-2 mb-3 leading-relaxed">
+            {post.excerpt}
+          </p>
+
+          <div className="flex flex-wrap gap-1.5 mt-1">
+            {post.categories?.slice(1, 3).map((cat, index) => (
+              <Badge
+                key={cat.slug || index}
+                variant="outline"
+                className="text-sm font-bold border-blue-200 text-blue-700 bg-blue-50 px-3 py-1 rounded-xl"
+              >
+                {cat.name}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+
+        <CardFooter className="p-5 pt-0 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6 border-2 border-blue-200">
+                <AvatarImage src={post.author.avatar} alt={post.author.name} />
+                <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-bold">
+                  {post.author.name?.charAt(0) || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-bold text-slate-600 truncate max-w-[100px]">
+                {post.author.name?.split(" ")[0]}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <LikeButton
+              postId={post.id}
+              initialLikes={post._count?.likes || 0}
+              userHasLiked={post.userHasLiked || false}
+              showDetails={true}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-            {post.categories && post.categories.length > 0 && (
-              <div className="absolute top-2 left-2">
-                <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 border-0 text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 font-medium">
-                  {post.categories[0].name}
-                </Badge>
-              </div>
-            )}
+            <div className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition-colors">
+              <MessageCircle className="h-4 w-4" />
+              <span className="text-sm font-bold">
+                {post._count?.comments || 0}
+              </span>
+            </div>
           </div>
-        </Link>
-      </CardHeader>
-
-      <CardContent className="p-3 sm:p-4 flex-grow">
-        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] text-slate-400 mb-1.5 sm:mb-2">
-          <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-          <span>{formatDate(post.publishedAt)}</span>
-          <span>•</span>
-          <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-          <span>{post.readTime} min read</span>
-        </div>
-
-        <CardTitle className="text-xs sm:text-sm font-bold text-white mb-1.5 sm:mb-2 line-clamp-2 group-hover:text-teal-300 transition-colors leading-snug">
-          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-        </CardTitle>
-
-        <p className="text-slate-400 text-[10px] sm:text-xs line-clamp-2 mb-2 leading-relaxed">
-          {post.excerpt}
-        </p>
-
-        <div className="flex flex-wrap gap-1 mt-1">
-          {post.categories?.slice(1, 3).map((cat, index) => (
-            <Badge
-              key={cat.slug || index}
-              variant="outline"
-              className="text-[8px] sm:text-[9px] border-teal-500/30 text-teal-300 bg-teal-500/5 px-1 sm:px-1.5 py-0 font-medium"
-            >
-              {cat.name}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-
-      <CardFooter className="p-3 sm:p-4 pt-0 flex items-center justify-between">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-1.5">
-            <Avatar className="h-4 w-4 sm:h-5 sm:w-5 border border-teal-500/30">
-              <AvatarImage src={post.author.avatar} alt={post.author.name} />
-              <AvatarFallback className="bg-teal-500/20 text-teal-300 text-[7px] sm:text-[8px] font-bold">
-                {post.author.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-[9px] sm:text-[10px] text-slate-400 truncate max-w-[60px] sm:max-w-[80px]">
-              {post.author.name?.split(" ")[0]}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <LikeButton
-            postId={post.id}
-            initialLikes={post._count?.likes || 0}
-            userHasLiked={post.userHasLiked || false}
-            showDetails={true}
-          />
-          <div className="flex items-center gap-0.5 text-slate-400 hover:text-teal-400 transition-colors">
-            <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-            <span className="text-[8px] sm:text-[9px] font-medium">
-              {post._count?.comments || 0}
-            </span>
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </motion.div>
+    </motion.div>
   );
 }
 
 function PostCardSkeleton() {
   return (
-    <Card className="flex flex-col overflow-hidden bg-slate-800/85 border border-slate-700/40 rounded-xl backdrop-blur-sm">
+    <Card className="flex flex-col overflow-hidden bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm">
       <CardHeader className="p-0">
         <Skeleton className="aspect-video w-full" />
       </CardHeader>
-      <CardContent className="p-3 sm:p-4 flex-grow">
-        <div className="flex items-center gap-1.5 mb-1.5 sm:mb-2">
-          <Skeleton className="h-2.5 sm:h-3 w-12 sm:w-16" />
-          <Skeleton className="h-2.5 sm:h-3 w-2.5 sm:w-3 rounded-full" />
-          <Skeleton className="h-2.5 sm:h-3 w-10 sm:w-12" />
+      <CardContent className="p-5 flex-grow">
+        <div className="flex items-center gap-2 mb-2">
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-4 w-4 rounded-full" />
+          <Skeleton className="h-4 w-12" />
         </div>
-        <Skeleton className="h-3 sm:h-4 w-3/4 mb-1.5 sm:mb-2" />
-        <Skeleton className="h-2.5 sm:h-3 w-full mb-1" />
-        <Skeleton className="h-2.5 sm:h-3 w-2/3 mb-2 sm:mb-3" />
-        <div className="flex gap-1">
-          <Skeleton className="h-3 sm:h-4 w-10 sm:w-12" />
-          <Skeleton className="h-3 sm:h-4 w-10 sm:w-12" />
+        <Skeleton className="h-6 w-3/4 mb-2" />
+        <Skeleton className="h-4 w-full mb-1" />
+        <Skeleton className="h-4 w-2/3 mb-3" />
+        <div className="flex gap-1.5">
+          <Skeleton className="h-6 w-16 rounded-xl" />
+          <Skeleton className="h-6 w-16 rounded-xl" />
         </div>
       </CardContent>
-      <CardFooter className="p-3 sm:p-4 pt-0">
+      <CardFooter className="p-5 pt-0">
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-1.5">
-            <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded-full" />
-            <Skeleton className="h-2 sm:h-2.5 w-10 sm:w-12" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-6 w-6 rounded-full" />
+            <Skeleton className="h-4 w-16" />
           </div>
-          <div className="flex gap-2">
-            <Skeleton className="h-7 w-16" />
-            <div className="flex items-center gap-0.5">
-              <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
-              <Skeleton className="h-2.5 sm:h-3 w-6 sm:w-8" />
+          <div className="flex gap-3">
+            <Skeleton className="h-8 w-16" />
+            <div className="flex items-center gap-1">
+              <Skeleton className="h-4 w-4" />
+              <Skeleton className="h-4 w-8" />
             </div>
           </div>
         </div>
@@ -204,6 +266,10 @@ export default function BlogPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
 
   useEffect(() => {
     async function fetchPosts() {
@@ -249,128 +315,172 @@ export default function BlogPage() {
   const regularPosts = posts.slice(4);
 
   return (
-    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
-      {/* Grid overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
 
-      {/* Glow orbs */}
-      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
-
-      <div className="relative z-10 container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
-            <Sparkles className="h-3 w-3 text-teal-400" />
-            <span className="text-[10px] sm:text-xs font-medium text-teal-300">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        {/* Hero Section with Animation */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-4">
+            <Sparkles className="h-5 w-5 text-blue-600" />
+            <span className="text-base font-bold text-blue-700 uppercase tracking-wide">
               Latest Articles
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 tracking-tight">
             From the{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Blog
             </span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-4">
             Insights, tutorials, and deep dives into web development, design,
             and technology.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Search Bar */}
-        <div className="mb-6 sm:mb-8 max-w-sm mx-auto">
+        {/* Search Bar with Animation */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-10 max-w-md mx-auto"
+        >
           <div className="relative">
             <Input
               type="search"
               placeholder="Search articles..."
-              className="pl-8 sm:pl-9 py-1.5 h-8 sm:h-9 text-xs sm:text-sm bg-slate-800/50 border-slate-700 focus:border-teal-500 text-slate-300 rounded-full"
+              className="pl-12 pr-4 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 rounded-2xl shadow-sm font-semibold"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Search className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 h-3 sm:h-3.5 w-3 sm:w-3.5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
           </div>
-        </div>
+        </motion.div>
 
         {/* Featured Posts Section - 4 columns */}
         {!loading && featuredPosts.length > 0 && !searchTerm && (
-          <div className="mb-8 sm:mb-12">
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
-              <h2 className="text-xs sm:text-sm font-bold text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mb-12"
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
+              <h2 className="text-2xl font-bold text-slate-900">
                 Featured Articles
               </h2>
             </div>
-            <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <motion.div 
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            >
               {featuredPosts.map((post, index) => (
-                <PostCard key={post.id || index} post={post} />
+                <PostCard key={post.id || index} post={post} index={index} />
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* All Posts Section */}
-        <div>
-           {!loading && regularPosts.length > 0 && !searchTerm && (
-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
-              <Zap className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
-              <h2 className="text-xs sm:text-sm font-bold text-white">
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={fadeInUp}
+        >
+          {!loading && regularPosts.length > 0 && !searchTerm && (
+            <div className="flex items-center gap-3 mb-5">
+              <Zap className="h-5 w-5 text-indigo-600" />
+              <h2 className="text-2xl font-bold text-slate-900">
                 Recent Posts
               </h2>
             </div>
           )}
 
           {searchTerm && posts.length > 0 && (
-            <div className="mb-4">
-              <p className="text-[10px] sm:text-xs text-slate-400">
+            <div className="mb-5">
+              <p className="text-base text-slate-600 font-bold">
                 Found {posts.length} result{posts.length !== 1 ? "s" : ""} for "{searchTerm}"
               </p>
             </div>
           )}
 
           {/* Posts Grid - 4 columns */}
-          <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {loading ? (
               Array.from({ length: 8 }).map((_, i) => (
                 <PostCardSkeleton key={i} />
               ))
             ) : posts.length > 0 ? (
               (searchTerm ? posts : regularPosts).map((post, index) => (
-                <PostCard key={post.id || index} post={post} />
+                <PostCard key={post.id || index} post={post} index={index} />
               ))
             ) : (
-              <div className="col-span-full text-center py-10 sm:py-12">
-                <div className="inline-flex p-2.5 sm:p-3 rounded-full bg-slate-800/50 mb-3">
-                  <Search className="h-5 w-5 sm:h-6 sm:w-6 text-slate-500" />
+              <motion.div 
+                variants={fadeInUp}
+                className="col-span-full text-center py-16"
+              >
+                <div className="inline-flex p-4 rounded-2xl bg-slate-100 border-2 border-slate-200 mb-4">
+                  <Search className="h-8 w-8 text-slate-400" />
                 </div>
-                <h3 className="text-sm sm:text-base font-bold text-white mb-1">
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">
                   No posts found
                 </h3>
-                <p className="text-[10px] sm:text-xs text-slate-400">
+                <p className="text-lg text-slate-600 font-semibold">
                   Try adjusting your search or browse all articles.
                 </p>
-              </div>
+              </motion.div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        {/* Pagination */}
+        {/* Pagination with Animation */}
         {!loading &&
-           pagination &&
-           pagination.pages > 1 &&
-           posts.length > 0 && (
-            <div className="mt-8 sm:mt-12 flex justify-center items-center gap-1.5 sm:gap-2">
+          pagination &&
+          pagination.pages > 1 &&
+          posts.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="mt-12 flex justify-center items-center gap-2"
+            >
               <Button
                 variant="outline"
-                size="sm"
+                size="lg"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="border-slate-700 text-slate-300 hover:border-teal-500 hover:text-teal-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
+                className="border-2 border-slate-200 text-white hover:border-blue-400 hover:text-blue-600 rounded-2xl h-10 text-base font-bold px-5 transition-all"
               >
-                <ArrowLeft className="mr-0.5 sm:mr-1 h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Prev
               </Button>
-              <div className="flex items-center gap-0.5 sm:gap-1">
+              <div className="flex items-center gap-1.5">
                 {Array.from(
                   { length: Math.min(5, pagination.pages) },
                   (_, i) => {
@@ -389,12 +499,12 @@ export default function BlogPage() {
                       <Button
                         key={i}
                         variant={pageNum === page ? "default" : "outline"}
-                        size="sm"
+                        size="lg"
                         onClick={() => setPage(pageNum)}
-                        className={`w-6 h-6 sm:w-7 sm:h-7 p-0 rounded-full text-[10px] sm:text-xs font-semibold ${
+                        className={`w-10 h-10 p-0 rounded-2xl text-base font-bold transition-all ${
                           pageNum === page
-                            ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white"
-                            : "border-slate-700 text-slate-400 hover:border-teal-500 hover:text-teal-300"
+                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/25"
+                            : "border-2 border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600"
                         }`}
                       >
                         {pageNum}
@@ -405,29 +515,34 @@ export default function BlogPage() {
               </div>
               <Button
                 variant="outline"
-                size="sm"
+                size="lg"
                 onClick={() =>
                   setPage((p) => Math.min(pagination.pages, p + 1))
                 }
                 disabled={page === pagination.pages}
-                className="border-slate-700 text-slate-300 hover:border-teal-500 hover:text-teal-300 rounded-full h-6 sm:h-7 text-[10px] sm:text-xs px-2.5 sm:px-3 font-medium"
+                className="border-2 border-slate-200 text-white hover:border-blue-400 hover:text-white rounded-2xl h-10 text-base font-bold px-5 transition-all"
               >
                 Next
-                <ArrowRight className="ml-0.5 sm:ml-1 h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </div>
+            </motion.div>
           )}
 
-        {/* Stats Footer */}
+        {/* Stats Footer with Animation */}
         {!loading && posts.length > 0 && pagination && (
-          <div className="mt-8 sm:mt-12 pt-4 sm:pt-5 border-t border-slate-700/30">
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-center text-slate-400 text-[8px] sm:text-[10px] font-medium">
-              <div className="flex items-center gap-1">
-                <Rss className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-12 pt-6 border-t-2 border-slate-200"
+          >
+            <div className="flex flex-wrap justify-center gap-6 text-center text-base text-slate-600 font-bold">
+              <div className="flex items-center gap-2">
+                <Rss className="h-5 w-5 text-blue-600" />
                 <span>{pagination.total} articles published</span>
               </div>
-              <div className="flex items-center gap-1">
-                <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
+              <div className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-blue-600" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.likes || 0),
@@ -436,8 +551,8 @@ export default function BlogPage() {
                   total likes
                 </span>
               </div>
-              <div className="flex items-center gap-1">
-                <MessageCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-teal-400" />
+              <div className="flex items-center gap-2">
+                <MessageCircle className="h-5 w-5 text-blue-600" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.comments || 0),
@@ -447,7 +562,7 @@ export default function BlogPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

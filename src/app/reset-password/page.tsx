@@ -21,8 +21,10 @@ import {
   ArrowLeft,
   CheckCircle,
   AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import { authService } from "@/lib/services/auth.service";
+import { motion } from "framer-motion";
 
 function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -68,7 +70,6 @@ function ResetPasswordForm() {
     }
   };
 
-  // Password strength calculator
   const getPasswordStrength = () => {
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -96,133 +97,165 @@ function ResetPasswordForm() {
 
   if (!email || !code) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[360px]">
+      <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-[400px]"
+        >
           <Link
             href="/forgot-password"
-            className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
+            className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-bold mb-4 transition-colors group"
           >
-            <ArrowLeft className="h-3 w-3" />
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Forgot Password
           </Link>
 
-          <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
-            <CardHeader className="pb-4 pt-5 px-5 text-center">
-              <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-pink-600 flex items-center justify-center shadow-lg shadow-red-500/25">
-                <AlertCircle className="h-5 w-5 text-white" />
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4 pt-6 px-6 text-center">
+              <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center shadow-lg shadow-red-500/25">
+                <AlertCircle className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-lg font-bold text-white">
+              <CardTitle className="text-2xl font-bold text-slate-900">
                 Invalid Reset Link
               </CardTitle>
-              <CardDescription className="text-slate-400 text-xs">
+              <CardDescription className="text-base text-slate-600 font-semibold">
                 Missing or invalid information
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="px-5 pb-4 text-center">
-              <p className="text-sm text-slate-300">
+            <CardContent className="px-6 pb-4 text-center">
+              <p className="text-base text-slate-600 font-semibold">
                 The password reset link is invalid or missing required
                 information.
               </p>
             </CardContent>
 
-            <CardFooter className="flex justify-center pb-5 px-5">
-              <Button
+            <CardFooter className="flex justify-center pb-6 px-6">
+              <motion.button
                 onClick={() => router.push("/forgot-password")}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="py-3 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
               >
                 Request New Reset Link
-              </Button>
+              </motion.button>
             </CardFooter>
           </Card>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-[360px]">
-          <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
-            <CardHeader className="pb-4 pt-5 px-5 text-center">
-              <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-500/25">
-                <CheckCircle className="h-5 w-5 text-white" />
+      <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[400px]"
+        >
+          <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-4 pt-6 px-6 text-center">
+              <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/25">
+                <CheckCircle className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-lg font-bold text-white">
+              <CardTitle className="text-2xl font-bold text-slate-900">
                 Password Reset Successful
               </CardTitle>
-              <CardDescription className="text-slate-400 text-xs">
+              <CardDescription className="text-base text-slate-600 font-semibold">
                 Your password has been updated
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="px-5 pb-4 text-center">
-              <p className="text-sm text-slate-300 mb-3">
+            <CardContent className="px-6 pb-4 text-center">
+              <p className="text-base text-slate-600 font-semibold mb-4">
                 Your password has been successfully reset.
               </p>
-              <div className="bg-slate-800/50 rounded-lg p-3">
-                <p className="text-xs text-slate-400">
+              <div className="bg-slate-50 border-2 border-slate-200 rounded-xl p-4">
+                <p className="text-sm font-bold text-slate-600">
                   You can now sign in with your new password.
                 </p>
               </div>
             </CardContent>
 
-            <CardFooter className="flex justify-center pb-5 px-5">
-              <Button
+            <CardFooter className="flex justify-center pb-6 px-6">
+              <motion.button
                 onClick={() => router.push("/login")}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="py-3 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
               >
                 Sign In Now
-              </Button>
+              </motion.button>
             </CardFooter>
           </Card>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[360px]">
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-[440px]"
+      >
         <Link
           href="/login"
-          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-bold mb-4 transition-colors group"
         >
-          <ArrowLeft className="h-3 w-3" />
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Back to Login
         </Link>
 
-        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
-          <CardHeader className="pb-4 pt-5 px-5 text-center">
-            <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <Lock className="h-5 w-5 text-white" />
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="pb-4 pt-6 px-6 text-center">
+            <div className="mx-auto mb-3 w-16 h-16 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-600/25">
+              <Lock className="h-8 w-8 text-white" />
             </div>
-            <CardTitle className="text-lg font-bold text-white">
+            <CardTitle className="text-2xl font-bold text-slate-900">
               Set New Password
             </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
+            <CardDescription className="text-base text-slate-600 font-semibold">
               Enter your new password
             </CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-3 px-5 pb-4">
-              <div className="space-y-1.5">
+            <CardContent className="space-y-4 px-6 pb-4">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-slate-300 text-xs">
+                  <Label htmlFor="password" className="text-base font-bold text-slate-700">
                     New Password
                   </Label>
                   {password && (
                     <span
-                      className={`text-[9px] px-1.5 py-0.5 rounded ${
+                      className={`text-sm font-bold px-3 py-1 rounded-full ${
                         strength >= 4
-                          ? "bg-green-500/20 text-green-400"
+                          ? "bg-green-100 text-green-700"
                           : strength >= 3
-                            ? "bg-blue-500/20 text-blue-400"
+                            ? "bg-blue-100 text-blue-700"
                             : strength >= 2
-                              ? "bg-yellow-500/20 text-yellow-400"
-                              : "bg-red-500/20 text-red-400"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-red-100 text-red-700"
                       }`}
                     >
                       {getStrengthText()}
@@ -230,12 +263,12 @@ function ResetPasswordForm() {
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Create new password"
-                    className="pl-8 pr-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500"
+                    className="pl-10 pr-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -244,49 +277,53 @@ function ResetPasswordForm() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-3.5 w-3.5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
                 {password && (
-                  <div className="mt-1">
-                    <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-300 ${getStrengthColor()}`}
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-2"
+                  >
+                    <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                      <motion.div
+                        className={`h-full transition-all duration-500 ${getStrengthColor()}`}
                         style={{ width: `${(strength / 5) * 100}%` }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(strength / 5) * 100}%` }}
                       />
                     </div>
-                    <p className="text-[9px] text-slate-500 mt-1">
+                    <p className="text-sm font-semibold text-slate-500 mt-1">
                       Password strength: {getStrengthText()}
                     </p>
-                  </div>
+                  </motion.div>
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="confirmPassword"
-                  className="text-slate-300 text-xs"
-                >
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-base font-bold text-slate-700">
                   Confirm Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm new password"
-                    className={`pl-8 pr-8 py-1.5 h-9 text-sm bg-slate-800/50 border focus:ring-1 text-white placeholder-slate-500 ${
+                    className={`pl-10 pr-10 py-3 h-12 text-base bg-white border-2 focus:ring-2 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200 ${
                       confirmPassword && password !== confirmPassword
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                         : confirmPassword && password === confirmPassword
-                          ? "border-green-500 focus:border-green-500 focus:ring-green-500"
-                          : "border-slate-700 focus:border-purple-500 focus:ring-purple-500"
+                          ? "border-green-400 focus:border-green-400 focus:ring-green-100"
+                          : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                     }`}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -295,61 +332,90 @@ function ResetPasswordForm() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-3.5 w-3.5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
                 {confirmPassword && password !== confirmPassword && (
-                  <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in">
-                    <AlertCircle className="h-3 w-3" />
+                  <motion.p 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-sm font-bold text-red-600 flex items-center gap-2"
+                  >
+                    <AlertCircle className="h-4 w-4" />
                     Passwords do not match
-                  </p>
+                  </motion.p>
                 )}
                 {confirmPassword &&
                   password === confirmPassword &&
                   password && (
-                    <p className="text-[10px] text-green-400 flex items-center gap-1 animate-in fade-in">
-                      <CheckCircle className="h-3 w-3" />
+                    <motion.p 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-sm font-bold text-green-600 flex items-center gap-2"
+                    >
+                      <CheckCircle className="h-4 w-4" />
                       Passwords match
-                    </p>
+                    </motion.p>
                   )}
               </div>
 
               {error && (
-                <div className="flex items-center gap-2 text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
-                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center gap-2 text-base font-bold text-red-700 bg-red-50 p-3 rounded-xl border-2 border-red-200"
+                >
+                  <AlertCircle className="h-5 w-5 flex-shrink-0" />
                   <span>{error}</span>
-                </div>
+                </motion.div>
               )}
 
-              <Button
+              <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Resetting..." : "Reset Password"}
-              </Button>
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Resetting...
+                  </span>
+                ) : (
+                  "Reset Password"
+                )}
+              </motion.button>
             </CardContent>
           </form>
 
-          <CardFooter className="flex justify-center pb-5 px-5">
-            <p className="text-xs text-slate-400">
+          <CardFooter className="flex justify-center pb-6 px-6">
+            <p className="text-base text-slate-600 font-semibold">
               Remembered your password?{" "}
               <Link
                 href="/login"
-                className="text-purple-400 hover:text-purple-300 font-medium"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
               >
                 Sign in
               </Link>
             </p>
           </CardFooter>
         </Card>
-      </div>
+
+        {/* Decorative elements */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-500 font-semibold flex items-center justify-center gap-2">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            Secure password reset
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -358,10 +424,10 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+        <div className="min-h-screen bg-slate-50/50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
-            <p className="text-slate-400 mt-2 text-sm">Loading...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto"></div>
+            <p className="text-slate-600 mt-4 text-base font-bold">Loading...</p>
           </div>
         </div>
       }

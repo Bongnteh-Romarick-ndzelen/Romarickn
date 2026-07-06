@@ -11,14 +11,8 @@ import {
   Twitter,
   Facebook,
   Send,
-  CheckCircle,
-  AlertCircle,
-  MapPin,
-  Clock,
-  MessageCircle,
-  Bot,
   Sparkles,
-  Zap,
+  ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -26,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { subscriptionService } from "@/lib/services/subscription.service";
 import { AIAssistance } from "./AIAssistance";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 function WhatsAppIcon(props: React.ComponentProps<"svg">) {
   return (
@@ -64,7 +59,6 @@ export function Footer() {
       const response = await subscriptionService.subscribe(email);
       if (response.success) {
         setIsSuccess(true);
-        // Fixed: Remove variant: "success" - use default or just title
         toast({
           variant: "success",
           title: "Success! 🎉",
@@ -113,93 +107,114 @@ export function Footer() {
       {/* AI Chat Assistant */}
       <AIAssistance />
 
-      <footer className="border-t bg-slate-950/80 border-slate-800/50 mt-auto">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+      <footer className="border-t-2 bg-slate-900 border-slate-800/50 mt-auto">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10">
           {/* Newsletter Subscription Section */}
-          <div className="mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b border-slate-800/50">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-slate-700/50"
+          >
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
               <div className="text-center lg:text-left">
-                <h3 className="text-xs sm:text-sm font-bold text-white mb-0.5">
-                  Subscribe to newsletter
-                </h3>
-                <p className="text-[9px] sm:text-[10px] text-slate-400">
-                  Get latest posts delivered to your inbox
+                <div className="inline-flex items-center gap-2 mb-1">
+                  <Sparkles className="h-5 w-5 text-teal-400" />
+                  <h3 className="font-['Radley',serif] text-xl sm:text-2xl font-bold text-white">
+                    Stay Updated
+                  </h3>
+                </div>
+                <p className="font-['Lato',sans-serif] text-base sm:text-lg font-bold text-slate-300">
+                  Get the latest posts delivered to your inbox
                 </p>
               </div>
 
               <form
                 onSubmit={handleSubscribe}
-                className="flex flex-row gap-2 w-full max-w-md"
+                className="flex flex-col sm:flex-row gap-3 w-full max-w-lg"
               >
                 <div className="flex-1 relative">
-                  <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-500" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-7 sm:pl-8 py-1.5 h-8 sm:h-9 text-[10px] sm:text-xs bg-slate-800/50 border-slate-700 focus:border-teal-500 text-white placeholder:text-slate-500 rounded-lg"
+                    className="pl-11 pr-4 py-3 h-12 text-base bg-slate-800/50 border-slate-700 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-white placeholder:text-slate-500 rounded-xl font-['Lato',sans-serif] font-semibold"
                     required
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-[10px] sm:text-xs h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg font-semibold whitespace-nowrap"
+                  className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-base font-bold h-12 px-6 rounded-xl shadow-lg shadow-teal-500/25 transition-all whitespace-nowrap font-['Lato',sans-serif]"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center gap-1">
-                      <div className="h-2.5 w-2.5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                      <span className="hidden sm:inline">Sub...</span>
+                    <span className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                      <span>Subscribing...</span>
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1">
-                      <Send className="h-3 w-3" />
-                      <span className="hidden sm:inline">Subscribe</span>
+                    <span className="flex items-center gap-2">
+                      <Send className="h-4 w-4" />
+                      Subscribe
                     </span>
                   )}
                 </Button>
               </form>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main Footer Content */}
-          <div className="flex flex-col items-center justify-between gap-4 sm:gap-5 md:flex-row">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col items-center justify-between gap-5 sm:gap-6 md:flex-row"
+          >
             {/* Brand & Copyright */}
-            <div className="flex flex-col items-center md:items-start gap-1 text-center md:text-left">
-              <div className="flex items-center gap-1.5">
-                <div className="p-1 rounded-md bg-gradient-to-br from-teal-500/20 to-cyan-500/20">
-                  <Code className="h-3 w-3 text-teal-400" />
+            <div className="flex flex-col items-center md:items-start gap-2 text-center md:text-left">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20">
+                  <Code className="h-5 w-5 text-teal-400" />
                 </div>
-                <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
-                  &copy; {new Date().getFullYear()} Bongnteh Romarick
-                </p>
+                <div className="flex flex-col">
+                  <span className="font-['Radley',serif] text-lg font-bold text-white">
+                    Bongnteh Romarick
+                  </span>
+                  <span className="font-['Lato',sans-serif] text-sm font-semibold text-slate-400">
+                    Full-Stack Developer
+                  </span>
+                </div>
               </div>
+              <p className="font-['Lato',sans-serif] text-sm font-bold text-slate-400">
+                &copy; {new Date().getFullYear()} All rights reserved.
+              </p>
             </div>
 
             {/* Social Links */}
-            <div className="flex flex-wrap items-center justify-center gap-0.5">
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
               <Link href={`mailto:${contactInfo.email}`} passHref>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="Email"
-                  className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all border border-slate-700 hover:border-red-500/30"
                   title="Send me an email"
                 >
-                  <Mail className="h-3 w-3" />
-                </Button>
+                  <Mail className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link href={`tel:${telNumber}`} passHref>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="Phone"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-all border border-slate-700 hover:border-blue-500/30"
                   title="Call me"
                 >
-                  <Phone className="h-3 w-3" />
-                </Button>
+                  <Phone className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link
                 href={`https://wa.me/${whatsappNumber}`}
@@ -207,15 +222,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 passHref
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="WhatsApp"
-                  className="h-7 w-7 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-all border border-slate-700 hover:border-emerald-500/30"
                   title="Message me on WhatsApp"
                 >
-                  <WhatsAppIcon className="h-3 w-3" />
-                </Button>
+                  <WhatsAppIcon className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link
                 href={`https://github.com/${contactInfo.github}`}
@@ -223,15 +238,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 passHref
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="GitHub"
-                  className="h-7 w-7 text-slate-400 hover:text-teal-400 hover:bg-teal-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-xl transition-all border border-slate-700 hover:border-slate-500"
                   title="View my GitHub profile"
                 >
-                  <Github className="h-3 w-3" />
-                </Button>
+                  <Github className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link
                 href={`https://linkedin.com/in/${contactInfo.linkedin}`}
@@ -239,15 +254,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 passHref
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="LinkedIn"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-all border border-slate-700 hover:border-blue-500/30"
                   title="Connect on LinkedIn"
                 >
-                  <Linkedin className="h-3 w-3" />
-                </Button>
+                  <Linkedin className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link
                 href={`https://x.com/${contactInfo.twitter}`}
@@ -255,15 +270,15 @@ export function Footer() {
                 rel="noopener noreferrer"
                 passHref
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="Twitter"
-                  className="h-7 w-7 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 rounded-xl transition-all border border-slate-700 hover:border-sky-500/30"
                   title="Follow me on X"
                 >
-                  <Twitter className="h-3 w-3" />
-                </Button>
+                  <Twitter className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link
                 href={`https://facebook.com/${contactInfo.facebook}`}
@@ -271,18 +286,55 @@ export function Footer() {
                 rel="noopener noreferrer"
                 passHref
               >
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label="Facebook"
-                  className="h-7 w-7 text-slate-400 hover:text-blue-600 hover:bg-blue-600/10 rounded-lg"
+                  className="p-2.5 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-xl transition-all border border-slate-700 hover:border-blue-500/30"
                   title="Connect on Facebook"
                 >
-                  <Facebook className="h-3 w-3" />
-                </Button>
+                  <Facebook className="h-4 w-4" />
+                </motion.button>
               </Link>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Bottom Bar */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-6 pt-5 border-t border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-3"
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-['Lato',sans-serif] text-sm font-bold text-slate-400">
+                Built with
+              </span>
+              <Heart className="h-4 w-4 text-red-400 fill-red-400" />
+              <span className="font-['Lato',sans-serif] text-sm font-bold text-slate-400">
+                using Next.js & Tailwind CSS
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-['Lato',sans-serif] text-sm font-bold text-slate-500">
+                v2.0.0
+              </span>
+              <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+              <Link
+                href="/privacy"
+                className="font-['Lato',sans-serif] text-sm font-bold text-slate-400 hover:text-teal-400 transition-colors"
+              >
+                Privacy
+              </Link>
+              <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+              <Link
+                href="/terms"
+                className="font-['Lato',sans-serif] text-sm font-bold text-slate-400 hover:text-teal-400 transition-colors"
+              >
+                Terms
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </footer>
 

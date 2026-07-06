@@ -10,11 +10,14 @@ import {
   BookOpen,
   Code,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 // Work Experience Data
 const workExperiences = [
@@ -212,277 +215,370 @@ const stats = [
   { label: "Education", value: "4", icon: GraduationCap },
 ];
 
-// Card background variants
-const cardBgVariants = [
-  "bg-slate-800/85",
-  "bg-slate-800/80",
-  "bg-slate-800/90",
-  "bg-slate-800/75",
-  "bg-slate-800/85",
-];
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const cardHover = {
+  rest: { scale: 1 },
+  hover: { 
+    scale: 1.02,
+    transition: { duration: 0.3 }
+  }
+};
 
 export default function ExperiencePage() {
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const [ref2, inView2] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
   return (
-    <div className="min-h-screen bg-[#111D3A] relative overflow-hidden">
-      {/* Grid overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(64,224,208,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(64,224,208,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
 
-      {/* Glow orbs */}
-      <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none z-0" />
-
-      <div className="relative z-10 container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        {/* Header Section */}
-        <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
-            <Briefcase className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-teal-400" />
-            <span className="text-[10px] sm:text-xs font-medium text-teal-300">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        {/* Header Section with Animation */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-4">
+            <Briefcase className="h-5 w-5 text-blue-600" />
+            <span className="text-base font-bold text-blue-700 uppercase tracking-wide">
               Professional Journey
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 tracking-tight">
             My{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Journey
             </span>
           </h1>
-          <p className="text-xs sm:text-sm md:text-base text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-4">
             A timeline of my professional experience, education, and growth as a
             developer
           </p>
-        </div>
+        </motion.div>
 
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-8 sm:mb-10 lg:mb-12 max-w-3xl mx-auto">
+        {/* Stats Row with Animation */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12 max-w-4xl mx-auto"
+        >
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div
+              <motion.div
                 key={index}
-                className="text-center p-2 sm:p-3 rounded-xl bg-slate-800/20 border border-slate-700/30 backdrop-blur-sm"
+                variants={fadeInUp}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+                className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <div className="inline-flex p-1 sm:p-1.5 rounded-lg bg-teal-500/10 mb-1">
-                  <Icon className="h-3 w-3 sm:h-4 sm:w-4 text-teal-400" />
+                <div className="inline-flex p-3 rounded-xl bg-blue-50 text-blue-600 mb-2">
+                  <Icon className="h-6 w-6" />
                 </div>
-                <div className="text-base sm:text-lg font-bold text-white">
+                <div className="text-4xl font-black text-slate-900">
                   {stat.value}
                 </div>
-                <div className="text-[8px] sm:text-[10px] text-slate-400 font-medium">
+                <div className="text-base font-bold text-slate-500 uppercase tracking-wider">
                   {stat.label}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Work Experience Section */}
-        <div className="mb-12 sm:mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-px bg-gradient-to-r from-teal-500 to-transparent" />
-            <span className="text-[10px] font-bold tracking-[0.25em] text-teal-400 uppercase">
+        <div className="mb-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-3 mb-6"
+          >
+            <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
+            <span className="text-base font-black tracking-[0.25em] text-blue-600 uppercase">
               Work Experience
             </span>
-            <div className="flex-1 h-px bg-gradient-to-l from-teal-500/30 to-transparent" />
-          </div>
-          <div className="space-y-4 sm:space-y-5 lg:space-y-6">
+            <div className="flex-1 h-0.5 bg-gradient-to-l from-blue-500/30 to-transparent" />
+          </motion.div>
+
+          <motion.div
+            ref={ref}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            variants={staggerContainer}
+            className="space-y-6"
+          >
             {workExperiences.map((exp, index) => (
-              <Card
+              <motion.div
                 key={exp.id}
-                className={`group ${cardBgVariants[index % cardBgVariants.length]} border border-slate-700/40 hover:border-teal-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-teal-900/20 hover:-translate-y-1 overflow-hidden rounded-xl backdrop-blur-sm`}
+                variants={fadeInUp}
+                whileHover="hover"
+                initial="rest"
+                animate="rest"
               >
-                <CardContent className="p-4 sm:p-5 md:p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-teal-400 transition-colors">
-                          {exp.role}
-                        </h3>
-                        {exp.featured && (
-                          <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 border-0 text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 font-semibold">
-                            Featured
+                <motion.div
+                  variants={cardHover}
+                  className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-300 transition-all duration-300"
+                >
+                  <CardContent className="p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                            {exp.role}
+                          </h3>
+                          {exp.featured && (
+                            <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
+                              <Sparkles className="h-3 w-3 inline mr-1" />
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xl font-bold text-blue-600 mt-1">
+                          {exp.company}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-start md:items-end gap-2">
+                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                          <Calendar className="h-5 w-5" />
+                          <span>{exp.period}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                          <MapPin className="h-5 w-5" />
+                          <span>{exp.location}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
+                      {exp.description}
+                    </p>
+
+                    <div className="mb-5">
+                      <h4 className="text-base font-black text-blue-600 mb-3 flex items-center gap-2">
+                        <Award className="h-5 w-5" />
+                        Key Achievements
+                      </h4>
+                      <ul className="space-y-2">
+                        {exp.achievements.map((achievement, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-3 text-base text-slate-600 font-semibold"
+                          >
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                            <span className="leading-relaxed">{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 className="text-base font-black text-blue-600 mb-3">
+                        Technologies Used
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {exp.skills.map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
+                          >
+                            {skill}
                           </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm sm:text-base font-semibold text-teal-400 mt-1">
-                        {exp.company}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-start sm:items-end gap-1">
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-400">
-                        <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>{exp.period}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-400">
-                        <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>{exp.location}</span>
+                        ))}
                       </div>
                     </div>
-                  </div>
-
-                  <p className="text-[11px] sm:text-xs md:text-sm text-slate-300 leading-relaxed mb-4">
-                    {exp.description}
-                  </p>
-
-                  <div className="mb-4">
-                    <h4 className="text-[10px] sm:text-xs font-bold text-teal-400 mb-2 flex items-center gap-1.5">
-                      <Award className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                      Key Achievements
-                    </h4>
-                    <ul className="space-y-1.5">
-                      {exp.achievements.map((achievement, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-[10px] sm:text-xs text-slate-400"
-                        >
-                          <div className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 flex-shrink-0"></div>
-                          <span className="leading-relaxed">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="text-[10px] sm:text-xs font-bold text-teal-400 mb-2">
-                      Technologies Used
-                    </h4>
-                    <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                      {exp.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="secondary"
-                          className="text-[8px] sm:text-[9px] bg-slate-700/50 text-slate-300 hover:bg-slate-700 transition-colors px-1.5 sm:px-2 py-0 font-medium"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </motion.div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Education Section */}
-        <div className="mb-12 sm:mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-px bg-gradient-to-r from-teal-500 to-transparent" />
-            <span className="text-[10px] font-bold tracking-[0.25em] text-teal-400 uppercase">
+        <div className="mb-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex items-center gap-3 mb-6"
+          >
+            <div className="w-12 h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
+            <span className="text-base font-black tracking-[0.25em] text-indigo-600 uppercase">
               Education
             </span>
-            <div className="flex-1 h-px bg-gradient-to-l from-teal-500/30 to-transparent" />
-          </div>
-          <div className="space-y-4 sm:space-y-5 lg:space-y-6">
+            <div className="flex-1 h-0.5 bg-gradient-to-l from-indigo-500/30 to-transparent" />
+          </motion.div>
+
+          <motion.div
+            ref={ref2}
+            initial="hidden"
+            animate={inView2 ? "visible" : "hidden"}
+            variants={staggerContainer}
+            className="space-y-6"
+          >
             {educationExperiences.map((edu, index) => (
-              <Card
+              <motion.div
                 key={edu.id}
-                className={`group ${cardBgVariants[index % cardBgVariants.length]} border border-slate-700/40 hover:border-teal-500/40 transition-all duration-300 hover:shadow-xl hover:shadow-teal-900/20 hover:-translate-y-1 overflow-hidden rounded-xl backdrop-blur-sm`}
+                variants={fadeInUp}
+                whileHover="hover"
+                initial="rest"
+                animate="rest"
               >
-                <CardContent className="p-4 sm:p-5 md:p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <GraduationCap className="h-4 w-4 text-teal-400" />
-                        <h3 className="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-teal-400 transition-colors">
-                          {edu.degree}
-                        </h3>
-                        {edu.featured && (
-                          <Badge className="bg-gradient-to-r from-teal-500 to-cyan-500 border-0 text-white text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 font-semibold">
-                            Current
+                <motion.div
+                  variants={cardHover}
+                  className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-indigo-300 transition-all duration-300"
+                >
+                  <CardContent className="p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <GraduationCap className="h-6 w-6 text-indigo-600" />
+                          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                            {edu.degree}
+                          </h3>
+                          {edu.featured && (
+                            <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
+                              <Sparkles className="h-3 w-3 inline mr-1" />
+                              Current
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xl font-bold text-indigo-600 mt-1">
+                          {edu.institution}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-start md:items-end gap-2">
+                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                          <Calendar className="h-5 w-5" />
+                          <span>{edu.period}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                          <MapPin className="h-5 w-5" />
+                          <span>{edu.location}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
+                      {edu.description}
+                    </p>
+
+                    <div className="mb-5">
+                      <h4 className="text-base font-black text-indigo-600 mb-3 flex items-center gap-2">
+                        <Award className="h-5 w-5" />
+                        Key Highlights
+                      </h4>
+                      <ul className="space-y-2">
+                        {edu.achievements.map((achievement, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-3 text-base text-slate-600 font-semibold"
+                          >
+                            <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0"></div>
+                            <span className="leading-relaxed">{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div>
+                      <h4 className="text-base font-black text-indigo-600 mb-3">
+                        Skills & Technologies
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {edu.skills.map((skill) => (
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
+                          >
+                            {skill}
                           </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm sm:text-base font-semibold text-teal-400 mt-1">
-                        {edu.institution}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-start sm:items-end gap-1">
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-400">
-                        <Calendar className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>{edu.period}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-400">
-                        <MapPin className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-                        <span>{edu.location}</span>
+                        ))}
                       </div>
                     </div>
-                  </div>
-
-                  <p className="text-[11px] sm:text-xs md:text-sm text-slate-300 leading-relaxed mb-4">
-                    {edu.description}
-                  </p>
-
-                  <div className="mb-4">
-                    <h4 className="text-[10px] sm:text-xs font-bold text-teal-400 mb-2 flex items-center gap-1.5">
-                      <Award className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                      Key Highlights
-                    </h4>
-                    <ul className="space-y-1.5">
-                      {edu.achievements.map((achievement, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-2 text-[10px] sm:text-xs text-slate-400"
-                        >
-                          <div className="w-1 h-1 rounded-full bg-teal-400 mt-1.5 flex-shrink-0"></div>
-                          <span className="leading-relaxed">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="text-[10px] sm:text-xs font-bold text-teal-400 mb-2">
-                      Skills & Technologies
-                    </h4>
-                    <div className="flex flex-wrap gap-1 sm:gap-1.5">
-                      {edu.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="secondary"
-                          className="text-[8px] sm:text-[9px] bg-slate-700/50 text-slate-300 hover:bg-slate-700 transition-colors px-1.5 sm:px-2 py-0 font-medium"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </motion.div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-10 sm:mt-12 lg:mt-16 text-center">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-teal-500/10 to-cyan-500/10 border border-teal-500/20 p-4 sm:p-6">
-            <h3 className="text-sm sm:text-base font-bold text-white mb-2">
+        {/* CTA Section with Animation */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 text-center"
+        >
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-8 md:p-10 shadow-sm">
+            <h3 className="text-3xl font-bold text-slate-900 mb-3">
               Looking for more details?
             </h3>
-            <p className="text-[11px] sm:text-sm text-slate-300 mb-3 sm:mb-4">
+            <p className="text-lg text-slate-600 font-semibold mb-6 max-w-md mx-auto">
               Download my full resume for a complete overview of my experience
               and qualifications.
             </p>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
-              <a
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.a
                 href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white text-[11px] sm:text-sm font-semibold transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
               >
-                <Briefcase className="h-3 w-3 sm:h-4 sm:w-4" />
+                <Briefcase className="h-6 w-6" />
                 Download Full Resume
-              </a>
+              </motion.a>
               <Link href="/contact">
-                <Button
-                  variant="outline"
-                  className="border-slate-700 text-slate-300 hover:bg-slate-800 text-[11px] sm:text-sm h-8 sm:h-9 px-3 sm:px-4 font-medium rounded-lg"
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all"
                 >
                   Contact Me
-                </Button>
+                </motion.button>
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

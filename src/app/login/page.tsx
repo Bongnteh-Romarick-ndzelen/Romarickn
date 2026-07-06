@@ -14,11 +14,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft, Sparkles } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { authService } from "@/lib/services/auth.service";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,8 +31,6 @@ export default function LoginPage() {
   const router = useRouter();
   const { login: authLogin } = useAuth();
 
-  // app/login/page.tsx
-  // Update the login handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -43,7 +42,6 @@ export default function LoginPage() {
       console.log("Login response:", response);
 
       if (response.success && response.data) {
-        // Create user object
         const userData = {
           _id: response.data._id || "",
           name: response.data.name || "",
@@ -56,7 +54,6 @@ export default function LoginPage() {
           updatedAt: new Date().toISOString(),
         };
 
-        // Pass both user data AND token to auth context
         const token = response.data.token || "";
         toast({
           variant: "success",
@@ -64,7 +61,6 @@ export default function LoginPage() {
           description: "Login Successfully, Redirecting you to home",
         });
         authLogin(userData, token);
-
         router.push("/");
       } else {
         setError(response.message || "Login failed");
@@ -82,48 +78,70 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[360px]">
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-[400px]"
+      >
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-bold mb-4 transition-colors group"
         >
-          <ArrowLeft className="h-3 w-3" />
-          Back
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back to Home
         </Link>
 
-        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
-          <CardHeader className="pb-4 pt-5 px-5 text-center">
-            <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <LogIn className="h-5 w-5 text-white" />
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="pb-4 pt-6 px-6 text-center">
+            <div className="mx-auto mb-3 w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-600/25">
+              <LogIn className="h-7 w-7 text-white" />
             </div>
-            <CardTitle className="text-lg font-bold text-white">
-              Welcome back
+            <CardTitle className="text-2xl font-bold text-slate-900">
+              Welcome Back
             </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
+            <CardDescription className="text-base text-slate-600 font-semibold">
               Sign in to your account
             </CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-3 px-5 pb-4">
+            <CardContent className="space-y-4 px-6 pb-4">
               {error && (
-                <p className="text-[16px] text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20">
-                  {error}
-                </p>
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="p-3 rounded-xl bg-red-50 border-2 border-red-200"
+                >
+                  <p className="text-base font-bold text-red-700">{error}</p>
+                </motion.div>
               )}
 
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-slate-300 text-xs">
-                  Email
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-base font-bold text-slate-700">
+                  Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500"
+                    className="pl-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -131,25 +149,25 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-slate-300 text-xs">
+                  <Label htmlFor="password" className="text-base font-bold text-slate-700">
                     Password
                   </Label>
                   <Link
                     href="/forgot-password"
-                    className="text-[10px] text-purple-400 hover:text-purple-300 transition-colors"
+                    className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
                   >
                     Forgot Password?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="pl-8 pr-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500"
+                    className="pl-10 pr-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -157,41 +175,52 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-3.5 w-3.5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
               </div>
 
-              <Button
+              <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </Button>
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Signing in...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
+              </motion.button>
             </CardContent>
           </form>
 
-          <div className="px-5 pb-4">
-            <div className="relative my-3">
-              <Separator className="bg-slate-700" />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800/30 px-2 text-[10px] text-slate-500">
+          <div className="px-6 pb-4">
+            <div className="relative my-4">
+              <Separator className="bg-slate-200" />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-sm font-bold text-slate-500">
                 Or continue with
               </span>
             </div>
 
-            <Button
+            <motion.button
               variant="outline"
-              className="w-full bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-500 border-slate-300 text-sm h-9 transition-all duration-200 flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-800 border-2 border-slate-200 text-base font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-3"
               onClick={handleGoogleLogin}
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24">
+              <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -210,22 +239,30 @@ export default function LoginPage() {
                 />
               </svg>
               <span>Sign in with Google</span>
-            </Button>
+            </motion.button>
           </div>
 
-          <CardFooter className="flex justify-center pt-0 pb-5 px-5">
-            <p className="text-xs text-slate-400">
+          <CardFooter className="flex justify-center pt-0 pb-6 px-6">
+            <p className="text-base text-slate-600 font-semibold">
               Don't have an account?{" "}
               <Link
                 href="/signup"
-                className="text-purple-400 hover:text-purple-300 font-medium"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
               >
                 Sign up
               </Link>
             </p>
           </CardFooter>
         </Card>
-      </div>
+
+        {/* Decorative elements */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-500 font-semibold flex items-center justify-center gap-2">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            Secure authentication powered by JWT
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }

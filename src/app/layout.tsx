@@ -8,7 +8,10 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 import { AuthProvider } from "@/context/AuthContext";
 import { LoadingScreenSpinner } from "@/components/LoadingScreen";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-inter" 
+});
 
 // Base URL for metadata
 const baseUrl =
@@ -98,7 +101,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111D3A",
+  themeColor: "#FFFFFF",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -112,10 +115,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(inter.variable, "dark")}
+      className={cn(inter.variable)}
       suppressHydrationWarning
     >
-      <body className="antialiased bg-[#111D3A] text-slate-300">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased bg-white text-gray-900 lato-regular">
         <LoadingScreenSpinner>
           <AuthProvider>
             <ConditionalHeader />

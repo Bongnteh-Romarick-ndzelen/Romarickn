@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { postService } from "@/lib/services/post.service";
 
 const projects = [
   {
@@ -13,7 +12,6 @@ const projects = [
       "Fullstack e-commerce and course platform with custom CMS, payment integration, and advanced security features.",
     emoji: "🛡️",
     imageUrl: "/projects/shielderas.png",
-    imgBg: "linear-gradient(135deg, #0D1F2D, #0F2720)",
     tags: ["Next.js", "TypeScript", "Stripe"],
     featured: true,
   },
@@ -24,7 +22,6 @@ const projects = [
       "Educational platform for CGCE exam preparation with quizzes, IQ tests, and performance analytics.",
     emoji: "🧠",
     imageUrl: "/projects/Brainy-qiz.png",
-    imgBg: "linear-gradient(135deg, #0D1627, #1A1040)",
     tags: ["Firebase", "Genkit", "Node.js"],
     featured: false,
   },
@@ -35,8 +32,37 @@ const projects = [
       "Enterprise-grade course and internship management system with real-time analytics.",
     emoji: "📊",
     imageUrl: "/projects/tic-portal.png",
-    imgBg: "linear-gradient(135deg, #0A1A2E, #0D2040)",
     tags: ["MongoDB", "Express", "Node.js"],
+    featured: true,
+  },
+  {
+    id: 4,
+    title: "EcoTrack Dashboard",
+    description:
+      "Environmental monitoring platform with real-time data visualization and analytics for sustainability projects.",
+    emoji: "🌱",
+    imageUrl: "/projects/ecotrack.png",
+    tags: ["React", "D3.js", "Python"],
+    featured: false,
+  },
+  {
+    id: 5,
+    title: "MediConnect Hub",
+    description:
+      "Telemedicine platform connecting patients with healthcare providers through secure video consultations.",
+    emoji: "🏥",
+    imageUrl: "/projects/mediconnect.png",
+    tags: ["Next.js", "WebRTC", "Node.js"],
+    featured: false,
+  },
+  {
+    id: 6,
+    title: "FinFlow Analytics",
+    description:
+      "Financial management system with AI-powered insights, automated reporting, and portfolio tracking.",
+    emoji: "💰",
+    imageUrl: "/projects/finflow.png",
+    tags: ["Vue.js", "Django", "PostgreSQL"],
     featured: true,
   },
 ];
@@ -47,32 +73,32 @@ const skills = [
     icon: "💻",
     desc: "React, Next.js, TypeScript, Tailwind, Framer Motion",
     level: 95,
-    barColor: "from-green-400 to-green-600",
-    iconBg: "bg-green-500/10",
+    barColor: "from-blue-600 to-indigo-600",
+    iconBg: "bg-blue-50 text-blue-600",
   },
   {
     name: "Backend Engineering",
     icon: "⚡",
     desc: "Node.js, Python, Django, Express.js, GraphQL",
     level: 92,
-    barColor: "from-blue-400 to-blue-600",
-    iconBg: "bg-blue-500/10",
+    barColor: "from-indigo-600 to-purple-600",
+    iconBg: "bg-indigo-50 text-indigo-600",
   },
   {
     name: "Database Management",
     icon: "🗄️",
     desc: "PostgreSQL, MongoDB, Prisma, Redis",
     level: 88,
-    barColor: "from-emerald-400 to-emerald-600",
-    iconBg: "bg-emerald-500/10",
+    barColor: "from-purple-600 to-pink-600",
+    iconBg: "bg-purple-50 text-purple-600",
   },
   {
     name: "Cloud & DevOps",
     icon: "☁️",
     desc: "AWS, Docker, Vercel, Render, Cloudinary",
     level: 85,
-    barColor: "from-orange-400 to-orange-600",
-    iconBg: "bg-orange-500/10",
+    barColor: "from-teal-500 to-emerald-600",
+    iconBg: "bg-teal-50 text-teal-600",
   },
 ];
 
@@ -123,19 +149,15 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setMounted(true);
     
-    // Fetch blog posts from backend
     const fetchBlogPosts = async () => {
       try {
-        console.log('Fetching blog posts from:', process.env.NEXT_PUBLIC_API_URL);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts?page=1&limit=4`);
-        console.log('Response status:', response.status);
         const data = await response.json();
-        console.log('Full response:', data);
-        console.log('Posts data:', data.data?.posts);
         setBlogPosts(data.data?.posts || []);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
@@ -147,66 +169,89 @@ export default function HomePage() {
     fetchBlogPosts();
   }, []);
 
-  useEffect(() => {
-    console.log('blogPosts updated:', blogPosts);
-  }, [blogPosts]);
+  const handleImageError = (src: string) => {
+    setImgErrors(prev => ({ ...prev, [src]: true }));
+  };
 
   return (
-    <div className="min-h-screen bg-[#111D3A] font-['DM_Sans',system-ui] overflow-x-hidden relative">
-      {/* Grid overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,255,136,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,136,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0" />
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
+      
+      {/* Google Fonts Loader */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+        .text-thick {
+          font-weight: 700 !important;
+        }
+        .text-medium {
+          font-weight: 600 !important;
+        }
+      `}</style>
 
       {/* ── HERO SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 min-h-[90vh] flex flex-col justify-center">
-        {/* Glow orbs */}
-        <div className="absolute top-[-80px] right-[-60px] w-[400px] h-[400px] bg-green-500/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-60px] left-[-60px] w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 min-h-[95vh] flex flex-col justify-center relative">
+        {/* Modern Blur Gradients */}
+        <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-gradient-to-br from-blue-200/40 to-indigo-200/30 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-purple-200/30 rounded-full blur-[120px] pointer-events-none" />
 
-        {/* Desktop Layout - 50/50 split */}
-        <div className="hidden md:flex md:flex-row md:justify-between md:items-center md:gap-12">
+        {/* Desktop Layout - 50/50 Splitting */}
+        <div className="hidden md:flex md:flex-row md:justify-between md:items-center md:gap-16 relative z-10">
           {/* Left Column - 50% */}
-          <div className="flex-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_6px_#00FF88]" />
-              <span className="text-xs font-medium text-green-400">
-                Available for opportunities
+          <div className="flex-1 space-y-7">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-blue-50/80 border border-blue-200 backdrop-blur-sm transition-all hover:bg-blue-50">
+              <span className="w-3 h-3 rounded-full bg-blue-600 animate-pulse" />
+              <span className="text-sm font-bold text-blue-800 tracking-wide uppercase">
+                Available for elite opportunities
               </span>
             </div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-green-500 uppercase mb-3">
-              FULL-STACK DEVELOPER & ARCHITECT
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-tight">
-              Bongnteh
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
-                Romarick
-              </span>
-            </h1>
-            <p className="text-sm text-slate-400 mt-4 max-w-lg leading-relaxed">
+            
+            <div className="space-y-4">
+              <p className="text-sm font-black tracking-[0.3em] text-indigo-600 uppercase">
+                FULL-STACK DEVELOPER & ARCHITECT
+              </p>
+              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-slate-900 leading-[1.08] tracking-tight">
+                Bongnteh
+                <br />
+                <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Romarick
+                </span>
+              </h1>
+            </div>
+
+            <p className="text-xl text-slate-700 max-w-xl leading-relaxed font-bold">
               Building high-performance, scalable web applications that combine
               technical excellence with thoughtful user experiences. Based in
-              Cameroon — working worldwide.
+              Cameroon — engineered for the global scale.
             </p>
-            <div className="flex flex-wrap gap-2 mt-5">
+
+            <div className="flex flex-wrap gap-3 pt-2">
               {techStack.map((t) => (
                 <span
                   key={t}
-                  className="px-3 py-1.5 rounded-lg bg-green-500/5 border border-green-500/20 text-xs font-medium text-green-400"
+                  className="px-4 py-2 rounded-xl bg-white border-2 border-slate-200 shadow-sm text-sm font-bold text-slate-700 hover:border-blue-400 hover:shadow-md transition-all"
                 >
                   {t}
                 </span>
               ))}
             </div>
-            <div className="flex gap-3 mt-6">
+
+            <div className="flex items-center gap-4 pt-4">
               <Link
                 href="/projects"
-                className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-green-500/25 transition-all"
+                className="px-10 py-4 bg-slate-900 text-white hover:bg-blue-600 text-base font-bold rounded-2xl shadow-lg shadow-slate-900/20 hover:shadow-blue-600/30 transition-all duration-300"
               >
-                View My Work →
+                View My Work &rarr;
               </Link>
               <Link
                 href="/contact"
-                className="px-6 py-2.5 border border-slate-700 text-slate-300 hover:bg-slate-800/50 rounded-lg text-sm font-medium transition-all"
+                className="px-10 py-4 bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 rounded-2xl text-base font-bold transition-all shadow-sm"
               >
                 ✉ Get In Touch
               </Link>
@@ -214,408 +259,392 @@ export default function HomePage() {
           </div>
 
           {/* Right Column - 50% */}
-          <div className="flex-1 flex flex-col items-center gap-5">
-            {/* Avatar */}
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-full blur-2xl opacity-40" />
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-r from-green-500 to-blue-500 p-1">
-                <Image
-                  src="/romarick.jpeg"
-                  alt="Bongnteh Romarick"
-                  width={200}
-                  height={200}
-                  className="w-full h-full rounded-full object-cover"
-                />
+          <div className="flex-1 flex flex-col items-center gap-10">
+            {/* Premium Avatar Frame */}
+            <div className="relative group">
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full blur-2xl opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+              <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full bg-white p-2 shadow-2xl">
+                {!imgErrors['/romarick.jpeg'] ? (
+                  <Image
+                    src="/romarick.jpeg"
+                    alt="Bongnteh Romarick"
+                    width={288}
+                    height={288}
+                    className="w-full h-full rounded-full object-cover border-4 border-white shadow-inner"
+                    priority
+                    unoptimized={true}
+                    onError={() => handleImageError('/romarick.jpeg')}
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                    <span className="text-4xl">👤</span>
+                  </div>
+                )}
               </div>
             </div>
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-3 w-full max-w-[260px]">
+            {/* Premium Stats Grid */}
+            <div className="grid grid-cols-2 gap-5 w-full max-w-[340px]">
               {stats.map((s) => (
                 <div
                   key={s.lbl}
-                  className="bg-slate-800/50 border border-green-500/10 rounded-xl p-3 text-center"
+                  className="bg-white border-2 border-slate-100 rounded-2xl p-5 text-center shadow-md shadow-slate-100/50 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group"
                 >
-                  <p className="text-lg font-bold text-white">{s.val}</p>
-                  <p className="text-[10px] text-slate-400">{s.lbl}</p>
+                  <p className="text-4xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{s.val}</p>
+                  <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-1">{s.lbl}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Mobile Layout - Image first then text */}
-        <div className="md:hidden flex flex-col items-center text-center">
-          {/* Avatar - First on mobile */}
-          {/* Mobile Avatar - Image */}
-          <div className="relative mb-6">
-            <div className="absolute -inset-4 bg-gradient-to-r from-green-500 to-blue-500 rounded-full blur-2xl opacity-40" />
-            <div className="relative w-32 h-32 rounded-full bg-gradient-to-r from-green-500 to-blue-500 p-1">
-              <Image
-                src="/romarick.jpeg"
-                alt="Bongnteh Romarick"
-                width={128}
-                height={128}
-                className="w-full h-full rounded-full object-cover"
-                priority
-              />
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col items-center text-center relative z-10 space-y-8">
+          <div className="relative">
+            <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-xl opacity-30" />
+            <div className="relative w-44 h-44 rounded-full bg-white p-1.5 shadow-2xl">
+              {!imgErrors['/romarick.jpeg'] ? (
+                <Image
+                  src="/romarick.jpeg"
+                  alt="Bongnteh Romarick"
+                  width={176}
+                  height={176}
+                  className="w-full h-full rounded-full object-cover border-4 border-white"
+                  priority
+                  unoptimized={true}
+                  onError={() => handleImageError('/romarick.jpeg')}
+                />
+              ) : (
+                <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <span className="text-4xl">👤</span>
+                </div>
+              )}
             </div>
           </div>
-          {/* Mobile Stats */}
-          <div className="grid grid-cols-4 gap-2 w-full max-w-[320px] mx-auto mb-6">
+
+          <div className="grid grid-cols-4 gap-3 w-full max-w-[380px] mx-auto">
             {stats.map((s) => (
-              <div
-                key={s.lbl}
-                className="bg-slate-800/50 border border-green-500/10 rounded-lg p-2 text-center"
-              >
-                <p className="text-sm font-bold text-white">{s.val}</p>
-                <p className="text-[8px] text-slate-400">{s.lbl}</p>
+              <div key={s.lbl} className="bg-white border-2 border-slate-200/60 rounded-xl p-3 text-center shadow-sm">
+                <p className="text-2xl font-black text-slate-900">{s.val}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-tight mt-0.5">{s.lbl}</p>
               </div>
             ))}
           </div>
-          {/* Text Content - Second on mobile */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/30 mb-4">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs font-medium text-green-400">
-              Available for opportunities
-            </span>
+
+          <div className="space-y-5 px-2">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border-2 border-blue-100">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="text-sm font-bold text-blue-700 tracking-wide">Available for roles</span>
+            </div>
+            <p className="text-sm font-black tracking-[0.25em] text-indigo-600 uppercase">FULL-STACK ARCHITECT</p>
+            <h1 className="text-5xl font-bold text-slate-900 leading-tight">
+              Bongnteh <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Romarick</span>
+            </h1>
+            <p className="text-lg text-slate-700 max-w-sm mx-auto leading-relaxed font-bold">
+              Building high-performance, scalable web applications that combine technical excellence with thoughtful UX.
+            </p>
           </div>
-          <p className="text-xs font-semibold tracking-[0.2em] text-green-500 uppercase mb-3">
-            FULL-STACK DEVELOPER & ARCHITECT
-          </p>
-          <h1 className="text-3xl font-bold text-white leading-tight">
-            Bongnteh
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
-              Romarick
-            </span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-4 leading-relaxed">
-            Building high-performance, scalable web applications that combine
-            technical excellence with thoughtful user experiences. Based in
-            Cameroon — working worldwide.
-          </p>
-          <div className="flex flex-wrap gap-2 justify-center mt-5">
+
+          <div className="flex flex-wrap gap-2 justify-center max-w-xs">
             {techStack.map((t) => (
-              <span
-                key={t}
-                className="px-2.5 py-1 rounded-lg bg-green-500/5 border border-green-500/20 text-[10px] font-medium text-green-400"
-              >
+              <span key={t} className="px-3.5 py-1.5 rounded-xl bg-white border-2 border-slate-200 text-sm font-bold text-slate-700">
                 {t}
               </span>
             ))}
           </div>
-          <div className="flex gap-3 justify-center mt-6">
-            <Link
-              href="/projects"
-              className="px-5 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xs font-semibold rounded-lg shadow-lg shadow-green-500/25 transition-all"
-            >
-              View My Work →
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs pt-2">
+            <Link href="/projects" className="w-full px-6 py-4 bg-slate-900 text-white text-base font-bold rounded-2xl text-center shadow-md">
+              View Work &rarr;
             </Link>
-            <Link
-              href="/contact"
-              className="px-5 py-2 border border-slate-700 text-slate-300 hover:bg-slate-800/50 rounded-lg text-xs font-medium transition-all"
-            >
+            <Link href="/contact" className="w-full px-6 py-4 bg-white border-2 border-slate-200 text-slate-700 text-base font-bold rounded-2xl text-center shadow-sm">
               ✉ Get In Touch
             </Link>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-          <span className="text-[9px] text-slate-400 tracking-widest uppercase">
-            scroll
-          </span>
-          <div className="w-px h-10 bg-gradient-to-b from-green-500 to-transparent animate-pulse" />
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40 hidden lg:flex">
+          <span className="text-[10px] text-slate-400 tracking-[0.3em] uppercase font-black">Scroll Down</span>
+          <div className="w-px h-12 bg-gradient-to-b from-indigo-500 to-transparent" />
         </div>
       </section>
 
       {/* ── SKILLS SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mb-2">
-            <div className="w-1 h-1 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-[9px] font-semibold tracking-wide text-green-400 uppercase">
-              Expertise
-            </span>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 bg-white rounded-3xl shadow-sm border-2 border-slate-100">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border-2 border-indigo-100 mb-4">
+            <div className="w-2 h-2 rounded-full bg-indigo-500" />
+            <span className="text-sm font-black tracking-widest text-indigo-700 uppercase">Expertise</span>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-white">
-            Skills &{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
-              Technologies
-            </span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+            Skills & <span className="text-indigo-600">Technologies</span>
           </h2>
+          <p className="text-lg text-slate-600 mt-4 max-w-xl mx-auto font-bold">
+            Modern production-ready architectures built using robust structural engineering methodologies.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {skills.map((sk) => (
             <div
               key={sk.name}
-              className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-2.5 hover:border-green-500/30 transition-all duration-300"
+              className="bg-slate-50/50 border-2 border-slate-200/60 rounded-2xl p-6 hover:bg-white hover:shadow-xl transition-all duration-300 group hover:border-blue-300"
             >
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className={`w-6 h-6 rounded-md ${sk.iconBg} flex items-center justify-center`}
-                  >
-                    <span className="text-xs">{sk.icon}</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-xl ${sk.iconBg} flex items-center justify-center text-2xl shadow-sm`}>
+                    {sk.icon}
                   </div>
-                  <p className="text-[10px] font-semibold text-white">
-                    {sk.name}
-                  </p>
+                  <p className="text-base font-black text-slate-800 tracking-tight">{sk.name}</p>
                 </div>
-                <span className="text-[9px] font-bold text-green-400">
-                  {sk.level}%
-                </span>
+                <span className="text-lg font-black text-slate-400 group-hover:text-blue-600 transition-colors">{sk.level}%</span>
               </div>
 
-              <div className="h-1 bg-slate-700 rounded-full overflow-hidden mb-1.5">
+              <div className="h-2 bg-slate-200 rounded-full overflow-hidden mb-4">
                 <div
-                  className={`h-full bg-gradient-to-r ${sk.barColor} rounded-full transition-all duration-700`}
+                  className={`h-full bg-gradient-to-r ${sk.barColor} rounded-full transition-all duration-1000`}
                   style={{ width: `${sk.level}%` }}
                 />
               </div>
 
-              <p className="text-[8px] text-slate-400 truncate">
-                {sk.desc.split(",")[0]}
-              </p>
+              <p className="text-base text-slate-600 leading-relaxed font-bold">{sk.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── PROJECTS SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 bg-slate-800/20 border-y border-slate-700/30 py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-14 gap-4">
+          <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-px bg-gradient-to-r from-green-500 to-transparent" />
-              <span className="text-xs font-bold tracking-[0.2em] text-green-400 uppercase">
-                Featured Work
-              </span>
+              <div className="w-10 h-1 bg-indigo-500" />
+              <span className="text-sm font-black tracking-[0.2em] text-indigo-600 uppercase">Featured Showcases</span>
             </div>
-            <Link
-              href="/projects"
-              className="text-xs text-slate-400 hover:text-green-400 transition-colors"
-            >
-              All projects ↗
-            </Link>
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+              Architectures That <span className="text-blue-600">Perform</span>
+            </h2>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8">
-            Projects That{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
-              Matter
-            </span>
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {projects.map((p) => (
-              <div
-                key={p.id}
-                className="group bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden hover:border-green-500/30 transition-all hover:-translate-y-1 duration-300"
-              >
-                {/* Project Image */}
-                <div className="relative h-48 overflow-hidden">
+          <Link href="/projects" className="inline-flex items-center text-base font-bold text-blue-600 hover:text-blue-700 transition-colors group">
+            View All Production Code <span className="transform group-hover:translate-x-1 transition-transform ml-2">&rarr;</span>
+          </Link>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((p) => (
+            <div
+              key={p.id}
+              className="group bg-white border-2 border-slate-200/70 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-slate-300/80 transition-all duration-300 flex flex-col"
+            >
+              <div className="relative h-56 overflow-hidden bg-slate-100">
+                {!imgErrors[p.imageUrl] ? (
                   <Image
                     src={p.imageUrl}
                     alt={p.title}
-                    width={400}
-                    height={200}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    width={500}
+                    height={300}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    priority
+                    unoptimized={true}
+                    onError={() => handleImageError(p.imageUrl)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-                </div>
-                <div className="p-4">
-                  {p.featured && (
-                    <span className="inline-block px-2 py-0.5 rounded bg-green-500/10 border border-green-500/30 text-[9px] font-medium text-green-400 mb-2">
-                      ★ Featured
-                    </span>
-                  )}
-                  <h3 className="text-sm font-semibold text-white mb-2 group-hover:text-green-400 transition-colors">
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                    <span className="text-4xl opacity-50">📁</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
+                {p.featured && (
+                  <span className="absolute top-4 right-4 px-4 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-black tracking-widest uppercase shadow-lg shadow-blue-600/30">
+                    ★ Featured
+                  </span>
+                )}
+              </div>
+
+              <div className="p-6 flex flex-col flex-1 justify-between space-y-4">
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
                     {p.title}
                   </h3>
-                  <p className="text-xs text-slate-400 mb-3 line-clamp-2">
+                  <p className="text-base text-slate-600 font-bold leading-relaxed line-clamp-2">
                     {p.description}
                   </p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
+                </div>
+
+                <div className="space-y-4 pt-2">
+                  <div className="flex flex-wrap gap-2">
                     {p.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="px-2 py-0.5 rounded bg-slate-700/50 text-[9px] text-slate-400"
-                      >
+                      <span key={t} className="px-3 py-1.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-700">
                         {t}
                       </span>
                     ))}
                   </div>
-                  <div className="flex gap-2">
-                    <button className="flex-1 py-1.5 text-xs font-semibold text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/10 transition-all">
+                  <div className="flex gap-3 pt-1">
+                    <button className="flex-1 py-3 text-sm font-black tracking-wider uppercase text-white bg-slate-900 rounded-2xl hover:bg-blue-600 transition-colors shadow-sm">
                       Live Demo
                     </button>
-                    <button className="flex-1 py-1.5 text-xs font-semibold text-slate-400 border border-slate-600 rounded-lg hover:bg-slate-700/50 transition-all">
-                      Code
+                    <button className="flex-1 py-3 text-sm font-black tracking-wider uppercase text-slate-700 border-2 border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors">
+                      Repository
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── BLOG SECTION ─────────────────────────────────────── */}
+      <section className="bg-white border-y-2 border-slate-100 py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-14 gap-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-1 bg-blue-500" />
+                <span className="text-sm font-black tracking-[0.2em] text-blue-600 uppercase">Intellectual Capital</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">Engineering Journals</h2>
+            </div>
+            <Link href="/blog" className="text-base font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
+              Read Entire Archive &rarr;
+            </Link>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loading ? (
+              [...Array(4)].map((_, index) => (
+                <div key={index} className="bg-slate-50 border-2 border-slate-200 rounded-2xl overflow-hidden">
+                  <div className="h-48 bg-slate-200 animate-pulse" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-4 bg-slate-200 rounded w-16 animate-pulse" />
+                    <div className="h-6 bg-slate-200 rounded w-5/6 animate-pulse" />
+                    <div className="h-4 bg-slate-200 rounded w-2/3 animate-pulse" />
+                  </div>
+                </div>
+              ))
+            ) : blogPosts.length === 0 ? (
+              <div className="col-span-full text-center py-16 text-slate-400 font-bold border-2 border-dashed border-slate-200 rounded-2xl">
+                No articles published currently. Check back shortly.
+              </div>
+            ) : (
+              blogPosts.map((post: any) => {
+                const imageUrl = post.coverImage || '/placeholder-blog.png';
+                return (
+                  <Link key={post._id || post.id} href={`/blog/${post.slug}`} className="group">
+                    <div className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-slate-300 transition-all duration-300">
+                      <div className="h-48 relative overflow-hidden bg-slate-100">
+                        {!imgErrors[imageUrl] ? (
+                          <Image
+                            src={imageUrl}
+                            alt={post.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                            unoptimized={true}
+                            onError={() => handleImageError(imageUrl)}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+                            <span className="text-4xl opacity-50">📝</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-5 space-y-3">
+                        <span className="inline-block px-3 py-1 rounded-xl bg-indigo-50 text-xs font-black tracking-wide text-indigo-700 uppercase border-2 border-indigo-100">
+                          {post.categories?.[0]?.name || 'General'}
+                        </span>
+                        <h3 className="text-xl font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-slate-500 font-bold">
+                          {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} &middot; {post.readTime || '5 min'} read
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
 
-       {/* ── BLOG SECTION ─────────────────────────────────────── */}
-       <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-         <div className="flex justify-between items-center mb-8">
-           <div className="flex items-center gap-3">
-             <div className="w-8 h-px bg-gradient-to-r from-green-500 to-transparent" />
-             <span className="text-xs font-bold tracking-[0.2em] text-green-400 uppercase">
-               Latest Insights
-             </span>
-           </div>
-           <Link
-             href="/blog"
-             className="text-xs text-slate-400 hover:text-green-400 transition-colors"
-           >
-             All articles ↗
-           </Link>
-         </div>
-         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8">
-           From the Blog
-         </h2>
-         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-           {loading ? (
-             // Loading skeletons
-             [...Array(4)].map((_, index) => (
-               <div key={index} className="bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden">
-                 <div className="h-20 bg-slate-700/50 animate-pulse" />
-                 <div className="p-3 space-y-2">
-                   <div className="h-3 bg-slate-700/50 rounded w-16 animate-pulse" />
-                   <div className="h-3 bg-slate-700/50 rounded w-3/4 animate-pulse" />
-                   <div className="h-3 bg-slate-700/50 rounded w-1/2 animate-pulse" />
-                 </div>
-               </div>
-             ))
-           ) : blogPosts.length === 0 ? (
-             <div className="col-span-full text-center py-8 text-slate-400">
-               No blog posts available
-             </div>
-           ) : (
-             blogPosts.map((post: any) => (
-               <Link key={post._id || post.id} href={`/blog/${post.slug}`} className="group">
-                 <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl overflow-hidden hover:border-green-500/30 transition-all">
-                    <div className="h-20 relative overflow-hidden">
-                      <Image
-                        src={post.coverImage || '/placeholder-blog.png'}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    </div>
-                   <div className="p-3">
-                     <span className="inline-block px-2 py-0.5 rounded bg-blue-500/10 text-[9px] text-blue-400 mb-2">
-                       {post.categories?.[0]?.name || 'General'}
-                     </span>
-                     <p className="text-xs font-semibold text-white mb-1 line-clamp-2 group-hover:text-green-400 transition-colors">
-                       {post.title}
-                     </p>
-                     <p className="text-[10px] text-slate-400 mb-2">
-                       {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · {post.readTime || '5 min'} read
-                     </p>
-                     <p className="text-[10px] text-green-400 group-hover:text-green-300">
-                       Read more →
-                     </p>
-                   </div>
-                 </div>
-               </Link>
-             ))
-           )}
-         </div>
-       </section>
-
       {/* ── TESTIMONIALS SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 bg-slate-800/20 border-y border-slate-700/30 py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-px bg-gradient-to-r from-green-500 to-transparent" />
-            <span className="text-xs font-bold tracking-[0.2em] text-green-400 uppercase">
-              Client Feedback
-            </span>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
+        <div className="text-center mb-16 space-y-3">
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-8 h-0.5 bg-slate-300" />
+            <span className="text-sm font-black tracking-[0.25em] text-slate-500 uppercase">Client Feedback</span>
+            <div className="w-8 h-0.5 bg-slate-300" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8">
-            What People Say
+          <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">
+            Endorsements of <span className="text-purple-600">Trust</span>
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {testimonials.map((t) => (
-              <div
-                key={t.id}
-                className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-5 hover:border-green-500/30 transition-all"
-              >
-                <div className="text-green-400 text-sm mb-3">★★★★★</div>
-                <p className="text-xs text-slate-300 italic mb-4">
-                  "{t.quote}"
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((t) => (
+            <div
+              key={t.id}
+              className="bg-white border-2 border-slate-200/80 rounded-2xl p-8 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex text-amber-400 gap-1 text-lg font-bold mb-5">★★★★★</div>
+                <p className="text-lg text-slate-700 font-bold leading-relaxed">
+                  &ldquo;{t.quote}&rdquo;
                 </p>
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-700/50">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
-                    {t.initials}
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-white">{t.name}</p>
-                    <p className="text-[10px] text-slate-400">{t.role}</p>
-                  </div>
+              </div>
+              <div className="flex items-center gap-4 pt-6 mt-6 border-t-2 border-slate-100">
+                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-base font-black text-white shadow-sm">
+                  {t.initials}
+                </div>
+                <div>
+                  <p className="text-base font-black text-slate-800 tracking-tight">{t.name}</p>
+                  <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-0.5">{t.role}</p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* ── CTA SECTION ─────────────────────────────────────── */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center relative">
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-[500px] h-[250px] bg-green-500/5 rounded-full blur-[100px]" />
-          </div>
-          <div className="relative z-10">
-            <div className="inline-flex p-2 rounded-xl bg-green-500/10 border border-green-500/20 mb-5">
-              <svg
-                className="w-6 h-6 text-green-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="bg-slate-950 rounded-3xl p-8 sm:p-12 lg:p-20 text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+          <div className="max-w-3xl mx-auto space-y-8 relative z-10">
+            <div className="inline-flex p-4 rounded-2xl bg-white/5 border-2 border-white/10 backdrop-blur-md mx-auto">
+              <svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
-              Ready to Build Something
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400 mt-1">
-                Extraordinary?
-              </span>
+            
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white leading-tight tracking-tight">
+              Ready to construct something <span className="text-indigo-400 block sm:inline">extraordinary?</span>
             </h2>
-            <p className="text-sm text-slate-400 mb-6 max-w-md mx-auto">
-              Available for freelance, contracts, and full-time remote roles.
-              Let's turn your vision into reality.
+            
+            <p className="text-xl text-slate-300 max-w-xl mx-auto font-bold leading-relaxed">
+              Available for specialized consulting, structural contracts, and premium distributed remote infrastructure assignments.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link
                 href="/contact"
-                className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-green-500/25 transition-all"
+                className="px-10 py-5 bg-white text-slate-950 hover:bg-indigo-50 text-base font-black rounded-2xl shadow-lg transition-all"
               >
-                ✉ Start a Conversation
+                ✉ Initialize Briefing
               </Link>
               <Link
                 href="/experience"
-                className="px-6 py-2.5 border border-slate-700 text-slate-300 hover:bg-slate-800/50 rounded-lg text-sm font-medium transition-all"
+                className="px-10 py-5 bg-white/5 border-2 border-white/10 hover:bg-white/10 text-white text-base font-black rounded-2xl transition-all"
               >
-                ↓ Download Resume
+                &darr; Dossier Resume
               </Link>
             </div>
-            <p className="text-xs text-slate-500 mt-4">
-              or reach out at{" "}
-              <span className="text-green-400">ndzelenromarick@gmail.com</span>
+
+            <p className="text-sm text-slate-500 pt-2 tracking-wide font-bold">
+              Direct routing: <span className="text-slate-300 font-black">ndzelenromarick@gmail.com</span>
             </p>
           </div>
         </div>

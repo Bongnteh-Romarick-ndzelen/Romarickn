@@ -28,11 +28,13 @@ import {
   Zap,
   Star,
   Award,
+  Sparkles,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { authService } from "@/lib/services/auth.service";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +48,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
-  const {toast} = useToast();
+  const { toast } = useToast();
   const router = useRouter();
   const { login: authLogin } = useAuth();
 
@@ -74,7 +76,7 @@ export default function SignupPage() {
     if (strength === 0)
       return {
         text: "No password",
-        color: "bg-slate-600",
+        color: "bg-slate-200",
         textColor: "text-slate-400",
         icon: null,
       };
@@ -82,27 +84,27 @@ export default function SignupPage() {
       return {
         text: "Weak",
         color: "bg-red-500",
-        textColor: "text-red-400",
+        textColor: "text-red-600",
         icon: Shield,
       };
     if (strength <= 3)
       return {
         text: "Good",
         color: "bg-yellow-500",
-        textColor: "text-yellow-400",
+        textColor: "text-yellow-600",
         icon: Zap,
       };
     if (strength <= 4)
       return {
         text: "Very Good",
         color: "bg-blue-500",
-        textColor: "text-blue-400",
+        textColor: "text-blue-600",
         icon: Star,
       };
     return {
       text: "Excellent",
       color: "bg-green-500",
-      textColor: "text-green-400",
+      textColor: "text-green-600",
       icon: Award,
     };
   };
@@ -112,7 +114,6 @@ export default function SignupPage() {
   const StrengthIcon = strengthInfo.icon;
   const isPasswordValid = passwordStrength.strength >= 4;
 
-  // Check if passwords match - runs on every keystroke
   useEffect(() => {
     if (formData.confirmPassword) {
       setPasswordsMatch(formData.password === formData.confirmPassword);
@@ -152,14 +153,13 @@ export default function SignupPage() {
         email: formData.email,
         password: formData.password,
       });
-      
+
       if (response.success) {
         toast({
           variant: "success",
           title: "User Created!",
           description: "Account created Successfully, Please verify email",
         });
-        // Don't auto-login, just redirect to verification
         router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
       } else {
         setError(response.message || "Signup failed");
@@ -175,12 +175,10 @@ export default function SignupPage() {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
 
-  // Get progress percentage
   const getProgressPercentage = () => {
     return (passwordStrength.strength / 5) * 100;
   };
 
-  // Password requirement component
   const PasswordRequirement = ({
     met,
     text,
@@ -188,64 +186,89 @@ export default function SignupPage() {
     met: boolean;
     text: string;
   }) => (
-    <div
-      className={`flex items-center gap-1.5 text-[10px] transition-all duration-200 ${
-        met ? "text-green-400" : "text-slate-500"
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.2 }}
+      className={`flex items-center gap-1.5 text-sm transition-all duration-200 ${
+        met ? "text-green-600" : "text-slate-400"
       }`}
     >
       {met ? (
-        <CheckCircle className="h-3 w-3 animate-in fade-in zoom-in" />
+        <CheckCircle className="h-4 w-4" />
       ) : (
-        <XCircle className="h-3 w-3" />
+        <XCircle className="h-4 w-4" />
       )}
-      <span>{text}</span>
-    </div>
+      <span className="font-semibold">{text}</span>
+    </motion.div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[400px]">
+    <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden flex items-center justify-center px-4 py-8">
+      
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
+        
+        h1, h2, h3, h4, .font-heading {
+          font-family: 'Radley', serif !important;
+          font-weight: 700 !important;
+        }
+        p, span, div, a, button, label, .font-body {
+          font-family: 'Lato', sans-serif !important;
+        }
+      `}</style>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-[440px]"
+      >
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-slate-400 hover:text-white text-xs mb-3 transition-colors"
+          className="inline-flex items-center gap-2 text-slate-600 hover:text-blue-600 text-sm font-bold mb-4 transition-colors group"
         >
-          <ArrowLeft className="h-3 w-3" />
-          Back
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back to Home
         </Link>
 
-        <Card className="bg-slate-800/30 border border-slate-700/50 backdrop-blur-sm rounded-xl shadow-2xl">
-          <CardHeader className="pb-4 pt-5 px-5 text-center">
-            <div className="mx-auto mb-2 w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/25">
-              <UserPlus className="h-5 w-5 text-white" />
+        <Card className="bg-white border-2 border-slate-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="pb-4 pt-6 px-6 text-center">
+            <div className="mx-auto mb-3 w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-600/25">
+              <UserPlus className="h-7 w-7 text-white" />
             </div>
-            <CardTitle className="text-lg font-bold text-white">
-              Create account
+            <CardTitle className="text-2xl font-bold text-slate-900">
+              Create Account
             </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
+            <CardDescription className="text-base text-slate-600 font-semibold">
               Get started for free
             </CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-3 px-5 pb-4">
+            <CardContent className="space-y-4 px-6 pb-4">
               {error && (
-                <p className="text-[16px] text-red-400 bg-red-500/10 p-2 rounded border border-red-500/20 animate-in fade-in">
-                  {error}
-                </p>
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="p-3 rounded-xl bg-red-50 border-2 border-red-200"
+                >
+                  <p className="text-base font-bold text-red-700">{error}</p>
+                </motion.div>
               )}
 
               {/* Name Field */}
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-slate-300 text-xs">
-                  Full name
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-base font-bold text-slate-700">
+                  Full Name
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="name"
                     type="text"
                     placeholder="John Doe"
-                    className="pl-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500 transition-all duration-200"
+                    className="pl-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -256,17 +279,17 @@ export default function SignupPage() {
               </div>
 
               {/* Email Field */}
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-slate-300 text-xs">
-                  Email
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-base font-bold text-slate-700">
+                  Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="pl-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500 transition-all duration-200"
+                    className="pl-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -277,27 +300,27 @@ export default function SignupPage() {
               </div>
 
               {/* Password Field */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-slate-300 text-xs">
-                    Password Strength
+                  <Label htmlFor="password" className="text-base font-bold text-slate-700">
+                    Password
                   </Label>
                   {formData.password && (
                     <div
-                      className={`flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${strengthInfo.textColor} bg-opacity-10`}
+                      className={`flex items-center gap-1.5 text-sm font-bold px-3 py-1 rounded-full ${strengthInfo.textColor} bg-opacity-10`}
                     >
-                      {StrengthIcon && <StrengthIcon className="h-3 w-3" />}
+                      {StrengthIcon && <StrengthIcon className="h-4 w-4" />}
                       <span>{strengthInfo.text}</span>
                     </div>
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create password"
-                    className="pl-8 pr-8 py-1.5 h-9 text-sm bg-slate-800/50 border-slate-700 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-white placeholder-slate-500 transition-all duration-200"
+                    placeholder="Create a strong password"
+                    className="pl-10 pr-10 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200"
                     value={formData.password}
                     onChange={(e) =>
                       setFormData({ ...formData, password: e.target.value })
@@ -307,98 +330,104 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-3.5 w-3.5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
 
                 {/* Password Strength Bar */}
                 {formData.password && (
-                  <div className="mt-1">
-                    <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-500 ease-out ${strengthInfo.color}`}
+                  <div className="mt-2">
+                    <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+                      <motion.div
+                        className={`h-full transition-all duration-500 ${strengthInfo.color}`}
                         style={{ width: `${getProgressPercentage()}%` }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${getProgressPercentage()}%` }}
                       />
                     </div>
                     <div className="flex justify-between mt-1">
-                      <span className="text-[9px] text-slate-500">Weak</span>
-                      <span className="text-[9px] text-slate-500">Good</span>
-                      <span className="text-[9px] text-slate-500">
-                        Very Good
-                      </span>
-                      <span className="text-[9px] text-slate-500">
-                        Excellent
-                      </span>
+                      <span className="text-xs font-semibold text-slate-400">Weak</span>
+                      <span className="text-xs font-semibold text-slate-400">Good</span>
+                      <span className="text-xs font-semibold text-slate-400">Very Good</span>
+                      <span className="text-xs font-semibold text-slate-400">Excellent</span>
                     </div>
                   </div>
                 )}
 
-                {/* Password Requirements - Shows as you type */}
-                <div className="mt-2 p-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <p className="text-[10px] text-slate-400 mb-2">
-                    Password must contain:
-                  </p>
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
-                    <PasswordRequirement
-                      met={passwordStrength.checks.length}
-                      text="At least 8 characters"
-                    />
-                    <PasswordRequirement
-                      met={passwordStrength.checks.upperCase}
-                      text="Uppercase letter"
-                    />
-                    <PasswordRequirement
-                      met={passwordStrength.checks.lowerCase}
-                      text="Lowercase letter"
-                    />
-                    <PasswordRequirement
-                      met={passwordStrength.checks.number}
-                      text="Number"
-                    />
-                    <PasswordRequirement
-                      met={passwordStrength.checks.specialChar}
-                      text="Special character"
-                    />
-                  </div>
-                  {formData.password && isPasswordValid && (
-                    <div className="mt-2 pt-1.5 border-t border-slate-700/50 animate-in fade-in">
-                      <p className="text-[10px] text-green-400 flex items-center gap-1">
-                        <CheckCircle className="h-3 w-3" />
-                        Excellent! Your password is strong
-                      </p>
+                {/* Password Requirements */}
+                {(formData.password || formData.confirmPassword) && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-3 p-4 rounded-xl bg-slate-50 border-2 border-slate-200"
+                  >
+                    <p className="text-sm font-bold text-slate-700 mb-2">
+                      Password must contain:
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                      <PasswordRequirement
+                        met={passwordStrength.checks.length}
+                        text="At least 8 characters"
+                      />
+                      <PasswordRequirement
+                        met={passwordStrength.checks.upperCase}
+                        text="Uppercase letter"
+                      />
+                      <PasswordRequirement
+                        met={passwordStrength.checks.lowerCase}
+                        text="Lowercase letter"
+                      />
+                      <PasswordRequirement
+                        met={passwordStrength.checks.number}
+                        text="Number"
+                      />
+                      <PasswordRequirement
+                        met={passwordStrength.checks.specialChar}
+                        text="Special character"
+                      />
                     </div>
-                  )}
-                </div>
+                    {formData.password && isPasswordValid && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-3 pt-3 border-t-2 border-slate-200"
+                      >
+                        <p className="text-sm font-bold text-green-600 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" />
+                          Excellent! Your password is strong
+                        </p>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                )}
               </div>
 
               {/* Confirm Password Field */}
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="confirmPassword"
-                  className="text-slate-300 text-xs"
-                >
-                  Confirm password
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="text-base font-bold text-slate-700">
+                  Confirm Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm password"
-                    className={`pl-8 pr-8 py-1.5 h-9 text-sm bg-slate-800/50 border focus:ring-1 text-white placeholder-slate-500 transition-all duration-200 ${
+                    placeholder="Confirm your password"
+                    className={`pl-10 pr-10 py-3 h-12 text-base bg-white border-2 focus:ring-2 text-slate-800 placeholder:text-slate-400 rounded-xl font-semibold transition-all duration-200 ${
                       formData.confirmPassword && !passwordsMatch
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
+                        ? "border-red-400 focus:border-red-400 focus:ring-red-100"
                         : formData.confirmPassword &&
                             passwordsMatch &&
                             formData.password
-                          ? "border-green-500 focus:border-green-500 focus:ring-green-500"
-                          : "border-slate-700 focus:border-purple-500 focus:ring-purple-500"
+                          ? "border-green-400 focus:border-green-400 focus:ring-green-100"
+                          : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                     }`}
                     value={formData.confirmPassword}
                     onChange={(e) =>
@@ -412,86 +441,105 @@ export default function SignupPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-3.5 w-3.5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="h-3.5 w-3.5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
                 {formData.confirmPassword && !passwordsMatch && (
-                  <p className="text-[10px] text-red-400 flex items-center gap-1 animate-in fade-in">
-                    <XCircle className="h-3 w-3" />
+                  <motion.p 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-sm font-bold text-red-600 flex items-center gap-2"
+                  >
+                    <XCircle className="h-4 w-4" />
                     Passwords do not match
-                  </p>
+                  </motion.p>
                 )}
                 {formData.confirmPassword &&
                   passwordsMatch &&
                   formData.password && (
-                    <p className="text-[10px] text-green-400 flex items-center gap-1 animate-in fade-in">
-                      <CheckCircle className="h-3 w-3" />
+                    <motion.p 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="text-sm font-bold text-green-600 flex items-center gap-2"
+                    >
+                      <CheckCircle className="h-4 w-4" />
                       Passwords match
-                    </p>
+                    </motion.p>
                   )}
               </div>
 
               {/* Terms Agreement */}
-              <div className="flex items-start gap-1.5 pt-1">
+              <div className="flex items-start gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="terms"
-                  className="mt-0.5 h-3 w-3 rounded border-slate-600 bg-slate-800/50 text-purple-600 focus:ring-purple-500"
+                  className="mt-0.5 h-4 w-4 rounded border-2 border-slate-300 bg-white text-blue-600 focus:ring-2 focus:ring-blue-200 focus:ring-offset-0"
                   required
                 />
                 <Label
                   htmlFor="terms"
-                  className="text-[10px] text-slate-400 cursor-pointer leading-tight"
+                  className="text-sm font-semibold text-slate-600 cursor-pointer leading-tight"
                 >
                   I agree to the{" "}
                   <Link
                     href="/terms"
-                    className="text-purple-400 hover:text-purple-300"
+                    className="text-blue-600 hover:text-blue-700 font-bold"
                   >
                     Terms
                   </Link>{" "}
                   and{" "}
                   <Link
                     href="/privacy"
-                    className="text-purple-400 hover:text-purple-300"
+                    className="text-blue-600 hover:text-blue-700 font-bold"
                   >
-                    Privacy
+                    Privacy Policy
                   </Link>
                 </Label>
               </div>
 
               {/* Submit Button */}
-              <Button
+              <motion.button
                 type="submit"
                 disabled={isLoading || !isFormValid()}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-sm h-9 shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Creating account..." : "Create account"}
-              </Button>
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    Creating account...
+                  </span>
+                ) : (
+                  "Create Account"
+                )}
+              </motion.button>
             </CardContent>
           </form>
 
           {/* Google Signup */}
-          <div className="px-5 pb-4">
-            <div className="relative my-3">
-              <Separator className="bg-slate-700" />
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800/30 px-2 text-[10px] text-slate-500">
+          <div className="px-6 pb-4">
+            <div className="relative my-4">
+              <Separator className="bg-slate-200" />
+              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-3 text-sm font-bold text-slate-500">
                 Or sign up with
               </span>
             </div>
 
-            <Button
+            <motion.button
               variant="outline"
-              className="w-full bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-500 border-slate-300 text-sm h-9 transition-all duration-200"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-800 border-2 border-slate-200 text-base font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-3"
               onClick={handleGoogleSignup}
             >
-              <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+              <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                   fill="#4285F4"
@@ -509,30 +557,37 @@ export default function SignupPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Google
-            </Button>
+              <span>Sign up with Google</span>
+            </motion.button>
           </div>
 
-          <CardFooter className="flex justify-center pt-0 pb-5 px-5">
-            <p className="text-xs text-slate-400">
+          <CardFooter className="flex flex-col gap-2 justify-center pt-0 pb-6 px-6">
+            <p className="text-base text-slate-600 font-semibold">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-purple-400 hover:text-purple-300 font-medium"
+                className="text-blue-600 hover:text-blue-700 font-bold transition-colors"
               >
                 Sign in
               </Link>
-              {" · "}
-              <Link
-                href="/resend-verification"
-                className="text-purple-400 hover:text-purple-300 font-medium"
-              >
-                Resend verification
-              </Link>
             </p>
+            <Link
+              href="/resend-verification"
+              className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              Resend verification email
+            </Link>
           </CardFooter>
         </Card>
-      </div>
+
+        {/* Decorative elements */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-500 font-semibold flex items-center justify-center gap-2">
+            <Sparkles className="h-4 w-4 text-blue-500" />
+            Secure signup with email verification
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
