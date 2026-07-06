@@ -17,7 +17,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -161,14 +161,6 @@ const staggerContainer = {
   }
 };
 
-const cardHover = {
-  rest: { scale: 1 },
-  hover: { 
-    scale: 1.02,
-    transition: { duration: 0.3 }
-  }
-};
-
 const statCardHover = {
   rest: { scale: 1 },
   hover: { 
@@ -180,6 +172,7 @@ const statCardHover = {
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -189,6 +182,15 @@ export default function ProjectsPage() {
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const filteredProjects = projects.filter((project) => {
     if (activeCategory === "All") return true;
@@ -290,10 +292,8 @@ export default function ProjectsPage() {
           className="flex flex-wrap justify-center gap-1.5 sm:gap-2.5 mb-8 sm:mb-10"
         >
           {categories.map((category) => (
-            <motion.button
+            <button
               key={category}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={() => setActiveCategory(category)}
               className={`px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl text-xs sm:text-base font-bold transition-all duration-200 ${
                 activeCategory === category
@@ -302,7 +302,7 @@ export default function ProjectsPage() {
               }`}
             >
               {category}
-            </motion.button>
+            </button>
           ))}
         </motion.div>
 
@@ -318,141 +318,139 @@ export default function ProjectsPage() {
             <motion.div
               key={project.title}
               variants={fadeInUp}
-              whileHover="hover"
-              initial="rest"
-              animate="rest"
+              className="group bg-white border-2 border-slate-200/80 transition-all duration-300 hover:border-blue-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden rounded-2xl"
+              onMouseEnter={() => !isMobile && setHoveredCard(index)}
+              onMouseLeave={() => !isMobile && setHoveredCard(null)}
+              onTouchStart={() => {
+                if (isMobile) {
+                  setHoveredCard(hoveredCard === index ? null : index);
+                }
+              }}
             >
-              <motion.div
-                variants={cardHover}
-                className="group bg-white border-2 border-slate-200/80 transition-all duration-300 hover:border-blue-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden rounded-2xl"
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                {/* Image Section */}
-                <CardHeader className="p-0 relative">
-                  <div className="relative aspect-video overflow-hidden bg-slate-100">
-                    <Image
-                      src={project.imageUrl}
-                      alt={project.title}
-                      width={600}
-                      height={400}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      priority={index < 4}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+              {/* Image Section */}
+              <CardHeader className="p-0 relative">
+                <div className="relative aspect-video overflow-hidden bg-slate-100">
+                  <Image
+                    src={project.imageUrl}
+                    alt={project.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    priority={index < 4}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-                    {/* Featured Badge */}
-                    {project.featured && (
-                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
-                        <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 border-0 text-white text-[10px] sm:text-sm font-black px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-lg">
-                          <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 fill-current" />
-                          Featured
-                        </Badge>
-                      </div>
-                    )}
-
-                    {/* Category Badge */}
-                    <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
-                      <Badge
-                        variant="outline"
-                        className="bg-white/90 backdrop-blur-sm border-2 border-white/30 text-slate-800 text-[10px] sm:text-sm font-bold px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-sm"
-                      >
-                        {project.category}
+                  {/* Featured Badge */}
+                  {project.featured && (
+                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 border-0 text-white text-[10px] sm:text-sm font-black px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-lg">
+                        <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 fill-current" />
+                        Featured
                       </Badge>
                     </div>
+                  )}
 
-                    {/* Hover Overlay */}
-                    <div
-                      className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-3 sm:gap-5 transition-all duration-300 ${
-                        hoveredCard === index ? "opacity-100" : "opacity-0"
-                      }`}
+                  {/* Category Badge */}
+                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
+                    <Badge
+                      variant="outline"
+                      className="bg-white/90 backdrop-blur-sm border-2 border-white/30 text-slate-800 text-[10px] sm:text-sm font-bold px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-sm"
                     >
-                      <Link href={project.liveUrl} target="_blank">
-                        <motion.button 
-                          whileHover={{ scale: 1.05 }}
-                          className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-slate-900 text-xs sm:text-base font-bold hover:bg-slate-100 transition-all shadow-lg"
-                        >
-                          <Eye className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-                          Preview
-                        </motion.button>
-                      </Link>
-                      <Link href={project.repoUrl} target="_blank">
-                        <motion.button 
-                          whileHover={{ scale: 1.05 }}
-                          className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-slate-900 text-white text-xs sm:text-base font-bold hover:bg-slate-800 transition-all shadow-lg"
-                        >
-                          <Github className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-                          Code
-                        </motion.button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="p-4 sm:p-6 flex flex-col">
-                  <CardTitle className="text-lg sm:text-2xl font-bold text-slate-900 mb-1.5 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
-                    {project.title}
-                  </CardTitle>
-
-                  <p className="text-sm sm:text-base text-slate-600 font-bold mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
-                    {project.description}
-                  </p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                    {project.tags.slice(0, 4).map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="secondary"
-                        className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                    {project.tags.length > 4 && (
-                      <Badge
-                        variant="secondary"
-                        className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
-                      >
-                        +{project.tags.length - 4}
-                      </Badge>
-                    )}
+                      {project.category}
+                    </Badge>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4 border-t-2 border-slate-100">
-                    <Link
-                      href={project.liveUrl}
-                      target="_blank"
-                      className="flex-1"
-                    >
-                      <Button
-                        size="sm"
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl shadow-lg shadow-blue-600/20 transition-all"
+                  {/* Hover Overlay - Only show on desktop or when tapped on mobile */}
+                  <div
+                    className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-3 sm:gap-5 transition-all duration-300 ${
+                      (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
+                        ? "opacity-100" 
+                        : "opacity-0 pointer-events-none"
+                    }`}
+                  >
+                    <Link href={project.liveUrl} target="_blank">
+                      <button 
+                        className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-slate-900 text-xs sm:text-base font-bold hover:bg-slate-100 transition-all shadow-lg"
                       >
-                        <ExternalLink className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                        <span className="hidden sm:inline">Live Demo</span>
-                        <span className="sm:hidden">Demo</span>
-                      </Button>
+                        <Eye className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
+                        Preview
+                      </button>
                     </Link>
-                    <Link
-                      href={project.repoUrl}
-                      target="_blank"
-                      className="flex-1"
-                    >
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl transition-all"
+                    <Link href={project.repoUrl} target="_blank">
+                      <button 
+                        className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-slate-900 text-white text-xs sm:text-base font-bold hover:bg-slate-800 transition-all shadow-lg"
                       >
-                        <Github className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                        <span className="hidden sm:inline">Code</span>
-                        <span className="sm:hidden">Repo</span>
-                      </Button>
+                        <Github className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
+                        Code
+                      </button>
                     </Link>
                   </div>
-                </CardContent>
-              </motion.div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-4 sm:p-6 flex flex-col">
+                <CardTitle className="text-lg sm:text-2xl font-bold text-slate-900 mb-1.5 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+                  {project.title}
+                </CardTitle>
+
+                <p className="text-sm sm:text-base text-slate-600 font-bold mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
+                  {project.description}
+                </p>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                  {project.tags.slice(0, 4).map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                  {project.tags.length > 4 && (
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
+                    >
+                      +{project.tags.length - 4}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4 border-t-2 border-slate-100">
+                  <Link
+                    href={project.liveUrl}
+                    target="_blank"
+                    className="flex-1"
+                  >
+                    <Button
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl shadow-lg shadow-blue-600/20 transition-all"
+                    >
+                      <ExternalLink className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="hidden sm:inline">Live Demo</span>
+                      <span className="sm:hidden">Demo</span>
+                    </Button>
+                  </Link>
+                  <Link
+                    href={project.repoUrl}
+                    target="_blank"
+                    className="flex-1"
+                  >
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl transition-all"
+                    >
+                      <Github className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="hidden sm:inline">Code</span>
+                      <span className="sm:hidden">Repo</span>
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
             </motion.div>
           ))}
         </motion.div>
