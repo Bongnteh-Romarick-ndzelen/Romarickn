@@ -318,8 +318,11 @@ export default function AboutPage() {
               </p>
             </motion.div>
 
-            {/* Hobbies */}
-            <motion.div variants={fadeInUp} className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
+            {/* Hobbies - Fixed flashing issue */}
+            <motion.div 
+              variants={fadeInUp} 
+              className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
+            >
               <h3 className="text-xl font-bold text-slate-900 mb-5 flex items-center gap-2">
                 <Heart className="h-6 w-6 text-red-500" />
                 Hobbies & Interests
@@ -328,23 +331,22 @@ export default function AboutPage() {
                 {hobbies.map((hobby, idx) => {
                   const Icon = hobby.icon;
                   return (
-                    <motion.div
+                    <div
                       key={idx}
-                      whileHover={{ scale: 1.02 }}
-                      className="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all"
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all duration-200"
                     >
-                      <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600">
+                      <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <div>
-                        <p className="text-base font-bold text-slate-800">
+                      <div className="min-w-0">
+                        <p className="text-base font-bold text-slate-800 truncate">
                           {hobby.name}
                         </p>
-                        <p className="text-sm font-semibold text-slate-500">
+                        <p className="text-sm font-semibold text-slate-500 truncate">
                           {hobby.desc}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -360,23 +362,22 @@ export default function AboutPage() {
                 {achievements.map((ach, idx) => {
                   const Icon = ach.icon;
                   return (
-                    <motion.div
+                    <div
                       key={idx}
-                      whileHover={{ scale: 1.02 }}
-                      className="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 hover:bg-white transition-all"
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 hover:bg-white transition-all duration-200"
                     >
-                      <div className="p-2.5 rounded-lg bg-purple-50 text-purple-600">
+                      <div className="p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <div>
-                        <p className="text-base font-bold text-slate-800">
+                      <div className="min-w-0">
+                        <p className="text-base font-bold text-slate-800 truncate">
                           {ach.title}
                         </p>
-                        <p className="text-sm font-semibold text-slate-500">
+                        <p className="text-sm font-semibold text-slate-500 truncate">
                           {ach.desc}
                         </p>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
