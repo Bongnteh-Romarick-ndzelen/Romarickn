@@ -126,22 +126,6 @@ const staggerContainer = {
   }
 };
 
-const cardHover = {
-  rest: { scale: 1 },
-  hover: { 
-    scale: 1.02,
-    transition: { duration: 0.3 }
-  }
-};
-
-const statCardHover = {
-  rest: { scale: 1 },
-  hover: { 
-    scale: 1.05,
-    transition: { duration: 0.3 }
-  }
-};
-
 export default function AboutPage() {
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -201,7 +185,7 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* ── STATS ROW ─────────────────────────────────────────── */}
+      {/* ── STATS ROW ─────────────────────────────────────────── - Fixed shaking */}
       <motion.section
         ref={ref}
         initial="hidden"
@@ -216,24 +200,17 @@ export default function AboutPage() {
               <motion.div
                 key={idx}
                 variants={fadeInUp}
-                whileHover="hover"
-                initial="rest"
-                animate="rest"
+                className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group"
               >
-                <motion.div
-                  variants={statCardHover}
-                  className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group"
-                >
-                  <div className="inline-flex p-3.5 rounded-xl bg-blue-50 text-blue-600 mb-3">
-                    <Icon className="h-7 w-7" />
-                  </div>
-                  <div className="text-4xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                    {stat.value}
-                  </div>
-                  <div className="text-base font-bold text-slate-500 uppercase tracking-wider mt-1.5">
-                    {stat.label}
-                  </div>
-                </motion.div>
+                <div className="inline-flex p-3.5 rounded-xl bg-blue-50 text-blue-600 mb-3">
+                  <Icon className="h-7 w-7" />
+                </div>
+                <div className="text-4xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
+                  {stat.value}
+                </div>
+                <div className="text-base font-bold text-slate-500 uppercase tracking-wider mt-1.5">
+                  {stat.label}
+                </div>
               </motion.div>
             );
           })}
@@ -251,58 +228,53 @@ export default function AboutPage() {
             variants={staggerContainer}
             className="space-y-6"
           >
-            {/* Profile Card */}
-            <motion.div variants={fadeInUp} whileHover="hover" initial="rest" animate="rest">
-              <motion.div
-                variants={cardHover}
-                className="bg-white border-2 border-slate-200/80 rounded-2xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
-              >
-                <div className="relative inline-block mx-auto mb-5">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full blur-2xl opacity-30" />
-                  <div className="relative w-36 h-36 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 p-1.5 shadow-xl">
-                    <Image
-                      src="/romarick.jpeg"
-                      alt="Bongnteh Romarick"
-                      width={144}
-                      height={144}
-                      className="w-full h-full rounded-full object-cover border-4 border-white"
-                    />
-                  </div>
+            {/* Profile Card - Removed whileHover from the motion.div wrapper */}
+            <motion.div variants={fadeInUp} className="bg-white border-2 border-slate-200/80 rounded-2xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+              <div className="relative inline-block mx-auto mb-5">
+                <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full blur-2xl opacity-30" />
+                <div className="relative w-36 h-36 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 p-1.5 shadow-xl">
+                  <Image
+                    src="/romarick.jpeg"
+                    alt="Bongnteh Romarick"
+                    width={144}
+                    height={144}
+                    className="w-full h-full rounded-full object-cover border-4 border-white"
+                  />
                 </div>
-                <h2 className="text-3xl font-bold text-slate-900">
-                  Bongnteh Romarick
-                </h2>
-                <p className="text-xl font-bold text-blue-600">
-                  Full-Stack Developer
-                </p>
-                <div className="flex items-center justify-center gap-4 text-base text-slate-600 font-bold mt-3">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="h-5 w-5" />
-                    Cameroon
-                  </span>
-                  <span className="text-slate-300">•</span>
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-5 w-5" />
-                    5+ Years
-                  </span>
-                </div>
-                <div className="flex gap-4 justify-center mt-6">
-                  <Link href="/contact">
-                    <Button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
-                      <Mail className="h-5 w-5 mr-2" />
-                      Contact
-                    </Button>
-                  </Link>
-                  <Link href="/experience">
-                    <Button
-                      variant="outline"
-                      className="px-8 py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-base font-bold rounded-xl transition-all"
-                    >
-                      Experience
-                    </Button>
-                  </Link>
-                </div>
-              </motion.div>
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900">
+                Bongnteh Romarick
+              </h2>
+              <p className="text-xl font-bold text-blue-600">
+                Full-Stack Developer
+              </p>
+              <div className="flex items-center justify-center gap-4 text-base text-slate-600 font-bold mt-3">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-5 w-5" />
+                  Cameroon
+                </span>
+                <span className="text-slate-300">•</span>
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-5 w-5" />
+                  5+ Years
+                </span>
+              </div>
+              <div className="flex gap-4 justify-center mt-6">
+                <Link href="/contact">
+                  <Button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
+                    <Mail className="h-5 w-5 mr-2" />
+                    Contact
+                  </Button>
+                </Link>
+                <Link href="/experience">
+                  <Button
+                    variant="outline"
+                    className="px-8 py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-base font-bold rounded-xl transition-all"
+                  >
+                    Experience
+                  </Button>
+                </Link>
+              </div>
             </motion.div>
 
             {/* Availability */}
@@ -318,7 +290,7 @@ export default function AboutPage() {
               </p>
             </motion.div>
 
-            {/* Hobbies - Fixed flashing issue */}
+            {/* Hobbies - Fixed */}
             <motion.div 
               variants={fadeInUp} 
               className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
@@ -428,43 +400,36 @@ export default function AboutPage() {
                 <motion.div
                   key={idx}
                   variants={fadeInUp}
-                  whileHover="hover"
-                  initial="rest"
-                  animate="rest"
+                  className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
                 >
-                  <motion.div
-                    variants={cardHover}
-                    className="bg-white border-2 border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`w-14 h-14 rounded-xl ${skill.iconBg} flex items-center justify-center shadow-sm`}
-                        >
-                          <Icon className="h-7 w-7" />
-                        </div>
-                        <div>
-                          <p className="text-lg font-black text-slate-800">
-                            {skill.name}
-                          </p>
-                          <p className="text-base font-bold text-slate-500">
-                            {skill.desc}
-                          </p>
-                        </div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-14 h-14 rounded-xl ${skill.iconBg} flex items-center justify-center shadow-sm`}
+                      >
+                        <Icon className="h-7 w-7" />
                       </div>
-                      <span className="text-xl font-black text-blue-600">
-                        {skill.level}%
-                      </span>
+                      <div>
+                        <p className="text-lg font-black text-slate-800">
+                          {skill.name}
+                        </p>
+                        <p className="text-base font-bold text-slate-500">
+                          {skill.desc}
+                        </p>
+                      </div>
                     </div>
-                    <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div
-                        className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full`}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${skill.level}%` }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                      />
-                    </div>
-                  </motion.div>
+                    <span className="text-xl font-black text-blue-600">
+                      {skill.level}%
+                    </span>
+                  </div>
+                  <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full`}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${skill.level}%` }}
+                      transition={{ duration: 1, delay: 0.3 }}
+                    />
+                  </div>
                 </motion.div>
               );
             })}
@@ -477,13 +442,12 @@ export default function AboutPage() {
               </h3>
               <div className="flex flex-wrap gap-2.5">
                 {techStack.map((tech, idx) => (
-                  <motion.span
+                  <span
                     key={idx}
-                    whileHover={{ scale: 1.05 }}
                     className="px-5 py-2.5 rounded-xl bg-blue-50 border-2 border-blue-200 text-base font-bold text-blue-700 hover:bg-blue-100 transition-all"
                   >
                     {tech}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
             </motion.div>
