@@ -14,12 +14,9 @@ import {
   Code2,
   Rocket,
   Users,
-  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
 const projects = [
   {
@@ -145,35 +142,10 @@ const categories = [
   "Web",
 ];
 
-// Animation variants
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const [ref2, inView2] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
 
   useEffect(() => {
     const checkMobile = () => {
@@ -209,39 +181,28 @@ export default function ProjectsPage() {
       `}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
-        {/* Header Section with Animation */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-8 sm:mb-10"
-        >
+        {/* Header Section */}
+        <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-3 sm:mb-4">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-            <span className="text-sm sm:text-base font-black text-blue-700 uppercase tracking-wide">
+            <span className="text-[10px] sm:text-base font-black text-blue-700 uppercase tracking-wide">
               Portfolio Showcase
             </span>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
             My{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Projects
             </span>
           </h1>
-          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-3 sm:mt-4">
+          <p className="text-sm sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-2 sm:mt-4">
             A curated selection of projects showcasing my technical skills and
             creative solutions
           </p>
-        </motion.div>
+        </div>
 
-        {/* Stats Row with Animation - Fixed shaking issue */}
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 mb-8 sm:mb-10 max-w-5xl mx-auto"
-        >
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
           {[
             { value: projects.length, label: "Total Projects", icon: Code2 },
             { value: featuredCount, label: "Featured", icon: Star },
@@ -250,37 +211,31 @@ export default function ProjectsPage() {
           ].map((stat, idx) => {
             const Icon = stat.icon;
             return (
-              <motion.div
+              <div
                 key={idx}
-                variants={fadeInUp}
-                className="bg-white border-2 border-slate-200/80 rounded-2xl p-3 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                className="bg-white border-2 border-slate-200/80 rounded-2xl p-2 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <div className="inline-flex p-2 sm:p-3 rounded-xl bg-blue-50 text-blue-600 mb-1 sm:mb-2">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                <div className="inline-flex p-1.5 sm:p-3 rounded-xl bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                  <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
-                <div className="text-2xl sm:text-4xl font-black text-slate-900">
+                <div className="text-lg sm:text-4xl font-black text-slate-900">
                   {stat.value}
                 </div>
-                <div className="text-xs sm:text-base font-bold text-slate-500 uppercase tracking-wider">
+                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wider">
                   {stat.label}
                 </div>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
 
-        {/* Category Filters with Animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-1.5 sm:gap-2.5 mb-8 sm:mb-10"
-        >
+        {/* Category Filters */}
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2.5 mb-6 sm:mb-10">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-xl text-xs sm:text-base font-bold transition-all duration-200 ${
+              className={`px-2.5 sm:px-6 py-1 sm:py-2.5 rounded-xl text-[10px] sm:text-base font-bold transition-all duration-200 ${
                 activeCategory === category
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/25"
                   : "bg-white border-2 border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-blue-50"
@@ -289,20 +244,13 @@ export default function ProjectsPage() {
               {category}
             </button>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Projects Grid with Animation */}
-        <motion.div
-          ref={ref2}
-          initial="hidden"
-          animate={inView2 ? "visible" : "hidden"}
-          variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-        >
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {filteredProjects.map((project, index) => (
-            <motion.div
+            <div
               key={project.title}
-              variants={fadeInUp}
               className="group bg-white border-2 border-slate-200/80 transition-all duration-300 hover:border-blue-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden rounded-2xl"
               onMouseEnter={() => !isMobile && setHoveredCard(index)}
               onMouseLeave={() => !isMobile && setHoveredCard(null)}
@@ -313,82 +261,80 @@ export default function ProjectsPage() {
               }}
             >
               {/* Image Section */}
-              <CardHeader className="p-0 relative">
-                <div className="relative aspect-video overflow-hidden bg-slate-100">
-                  <Image
-                    src={project.imageUrl}
-                    alt={project.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    priority={index < 4}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+              <div className="relative aspect-video overflow-hidden bg-slate-100">
+                <Image
+                  src={project.imageUrl}
+                  alt={project.title}
+                  width={600}
+                  height={400}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority={index < 4}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-                  {/* Featured Badge */}
-                  {project.featured && (
-                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 border-0 text-white text-[10px] sm:text-sm font-black px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-lg">
-                        <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 fill-current" />
-                        Featured
-                      </Badge>
-                    </div>
-                  )}
-
-                  {/* Category Badge */}
-                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
-                    <Badge
-                      variant="outline"
-                      className="bg-white/90 backdrop-blur-sm border-2 border-white/30 text-slate-800 text-[10px] sm:text-sm font-bold px-2 sm:px-4 py-1 sm:py-1.5 rounded-xl shadow-sm"
-                    >
-                      {project.category}
+                {/* Featured Badge */}
+                {project.featured && (
+                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
+                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 border-0 text-white text-[8px] sm:text-sm font-black px-1.5 sm:px-4 py-0.5 sm:py-1.5 rounded-xl shadow-lg">
+                      <Star className="h-2.5 w-2.5 sm:h-4 sm:w-4 mr-0.5 sm:mr-1.5 fill-current" />
+                      Featured
                     </Badge>
                   </div>
+                )}
 
-                  {/* Hover Overlay */}
-                  <div
-                    className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-3 sm:gap-5 transition-all duration-300 ${
-                      (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
-                        ? "opacity-100" 
-                        : "opacity-0 pointer-events-none"
-                    }`}
+                {/* Category Badge */}
+                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10">
+                  <Badge
+                    variant="outline"
+                    className="bg-white/90 backdrop-blur-sm border-2 border-white/30 text-slate-800 text-[8px] sm:text-sm font-bold px-1.5 sm:px-4 py-0.5 sm:py-1.5 rounded-xl shadow-sm"
                   >
-                    <Link href={project.liveUrl} target="_blank">
-                      <button 
-                        className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-white text-slate-900 text-xs sm:text-base font-bold hover:bg-slate-100 transition-all shadow-lg"
-                      >
-                        <Eye className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-                        Preview
-                      </button>
-                    </Link>
-                    <Link href={project.repoUrl} target="_blank">
-                      <button 
-                        className="px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-slate-900 text-white text-xs sm:text-base font-bold hover:bg-slate-800 transition-all shadow-lg"
-                      >
-                        <Github className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1 sm:mr-2" />
-                        Code
-                      </button>
-                    </Link>
-                  </div>
+                    {project.category}
+                  </Badge>
                 </div>
-              </CardHeader>
 
-              <CardContent className="p-4 sm:p-6 flex flex-col">
-                <CardTitle className="text-lg sm:text-2xl font-bold text-slate-900 mb-1.5 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+                {/* Hover Overlay */}
+                <div
+                  className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-2 sm:gap-5 transition-all duration-300 ${
+                    (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
+                      ? "opacity-100" 
+                      : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <Link href={project.liveUrl} target="_blank">
+                    <button 
+                      className="px-2 sm:px-6 py-1 sm:py-3 rounded-xl bg-white text-slate-900 text-[10px] sm:text-base font-bold hover:bg-slate-100 transition-all shadow-lg"
+                    >
+                      <Eye className="h-3.5 w-3.5 sm:h-5 sm:w-5 inline mr-0.5 sm:mr-2" />
+                      Preview
+                    </button>
+                  </Link>
+                  <Link href={project.repoUrl} target="_blank">
+                    <button 
+                      className="px-2 sm:px-6 py-1 sm:py-3 rounded-xl bg-slate-900 text-white text-[10px] sm:text-base font-bold hover:bg-slate-800 transition-all shadow-lg"
+                    >
+                      <Github className="h-3.5 w-3.5 sm:h-5 sm:w-5 inline mr-0.5 sm:mr-2" />
+                      Code
+                    </button>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-6 flex flex-col">
+                <h3 className="text-sm sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
                   {project.title}
-                </CardTitle>
+                </h3>
 
-                <p className="text-sm sm:text-base text-slate-600 font-bold mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
+                <p className="text-[10px] sm:text-base text-slate-600 font-bold mb-1.5 sm:mb-3 line-clamp-2 leading-relaxed">
                   {project.description}
                 </p>
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-4">
                   {project.tags.slice(0, 4).map((tag) => (
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
+                      className="text-[8px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-1.5 sm:px-3.5 py-0.5 sm:py-1.5 rounded-xl border-2 border-slate-200"
                     >
                       {tag}
                     </Badge>
@@ -396,7 +342,7 @@ export default function ProjectsPage() {
                   {project.tags.length > 4 && (
                     <Badge
                       variant="secondary"
-                      className="text-[10px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl border-2 border-slate-200"
+                      className="text-[8px] sm:text-sm font-bold bg-slate-100 text-slate-700 px-1.5 sm:px-3.5 py-0.5 sm:py-1.5 rounded-xl border-2 border-slate-200"
                     >
                       +{project.tags.length - 4}
                     </Badge>
@@ -404,7 +350,7 @@ export default function ProjectsPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2 sm:gap-3 mt-auto pt-3 sm:pt-4 border-t-2 border-slate-100">
+                <div className="flex gap-1.5 sm:gap-3 mt-auto pt-2 sm:pt-4 border-t-2 border-slate-100">
                   <Link
                     href={project.liveUrl}
                     target="_blank"
@@ -412,9 +358,9 @@ export default function ProjectsPage() {
                   >
                     <Button
                       size="sm"
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl shadow-lg shadow-blue-600/20 transition-all"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[10px] sm:text-base font-bold h-7 sm:h-11 rounded-xl shadow-lg shadow-blue-600/20 transition-all"
                     >
-                      <ExternalLink className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      <ExternalLink className="mr-0.5 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
                       <span className="hidden sm:inline">Live Demo</span>
                       <span className="sm:hidden">Demo</span>
                     </Button>
@@ -427,57 +373,44 @@ export default function ProjectsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-xs sm:text-base font-bold h-9 sm:h-11 rounded-xl transition-all"
+                      className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-[10px] sm:text-base font-bold h-7 sm:h-11 rounded-xl transition-all"
                     >
-                      <Github className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      <Github className="mr-0.5 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
                       <span className="hidden sm:inline">Code</span>
                       <span className="sm:hidden">Repo</span>
                     </Button>
                   </Link>
                 </div>
-              </CardContent>
-            </motion.div>
+              </div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* CTA Section with Animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 sm:mt-16"
-        >
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-6 sm:p-10 text-center shadow-sm">
-            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3">
+        {/* CTA Section */}
+        <div className="mt-10 sm:mt-16">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-4 sm:p-10 text-center shadow-sm">
+            <h3 className="text-lg sm:text-3xl font-bold text-slate-900 mb-1.5 sm:mb-3">
               Have a project in mind?
             </h3>
-            <p className="text-base sm:text-lg text-slate-600 font-bold mb-4 sm:mb-6 max-w-md mx-auto">
+            <p className="text-sm sm:text-lg text-slate-600 font-bold mb-3 sm:mb-6 max-w-md mx-auto">
               Let's collaborate and bring your ideas to life. I'm available for
               freelance work and partnerships.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center">
               <Link href="/contact">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 sm:px-10 py-3 sm:py-4.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base sm:text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
-                >
+                <button className="px-4 sm:px-10 py-2 sm:py-4.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
                   Start a Project
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 inline" />
-                </motion.button>
+                  <ArrowRight className="ml-1 sm:ml-2 h-4 w-4 sm:h-5 sm:w-5 inline" />
+                </button>
               </Link>
               <Link href="/experience">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 sm:px-10 py-3 sm:py-4.5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-base sm:text-lg font-bold rounded-xl transition-all"
-                >
+                <button className="px-4 sm:px-10 py-2 sm:py-4.5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl transition-all">
                   View My Experience
-                </motion.button>
+                </button>
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
