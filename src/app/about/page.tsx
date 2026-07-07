@@ -142,25 +142,25 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── STATS ROW ── FIXED: 4 columns on mobile, removed animations ── */}
+      {/* ── STATS ROW ── MATCHES HOME PAGE LAYOUT ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-5 max-w-5xl mx-auto">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm"
+                className="bg-white border-2 border-slate-100 rounded-2xl p-5 text-center shadow-md shadow-slate-100/50"
               >
-                <div className="inline-flex p-1.5 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-3">
-                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-2 rounded-lg bg-blue-50 text-blue-600 mb-2">
+                  <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
+                <p className="text-3xl sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
-                </div>
-                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
+                </p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-1.5">
                   {stat.label}
-                </div>
+                </p>
               </div>
             );
           })}
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies */}
+            {/* Hobbies - MATCHES HOME PAGE LAYOUT */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />

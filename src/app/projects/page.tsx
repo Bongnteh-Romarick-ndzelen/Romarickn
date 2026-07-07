@@ -201,8 +201,8 @@ export default function ProjectsPage() {
           </p>
         </div>
 
-        {/* Stats Row - FIXED: Kept 4 columns on mobile, removed animations */}
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
+        {/* Stats Row - MATCHES HOME PAGE LAYOUT */}
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
           {[
             { value: projects.length, label: "Total Projects", icon: Code2 },
             { value: featuredCount, label: "Featured", icon: Star },
@@ -213,23 +213,23 @@ export default function ProjectsPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-5 text-center shadow-sm"
+                className="bg-white border-2 border-slate-100 rounded-2xl p-5 text-center shadow-md shadow-slate-100/50"
               >
-                <div className="inline-flex p-1.5 sm:p-3 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
-                  <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
+                <div className="inline-flex p-2 rounded-lg bg-blue-50 text-blue-600 mb-2">
+                  <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
+                <p className="text-3xl sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
-                </div>
-                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
+                </p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-1.5">
                   {stat.label}
-                </div>
+                </p>
               </div>
             );
           })}
         </div>
 
-        {/* Category Filters - FIXED: Removed transition animations */}
+        {/* Category Filters */}
         <div className="flex flex-wrap justify-center gap-1 sm:gap-2.5 mb-6 sm:mb-10">
           {categories.map((category) => (
             <button
@@ -292,7 +292,7 @@ export default function ProjectsPage() {
                   </Badge>
                 </div>
 
-                {/* Hover Overlay - FIXED: Made more stable */}
+                {/* Hover Overlay */}
                 <div
                   className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-2 sm:gap-5 ${
                     (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
@@ -349,7 +349,7 @@ export default function ProjectsPage() {
                   )}
                 </div>
 
-                {/* Action Buttons - FIXED: Removed hover transitions */}
+                {/* Action Buttons */}
                 <div className="flex gap-1.5 sm:gap-3 mt-auto pt-2 sm:pt-4 border-t-2 border-slate-100">
                   <Link
                     href={project.liveUrl}
