@@ -120,15 +120,15 @@ export default function AboutPage() {
       `}</style>
 
       {/* ── HERO SECTION ─────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-24">
-        <div className="text-center space-y-3 sm:space-y-5">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-24">
+        <div className="text-center space-y-2 sm:space-y-5">
           <div className="inline-flex items-center gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-2 sm:mb-3">
             <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
             <span className="text-[10px] sm:text-base font-black text-blue-700 uppercase tracking-wide">
               Get to Know Me
             </span>
           </div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
             About{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Me
@@ -144,21 +144,21 @@ export default function AboutPage() {
 
       {/* ── STATS ROW ─────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 max-w-5xl mx-auto">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-2xl p-3 sm:p-6 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group"
               >
-                <div className="inline-flex p-2 sm:p-3.5 rounded-xl bg-blue-50 text-blue-600 mb-1 sm:mb-3">
-                  <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-1.5 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-3">
+                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-2xl sm:text-4xl font-black text-slate-900 group-hover:text-blue-600 transition-colors">
+                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
                   {stat.value}
                 </div>
-                <div className="text-[10px] sm:text-base font-bold text-slate-500 uppercase tracking-wider mt-0.5 sm:mt-1.5">
+                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
                   {stat.label}
                 </div>
               </div>
@@ -244,22 +244,22 @@ export default function AboutPage() {
                 {hobbies.map((hobby, idx) => {
                   const Icon = hobby.icon;
                   return (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all duration-200"
-                    >
-                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                          {hobby.name}
-                        </p>
-                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                          {hobby.desc}
-                        </p>
-                      </div>
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all duration-200 overflow-hidden min-w-0"
+                  >
+                    <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
+                        {hobby.name}
+                      </p>
+                      <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
+                        {hobby.desc}
+                      </p>
+                    </div>
+                  </div>
                   );
                 })}
               </div>
@@ -275,22 +275,22 @@ export default function AboutPage() {
                 {achievements.map((ach, idx) => {
                   const Icon = ach.icon;
                   return (
-                    <div
-                      key={idx}
-                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 hover:bg-white transition-all duration-200"
-                    >
-                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                          {ach.title}
-                        </p>
-                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                          {ach.desc}
-                        </p>
-                      </div>
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 hover:bg-white transition-all duration-200 overflow-hidden min-w-0"
+                  >
+                    <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
+                        {ach.title}
+                      </p>
+                      <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
+                        {ach.desc}
+                      </p>
+                    </div>
+                  </div>
                   );
                 })}
               </div>
