@@ -235,53 +235,23 @@ export default function AboutPage() {
             </div>
 
             {/* Hobbies */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm overflow-hidden">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
                 Hobbies & Interests
               </h3>
-
-              {/* Mobile: fixed-width horizontal scroll (no shrink/truncate fight) */}
-              <div className="flex sm:hidden gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+              <div className="flex flex-wrap gap-2">
                 {hobbies.map((hobby, idx) => {
                   const Icon = hobby.icon;
                   return (
                     <div
                       key={idx}
-                      className="shrink-0 w-[110px] snap-start bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2.5 text-center shadow-sm"
+                      className="flex items-center gap-2 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-2"
                     >
-                      <div className="inline-flex p-1.5 rounded-lg bg-blue-50 text-blue-600 mb-1">
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <p className="text-[11px] font-bold text-slate-800 leading-snug">
+                      <Icon className="h-4 w-4 text-blue-600" />
+                      <span className="text-xs sm:text-sm font-bold text-slate-800">
                         {hobby.name}
-                      </p>
-                      <p className="text-[9px] font-semibold text-slate-500 leading-snug mt-0.5">
-                        {hobby.desc}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Desktop / tablet: 2-column grid, plenty of room so no shrink conflict */}
-              <div className="hidden sm:grid grid-cols-2 gap-3">
-                {hobbies.map((hobby, idx) => {
-                  const Icon = hobby.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-3.5 text-center shadow-sm"
-                    >
-                      <div className="inline-flex p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-1.5">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <p className="text-base font-bold text-slate-800">
-                        {hobby.name}
-                      </p>
-                      <p className="text-sm font-semibold text-slate-500">
-                        {hobby.desc}
-                      </p>
+                      </span>
                     </div>
                   );
                 })}
@@ -289,53 +259,23 @@ export default function AboutPage() {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm overflow-hidden">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
                 Achievements
               </h3>
-
-              {/* Mobile: fixed-width horizontal scroll (no shrink/truncate fight) */}
-              <div className="flex sm:hidden gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+              <div className="flex flex-wrap gap-2">
                 {achievements.map((ach, idx) => {
                   const Icon = ach.icon;
                   return (
                     <div
                       key={idx}
-                      className="shrink-0 w-[120px] snap-start bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2.5 text-center shadow-sm"
+                      className="flex items-center gap-2 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-2"
                     >
-                      <div className="inline-flex p-1.5 rounded-lg bg-purple-50 text-purple-600 mb-1">
-                        <Icon className="h-4 w-4" />
-                      </div>
-                      <p className="text-[11px] font-bold text-slate-800 leading-snug">
+                      <Icon className="h-4 w-4 text-purple-600" />
+                      <span className="text-xs sm:text-sm font-bold text-slate-800">
                         {ach.title}
-                      </p>
-                      <p className="text-[9px] font-semibold text-slate-500 leading-snug mt-0.5">
-                        {ach.desc}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Desktop / tablet: 2-column grid, plenty of room so no shrink conflict */}
-              <div className="hidden sm:grid grid-cols-2 gap-3">
-                {achievements.map((ach, idx) => {
-                  const Icon = ach.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-3.5 text-center shadow-sm"
-                    >
-                      <div className="inline-flex p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-1.5">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <p className="text-base font-bold text-slate-800">
-                        {ach.title}
-                      </p>
-                      <p className="text-sm font-semibold text-slate-500">
-                        {ach.desc}
-                      </p>
+                      </span>
                     </div>
                   );
                 })}
