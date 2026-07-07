@@ -106,7 +106,7 @@ const techStack = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
-      
+
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
         
@@ -136,7 +136,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-sm sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold px-4">
             A passionate developer dedicated to creating impactful digital
-            experiences. My journey into programming started with a simple "Hello, World!" and has since evolved 
+            experiences. My journey into programming started with a simple "Hello, World!" and has since evolved
             into a career where I solve complex problems and build applications that make a difference.
           </p>
         </div>
@@ -234,22 +234,24 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies */}
+            {/* Hobbies - STABLE VERSION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
                 Hobbies & Interests
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                 {hobbies.map((hobby, idx) => {
                   const Icon = hobby.icon;
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-2"
+                      className="flex items-center gap-1.5 sm:gap-2.5 bg-slate-50 border-2 border-slate-200/60 rounded-full px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-sm hover:shadow-md transition-all duration-200"
                     >
-                      <Icon className="h-4 w-4 text-blue-600" />
-                      <span className="text-xs sm:text-sm font-bold text-slate-800">
+                      <div className="p-1 rounded-full bg-blue-50 text-blue-600">
+                        <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="text-[10px] sm:text-sm font-bold text-slate-700 whitespace-nowrap">
                         {hobby.name}
                       </span>
                     </div>
@@ -258,22 +260,24 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Achievements */}
+            {/* Achievements - STABLE VERSION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
                 Achievements
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
                 {achievements.map((ach, idx) => {
                   const Icon = ach.icon;
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 bg-slate-50 border-2 border-slate-200/60 rounded-xl px-3 py-2"
+                      className="flex items-center gap-1.5 sm:gap-2.5 bg-slate-50 border-2 border-slate-200/60 rounded-full px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-sm hover:shadow-md transition-all duration-200"
                     >
-                      <Icon className="h-4 w-4 text-purple-600" />
-                      <span className="text-xs sm:text-sm font-bold text-slate-800">
+                      <div className="p-1 rounded-full bg-purple-50 text-purple-600">
+                        <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </div>
+                      <span className="text-[10px] sm:text-sm font-bold text-slate-700 whitespace-nowrap">
                         {ach.title}
                       </span>
                     </div>
