@@ -300,7 +300,7 @@ export default function AboutPage() {
           {/* Right Column - Bio & Skills */}
           <div className="space-y-4 sm:space-y-6">
             {/* Bio */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 sm:p-8 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 sm:p-8 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Rocket className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                 My Journey
@@ -334,7 +334,7 @@ export default function AboutPage() {
               return (
                 <div
                   key={idx}
-                  className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                  className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <div className="flex items-center gap-3 sm:gap-4">
@@ -369,8 +369,7 @@ export default function AboutPage() {
             {/* Tech Stack Tags */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
-                <Code2 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                Technologies I Work With
+         ork With
               </h3>
               <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                 {techStack.map((tech, idx) => (
