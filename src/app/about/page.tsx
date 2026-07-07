@@ -142,23 +142,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── STATS ROW ── FIXED: Removed ALL animations and simplified layout ── */}
+      {/* ── STATS ROW ── FIXED: 4 columns on mobile, removed animations ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 max-w-5xl mx-auto">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-3 sm:p-6 text-center shadow-sm"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm"
               >
-                <div className="inline-flex p-2 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-3">
-                  <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-1.5 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-3">
+                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-xl sm:text-4xl font-black text-slate-900 leading-none">
+                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </div>
-                <div className="text-[10px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight">
+                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
                   {stat.label}
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default function AboutPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center mt-4 sm:mt-6">
                 <Link href="/contact">
-                  <Button className="px-5 sm:px-8 py-2.5 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
+                  <Button className="px-5 sm:px-8 py-2.5 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg shadow-blue-600/25">
                     <Mail className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2" />
                     Contact
                   </Button>
@@ -213,7 +213,7 @@ export default function AboutPage() {
                 <Link href="/experience">
                   <Button
                     variant="outline"
-                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-base font-bold rounded-xl transition-all"
+                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-base font-bold rounded-xl"
                   >
                     Experience
                   </Button>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies - FIXED: Removed animations, added stability */}
+            {/* Hobbies */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
@@ -328,7 +328,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Skills Cards - FIXED: Removed transition animations */}
+            {/* Skills Cards */}
             {skills.map((skill, idx) => {
               const Icon = skill.icon;
               return (
@@ -358,7 +358,7 @@ export default function AboutPage() {
                   </div>
                   <div className="h-2 sm:h-2.5 bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full transition-none`}
+                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full`}
                       style={{ width: `${skill.level}%` }}
                     />
                   </div>
@@ -366,7 +366,7 @@ export default function AboutPage() {
               );
             })}
 
-            {/* Tech Stack Tags - FIXED: Removed hover transition */}
+            {/* Tech Stack Tags */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Code2 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
@@ -415,12 +415,12 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center">
             <Link href="/projects">
-              <button className="px-6 sm:px-10 py-3 sm:py-4.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all">
+              <button className="px-6 sm:px-10 py-3 sm:py-4.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25">
                 View My Work →
               </button>
             </Link>
             <Link href="/contact">
-              <button className="px-6 sm:px-10 py-3 sm:py-4.5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl transition-all">
+              <button className="px-6 sm:px-10 py-3 sm:py-4.5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl">
                 <Mail className="h-4 w-4 sm:h-5 sm:w-5 inline mr-1.5 sm:mr-2" />
                 Contact Me
               </button>
