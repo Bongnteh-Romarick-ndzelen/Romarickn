@@ -202,7 +202,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
           {[
             { value: projects.length, label: "Total Projects", icon: Code2 },
             { value: featuredCount, label: "Featured", icon: Star },
@@ -213,15 +213,15 @@ export default function ProjectsPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-2xl p-2 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <div className="inline-flex p-1.5 sm:p-3 rounded-xl bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                <div className="inline-flex p-1.5 sm:p-3 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
                   <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
-                <div className="text-lg sm:text-4xl font-black text-slate-900">
+                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </div>
-                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wider">
+                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
                   {stat.label}
                 </div>
               </div>
@@ -319,12 +319,12 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              <div className="p-3 sm:p-6 flex flex-col">
-                <h3 className="text-sm sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1">
+              <div className="p-3 sm:p-6 flex flex-col min-w-0">
+                <h3 className="text-sm sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1 min-w-0">
                   {project.title}
                 </h3>
 
-                <p className="text-[10px] sm:text-base text-slate-600 font-bold mb-1.5 sm:mb-3 line-clamp-2 leading-relaxed">
+                <p className="text-[10px] sm:text-base text-slate-600 font-bold mb-1.5 sm:mb-3 line-clamp-2 leading-relaxed break-words">
                   {project.description}
                 </p>
 
@@ -354,7 +354,7 @@ export default function ProjectsPage() {
                   <Link
                     href={project.liveUrl}
                     target="_blank"
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                   >
                     <Button
                       size="sm"
@@ -368,7 +368,7 @@ export default function ProjectsPage() {
                   <Link
                     href={project.repoUrl}
                     target="_blank"
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                   >
                     <Button
                       size="sm"

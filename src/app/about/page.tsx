@@ -150,12 +150,12 @@ export default function AboutPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm"
               >
                 <div className="inline-flex p-1.5 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-3">
                   <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
+                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </div>
                 <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
@@ -173,7 +173,7 @@ export default function AboutPage() {
           {/* Left Column - Profile & Info */}
           <div className="space-y-4 sm:space-y-6">
             {/* Profile Card */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 sm:p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 sm:p-8 text-center shadow-sm">
               <div className="relative inline-block mx-auto mb-4 sm:mb-5">
                 <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full blur-2xl opacity-30" />
                 <div className="relative w-24 h-24 sm:w-36 sm:h-36 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 p-1 sm:p-1.5 shadow-xl">
@@ -222,9 +222,9 @@ export default function AboutPage() {
             </div>
 
             {/* Availability */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 text-center shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 text-center shadow-sm">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500" />
                 <span className="text-sm sm:text-base font-black text-emerald-600">
                   Available for Work
                 </span>
@@ -235,7 +235,7 @@ export default function AboutPage() {
             </div>
 
             {/* Hobbies */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
                 Hobbies & Interests
@@ -246,7 +246,7 @@ export default function AboutPage() {
                   return (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 hover:bg-white transition-all duration-200 overflow-hidden min-w-0"
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
                   >
                     <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
                       <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -266,7 +266,7 @@ export default function AboutPage() {
             </div>
 
             {/* Achievements */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
                 Achievements
@@ -277,7 +277,7 @@ export default function AboutPage() {
                   return (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 hover:bg-white transition-all duration-200 overflow-hidden min-w-0"
+                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
                   >
                     <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
                       <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -367,7 +367,7 @@ export default function AboutPage() {
             })}
 
             {/* Tech Stack Tags */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Code2 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                 Technologies I Work With
