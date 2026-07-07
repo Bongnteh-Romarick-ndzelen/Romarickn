@@ -142,23 +142,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── STATS ROW ─────────────────────────────────────────── */}
+      {/* ── STATS ROW ── FIXED: Removed ALL animations and simplified layout ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-5 max-w-5xl mx-auto">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-6 text-center shadow-sm"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-3 sm:p-6 text-center shadow-sm"
               >
-                <div className="inline-flex p-1.5 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-3">
-                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-2 sm:p-3.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-3">
+                  <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
+                <div className="text-xl sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </div>
-                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
+                <div className="text-[10px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight">
                   {stat.label}
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies */}
+            {/* Hobbies - FIXED: Removed animations, added stability */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
@@ -244,22 +244,22 @@ export default function AboutPage() {
                 {hobbies.map((hobby, idx) => {
                   const Icon = hobby.icon;
                   return (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
-                  >
-                    <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
-                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
+                    >
+                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
+                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
+                          {hobby.name}
+                        </p>
+                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
+                          {hobby.desc}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                        {hobby.name}
-                      </p>
-                      <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                        {hobby.desc}
-                      </p>
-                    </div>
-                  </div>
                   );
                 })}
               </div>
@@ -275,22 +275,22 @@ export default function AboutPage() {
                 {achievements.map((ach, idx) => {
                   const Icon = ach.icon;
                   return (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
-                  >
-                    <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
-                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
+                    >
+                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
+                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
+                          {ach.title}
+                        </p>
+                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
+                          {ach.desc}
+                        </p>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                        {ach.title}
-                      </p>
-                      <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                        {ach.desc}
-                      </p>
-                    </div>
-                  </div>
                   );
                 })}
               </div>
@@ -328,7 +328,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Skills Cards */}
+            {/* Skills Cards - FIXED: Removed transition animations */}
             {skills.map((skill, idx) => {
               const Icon = skill.icon;
               return (
@@ -337,28 +337,28 @@ export default function AboutPage() {
                   className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                       <div
-                        className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl ${skill.iconBg} flex items-center justify-center shadow-sm`}
+                        className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl ${skill.iconBg} flex items-center justify-center shadow-sm flex-shrink-0`}
                       >
                         <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
                       </div>
-                      <div>
-                        <p className="text-sm sm:text-lg font-black text-slate-800">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm sm:text-lg font-black text-slate-800 truncate">
                           {skill.name}
                         </p>
-                        <p className="text-[10px] sm:text-base font-bold text-slate-500">
+                        <p className="text-[10px] sm:text-base font-bold text-slate-500 truncate">
                           {skill.desc}
                         </p>
                       </div>
                     </div>
-                    <span className="text-base sm:text-xl font-black text-blue-600">
+                    <span className="text-base sm:text-xl font-black text-blue-600 flex-shrink-0 ml-2">
                       {skill.level}%
                     </span>
                   </div>
                   <div className="h-2 sm:h-2.5 bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full`}
+                      className={`h-full bg-gradient-to-r ${skill.barColor} rounded-full transition-none`}
                       style={{ width: `${skill.level}%` }}
                     />
                   </div>
@@ -366,16 +366,17 @@ export default function AboutPage() {
               );
             })}
 
-            {/* Tech Stack Tags */}
+            {/* Tech Stack Tags - FIXED: Removed hover transition */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
-         ork With
+                <Code2 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                Tech Stack
               </h3>
               <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                 {techStack.map((tech, idx) => (
                   <span
                     key={idx}
-                    className="px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl bg-blue-50 border-2 border-blue-200 text-[10px] sm:text-base font-bold text-blue-700 hover:bg-blue-100 transition-all"
+                    className="px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-xl bg-blue-50 border-2 border-blue-200 text-[10px] sm:text-base font-bold text-blue-700"
                   >
                     {tech}
                   </span>

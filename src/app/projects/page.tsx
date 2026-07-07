@@ -213,7 +213,7 @@ export default function ProjectsPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-5 text-center shadow-sm"
               >
                 <div className="inline-flex p-1.5 sm:p-3 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
                   <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
@@ -251,7 +251,7 @@ export default function ProjectsPage() {
           {filteredProjects.map((project, index) => (
             <div
               key={project.title}
-              className="group bg-white border-2 border-slate-200/80 transition-all duration-300 hover:border-blue-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden rounded-2xl"
+              className="bg-white border-2 border-slate-200/80 overflow-hidden rounded-2xl"
               onMouseEnter={() => !isMobile && setHoveredCard(index)}
               onMouseLeave={() => !isMobile && setHoveredCard(null)}
               onTouchStart={() => {
@@ -267,7 +267,7 @@ export default function ProjectsPage() {
                   alt={project.title}
                   width={600}
                   height={400}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover"
                   priority={index < 4}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
@@ -294,7 +294,7 @@ export default function ProjectsPage() {
 
                 {/* Hover Overlay */}
                 <div
-                  className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-2 sm:gap-5 transition-all duration-300 ${
+                  className={`absolute inset-0 bg-blue-600/90 backdrop-blur-sm flex items-center justify-center gap-2 sm:gap-5 ${
                     (!isMobile && hoveredCard === index) || (isMobile && hoveredCard === index)
                       ? "opacity-100" 
                       : "opacity-0 pointer-events-none"
@@ -320,7 +320,7 @@ export default function ProjectsPage() {
               </div>
 
               <div className="p-3 sm:p-6 flex flex-col min-w-0">
-                <h3 className="text-sm sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors line-clamp-1 min-w-0">
+                <h3 className="text-sm sm:text-2xl font-bold text-slate-900 mb-1 sm:mb-2 line-clamp-1 min-w-0">
                   {project.title}
                 </h3>
 
