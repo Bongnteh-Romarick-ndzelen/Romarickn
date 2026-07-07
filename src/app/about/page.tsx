@@ -106,7 +106,7 @@ const techStack = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
-      
+
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
         
@@ -136,7 +136,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-sm sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold px-4">
             A passionate developer dedicated to creating impactful digital
-            experiences. My journey into programming started with a simple "Hello, World!" and has since evolved 
+            experiences. My journey into programming started with a simple "Hello, World!" and has since evolved
             into a career where I solve complex problems and build applications that make a difference.
           </p>
         </div>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies - REDESIGNED TO MATCH STATS SECTION */}
+            {/* Hobbies - FIXED VERSION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
@@ -246,15 +246,15 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm hover:shadow-md transition-shadow duration-200"
                     >
                       <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-1.5">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
+                      <p className="text-[10px] sm:text-base font-bold text-slate-800 break-words leading-tight">
                         {hobby.name}
                       </p>
-                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
+                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 break-words leading-tight">
                         {hobby.desc}
                       </p>
                     </div>
@@ -263,7 +263,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Achievements - REDESIGNED TO MATCH STATS SECTION */}
+            {/* Achievements - FIXED VERSION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
@@ -275,15 +275,15 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm hover:shadow-md transition-shadow duration-200"
                     >
                       <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-0.5 sm:mb-1.5">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
+                      <p className="text-[10px] sm:text-base font-bold text-slate-800 break-words leading-tight">
                         {ach.title}
                       </p>
-                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
+                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 break-words leading-tight">
                         {ach.desc}
                       </p>
                     </div>

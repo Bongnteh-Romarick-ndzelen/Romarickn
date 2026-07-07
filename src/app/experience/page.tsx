@@ -472,7 +472,7 @@ export default function ExperiencePage() {
                 className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
               >
                 <Briefcase className="h-6 w-6" />
-                Download Full Resume
+                Download Resume
               </a>
               <Link href="/contact">
                 <button className="px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all">
