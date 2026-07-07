@@ -16,8 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
 // Work Experience Data
 const workExperiences = [
@@ -85,7 +83,7 @@ const workExperiences = [
       "Built web applications using Django framework",
       "Developed responsive frontend interfaces with Bootstrap",
       "Worked with PHP Laravel for backend services",
-      "Collaborated with team on 3+ projects",
+      "Collaborated on team on 3+ projects",
       "Received positive feedback for technical contributions",
     ],
     skills: ["Django", "Bootstrap", "PHP", "Laravel", "JavaScript", "HTML/CSS"],
@@ -215,41 +213,7 @@ const stats = [
   { label: "Education", value: "4", icon: GraduationCap },
 ];
 
-// Animation variants
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
-};
-
-const cardHover = {
-  rest: { scale: 1 },
-  hover: { 
-    scale: 1.02,
-    transition: { duration: 0.3 }
-  }
-};
-
 export default function ExperiencePage() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const [ref2, inView2] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
       
@@ -266,13 +230,8 @@ export default function ExperiencePage() {
       `}</style>
 
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        {/* Header Section with Animation */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
-        >
+        {/* Header Section */}
+        <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-4">
             <Briefcase className="h-5 w-5 text-blue-600" />
             <span className="text-base font-bold text-blue-700 uppercase tracking-wide">
@@ -289,264 +248,214 @@ export default function ExperiencePage() {
             A timeline of my professional experience, education, and growth as a
             developer
           </p>
-        </motion.div>
+        </div>
 
-        {/* Stats Row with Animation */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12 max-w-4xl mx-auto"
-        >
+        {/* Stats Row - MATCHES ABOUT PAGE LAYOUT */}
+        <div className="flex flex-row flex-wrap justify-center gap-2 sm:grid sm:grid-cols-4 sm:gap-5 mb-12 max-w-4xl mx-auto">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <motion.div
+              <div
                 key={index}
-                variants={fadeInUp}
-                whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                className="bg-white border-2 border-slate-200/80 rounded-2xl p-5 text-center shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                className="flex-1 min-w-[70px] max-w-[90px] sm:max-w-none sm:min-w-0 bg-white border-2 border-slate-100 rounded-2xl p-3 sm:p-5 text-center shadow-md shadow-slate-100/50"
               >
-                <div className="inline-flex p-3 rounded-xl bg-blue-50 text-blue-600 mb-2">
-                  <Icon className="h-6 w-6" />
+                <div className="inline-flex p-1.5 sm:p-2 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <div className="text-4xl font-black text-slate-900">
+                <p className="text-base sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
-                </div>
-                <div className="text-base font-bold text-slate-500 uppercase tracking-wider">
+                </p>
+                <p className="text-[8px] sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-0.5 sm:mt-1.5 leading-tight">
                   {stat.label}
-                </div>
-              </motion.div>
+                </p>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Work Experience Section */}
         <div className="mb-16">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-3 mb-6"
-          >
+          <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
             <span className="text-base font-black tracking-[0.25em] text-blue-600 uppercase">
               Work Experience
             </span>
             <div className="flex-1 h-0.5 bg-gradient-to-l from-blue-500/30 to-transparent" />
-          </motion.div>
+          </div>
 
-          <motion.div
-            ref={ref}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            variants={staggerContainer}
-            className="space-y-6"
-          >
+          <div className="space-y-6">
             {workExperiences.map((exp, index) => (
-              <motion.div
+              <div
                 key={exp.id}
-                variants={fadeInUp}
-                whileHover="hover"
-                initial="rest"
-                animate="rest"
+                className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm"
               >
-                <motion.div
-                  variants={cardHover}
-                  className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-300 transition-all duration-300"
-                >
-                  <CardContent className="p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                            {exp.role}
-                          </h3>
-                          {exp.featured && (
-                            <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
-                              <Sparkles className="h-3 w-3 inline mr-1" />
-                              Featured
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xl font-bold text-blue-600 mt-1">
-                          {exp.company}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-start md:items-end gap-2">
-                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
-                          <Calendar className="h-5 w-5" />
-                          <span>{exp.period}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
-                          <MapPin className="h-5 w-5" />
-                          <span>{exp.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
-                      {exp.description}
-                    </p>
-
-                    <div className="mb-5">
-                      <h4 className="text-base font-black text-blue-600 mb-3 flex items-center gap-2">
-                        <Award className="h-5 w-5" />
-                        Key Achievements
-                      </h4>
-                      <ul className="space-y-2">
-                        {exp.achievements.map((achievement, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-3 text-base text-slate-600 font-semibold"
-                          >
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                            <span className="leading-relaxed">{achievement}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="text-base font-black text-blue-600 mb-3">
-                        Technologies Used
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {exp.skills.map((skill) => (
-                          <Badge
-                            key={skill}
-                            variant="secondary"
-                            className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
-                          >
-                            {skill}
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <h3 className="text-2xl md:text-3xl font-bold text-slate-900">
+                          {exp.role}
+                        </h3>
+                        {exp.featured && (
+                          <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
+                            <Sparkles className="h-3 w-3 inline mr-1" />
+                            Featured
                           </Badge>
-                        ))}
+                        )}
+                      </div>
+                      <p className="text-xl font-bold text-blue-600 mt-1">
+                        {exp.company}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-start md:items-end gap-2">
+                      <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                        <Calendar className="h-5 w-5" />
+                        <span>{exp.period}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                        <MapPin className="h-5 w-5" />
+                        <span>{exp.location}</span>
                       </div>
                     </div>
-                  </CardContent>
-                </motion.div>
-              </motion.div>
+                  </div>
+
+                  <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
+                    {exp.description}
+                  </p>
+
+                  <div className="mb-5">
+                    <h4 className="text-base font-black text-blue-600 mb-3 flex items-center gap-2">
+                      <Award className="h-5 w-5" />
+                      Key Achievements
+                    </h4>
+                    <ul className="space-y-2">
+                      {exp.achievements.map((achievement, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-3 text-base text-slate-600 font-semibold"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                          <span className="leading-relaxed">{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-base font-black text-blue-600 mb-3">
+                      Technologies Used
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {exp.skills.map((skill) => (
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Education Section */}
         <div className="mb-16">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center gap-3 mb-6"
-          >
+          <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
             <span className="text-base font-black tracking-[0.25em] text-indigo-600 uppercase">
               Education
             </span>
             <div className="flex-1 h-0.5 bg-gradient-to-l from-indigo-500/30 to-transparent" />
-          </motion.div>
+          </div>
 
-          <motion.div
-            ref={ref2}
-            initial="hidden"
-            animate={inView2 ? "visible" : "hidden"}
-            variants={staggerContainer}
-            className="space-y-6"
-          >
+          <div className="space-y-6">
             {educationExperiences.map((edu, index) => (
-              <motion.div
+              <div
                 key={edu.id}
-                variants={fadeInUp}
-                whileHover="hover"
-                initial="rest"
-                animate="rest"
+                className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm"
               >
-                <motion.div
-                  variants={cardHover}
-                  className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-indigo-300 transition-all duration-300"
-                >
-                  <CardContent className="p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <GraduationCap className="h-6 w-6 text-indigo-600" />
-                          <h3 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                            {edu.degree}
-                          </h3>
-                          {edu.featured && (
-                            <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
-                              <Sparkles className="h-3 w-3 inline mr-1" />
-                              Current
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xl font-bold text-indigo-600 mt-1">
-                          {edu.institution}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-start md:items-end gap-2">
-                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
-                          <Calendar className="h-5 w-5" />
-                          <span>{edu.period}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-base font-bold text-slate-500">
-                          <MapPin className="h-5 w-5" />
-                          <span>{edu.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
-                      {edu.description}
-                    </p>
-
-                    <div className="mb-5">
-                      <h4 className="text-base font-black text-indigo-600 mb-3 flex items-center gap-2">
-                        <Award className="h-5 w-5" />
-                        Key Highlights
-                      </h4>
-                      <ul className="space-y-2">
-                        {edu.achievements.map((achievement, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-3 text-base text-slate-600 font-semibold"
-                          >
-                            <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0"></div>
-                            <span className="leading-relaxed">{achievement}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h4 className="text-base font-black text-indigo-600 mb-3">
-                        Skills & Technologies
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {edu.skills.map((skill) => (
-                          <Badge
-                            key={skill}
-                            variant="secondary"
-                            className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
-                          >
-                            {skill}
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-5">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <GraduationCap className="h-6 w-6 text-indigo-600" />
+                        <h3 className="text-2xl md:text-3xl font-bold text-slate-900">
+                          {edu.degree}
+                        </h3>
+                        {edu.featured && (
+                          <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 text-white text-sm font-black px-4 py-1.5 rounded-xl">
+                            <Sparkles className="h-3 w-3 inline mr-1" />
+                            Current
                           </Badge>
-                        ))}
+                        )}
+                      </div>
+                      <p className="text-xl font-bold text-indigo-600 mt-1">
+                        {edu.institution}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-start md:items-end gap-2">
+                      <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                        <Calendar className="h-5 w-5" />
+                        <span>{edu.period}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-base font-bold text-slate-500">
+                        <MapPin className="h-5 w-5" />
+                        <span>{edu.location}</span>
                       </div>
                     </div>
-                  </CardContent>
-                </motion.div>
-              </motion.div>
+                  </div>
+
+                  <p className="text-lg text-slate-600 font-semibold leading-relaxed mb-5">
+                    {edu.description}
+                  </p>
+
+                  <div className="mb-5">
+                    <h4 className="text-base font-black text-indigo-600 mb-3 flex items-center gap-2">
+                      <Award className="h-5 w-5" />
+                      Key Highlights
+                    </h4>
+                    <ul className="space-y-2">
+                      {edu.achievements.map((achievement, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-3 text-base text-slate-600 font-semibold"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0"></div>
+                          <span className="leading-relaxed">{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-base font-black text-indigo-600 mb-3">
+                      Skills & Technologies
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {edu.skills.map((skill) => (
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="text-sm font-bold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl border-2 border-slate-200"
+                        >
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        {/* CTA Section with Animation */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 text-center"
-        >
+        {/* CTA Section */}
+        <div className="mt-12 text-center">
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-8 md:p-10 shadow-sm">
             <h3 className="text-3xl font-bold text-slate-900 mb-3">
               Looking for more details?
@@ -556,29 +465,23 @@ export default function ExperiencePage() {
               and qualifications.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.a
+              <a
                 href="/api/resume/download"
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
               >
                 <Briefcase className="h-6 w-6" />
                 Download Full Resume
-              </motion.a>
+              </a>
               <Link href="/contact">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all"
-                >
+                <button className="px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all">
                   Contact Me
-                </motion.button>
+                </button>
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
