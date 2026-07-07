@@ -234,63 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
-              <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
-                <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
-                Hobbies & Interests
-              </h3>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {hobbies.map((hobby, idx) => {
-                  const Icon = hobby.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="min-w-0 bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
-                    >
-                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-1.5">
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
-                        {hobby.name}
-                      </p>
-                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
-                        {hobby.desc}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Achievements */}
-            <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
-              <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
-                <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
-                Achievements
-              </h3>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {achievements.map((ach, idx) => {
-                  const Icon = ach.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className="min-w-0 bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
-                    >
-                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-0.5 sm:mb-1.5">
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
-                        {ach.title}
-                      </p>
-                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
-                        {ach.desc}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            
           </div>
 
           {/* Right Column - Bio & Skills */}
