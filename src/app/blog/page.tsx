@@ -62,27 +62,17 @@ interface Pagination {
   pages: number;
 }
 
-// Animation variants
+// Animation variants - SIMPLIFIED for better performance
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
 
 const cardHover = {
   rest: { scale: 1 },
   hover: { 
     scale: 1.02,
-    transition: { duration: 0.3 }
+    transition: { duration: 0.2 }
   }
 };
 
@@ -92,6 +82,7 @@ function PostCard({ post, index }: { post: Post; index: number }) {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
+    rootMargin: '50px 0px',
   });
 
   // Check if image is from Cloudinary
@@ -109,25 +100,24 @@ function PostCard({ post, index }: { post: Post; index: number }) {
       animate={inView ? "visible" : "hidden"}
       variants={fadeInUp}
       whileHover="hover"
-      initial="rest"
-      animate="rest"
+      className="h-full"
     >
       <motion.div
         variants={cardHover}
-        className="group bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-300 transition-all duration-300 flex flex-col"
+        className="group bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-300 transition-all duration-300 flex flex-col h-full"
       >
         <CardHeader className="p-0 relative">
           <Link href={`/blog/${post.slug}`}>
             <div className="relative aspect-video overflow-hidden bg-slate-100">
               {!imgError ? (
                 isCloudinary ? (
-                  // Use regular img tag for Cloudinary images to avoid Next.js optimization issues
                   <img
                     src={imageUrl}
                     alt={post.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={() => setImgError(true)}
                     loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <Image
@@ -137,7 +127,8 @@ function PostCard({ post, index }: { post: Post; index: number }) {
                     height={400}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={() => setImgError(true)}
-                    priority={index < 4}
+                    priority={index < 2}
+                    loading={index < 2 ? "eager" : "lazy"}
                   />
                 )
               ) : (
@@ -157,20 +148,20 @@ function PostCard({ post, index }: { post: Post; index: number }) {
           </Link>
         </CardHeader>
 
-        <CardContent className="p-5 flex-grow">
-          <div className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-2">
-            <Calendar className="h-4 w-4" />
-            <span>{formatDate(post.publishedAt)}</span>
-            <span>•</span>
-            <Clock className="h-4 w-4" />
-            <span>{post.readTime} min read</span>
+        <CardContent className="p-4 sm:p-5 flex-grow">
+          <div className="flex items-center gap-2 text-sm font-bold text-slate-500 mb-2 flex-wrap">
+            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+            <span className="text-xs sm:text-sm">{formatDate(post.publishedAt)}</span>
+            <span className="hidden xs:inline">•</span>
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 hidden xs:inline" />
+            <span className="text-xs sm:text-sm hidden xs:inline">{post.readTime} min read</span>
           </div>
 
-          <CardTitle className="text-xl font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">
+          <CardTitle className="text-lg sm:text-xl font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-snug">
             <Link href={`/blog/${post.slug}`}>{post.title}</Link>
           </CardTitle>
 
-          <p className="text-base text-slate-600 font-semibold line-clamp-2 mb-3 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 font-semibold line-clamp-2 mb-3 leading-relaxed">
             {post.excerpt}
           </p>
 
@@ -179,7 +170,7 @@ function PostCard({ post, index }: { post: Post; index: number }) {
               <Badge
                 key={cat.slug || index}
                 variant="outline"
-                className="text-sm font-bold border-blue-200 text-blue-700 bg-blue-50 px-3 py-1 rounded-xl"
+                className="text-xs sm:text-sm font-bold border-blue-200 text-blue-700 bg-blue-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-xl"
               >
                 {cat.name}
               </Badge>
@@ -187,21 +178,19 @@ function PostCard({ post, index }: { post: Post; index: number }) {
           </div>
         </CardContent>
 
-        <CardFooter className="p-5 pt-0 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6 border-2 border-blue-200">
-                <AvatarImage src={post.author.avatar} alt={post.author.name} />
-                <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-bold">
-                  {post.author.name?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm font-bold text-slate-600 truncate max-w-[100px]">
-                {post.author.name?.split(" ")[0]}
-              </span>
-            </div>
+        <CardFooter className="p-4 sm:p-5 pt-0 flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6 border-2 border-blue-200 flex-shrink-0">
+              <AvatarImage src={post.author.avatar} alt={post.author.name} />
+              <AvatarFallback className="bg-blue-100 text-blue-700 text-xs font-bold">
+                {post.author.name?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-bold text-slate-600 truncate max-w-[80px] sm:max-w-[100px]">
+              {post.author.name?.split(" ")[0]}
+            </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <LikeButton
               postId={post.id}
               initialLikes={post._count?.likes || 0}
@@ -209,8 +198,8 @@ function PostCard({ post, index }: { post: Post; index: number }) {
               showDetails={true}
             />
             <div className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition-colors">
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-sm font-bold">
+              <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm font-bold">
                 {post._count?.comments || 0}
               </span>
             </div>
@@ -223,15 +212,15 @@ function PostCard({ post, index }: { post: Post; index: number }) {
 
 function PostCardSkeleton() {
   return (
-    <Card className="flex flex-col overflow-hidden bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm">
+    <Card className="flex flex-col overflow-hidden bg-white border-2 border-slate-200/80 rounded-2xl shadow-sm h-full">
       <CardHeader className="p-0">
         <Skeleton className="aspect-video w-full" />
       </CardHeader>
-      <CardContent className="p-5 flex-grow">
+      <CardContent className="p-4 sm:p-5 flex-grow">
         <div className="flex items-center gap-2 mb-2">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-3 rounded-full hidden xs:inline" />
+          <Skeleton className="h-3 w-12 hidden xs:inline" />
         </div>
         <Skeleton className="h-6 w-3/4 mb-2" />
         <Skeleton className="h-4 w-full mb-1" />
@@ -241,13 +230,13 @@ function PostCardSkeleton() {
           <Skeleton className="h-6 w-16 rounded-xl" />
         </div>
       </CardContent>
-      <CardFooter className="p-5 pt-0">
-        <div className="flex items-center justify-between w-full">
+      <CardFooter className="p-4 sm:p-5 pt-0">
+        <div className="flex items-center justify-between w-full flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Skeleton className="h-6 w-6 rounded-full" />
             <Skeleton className="h-4 w-16" />
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Skeleton className="h-8 w-16" />
             <div className="flex items-center gap-1">
               <Skeleton className="h-4 w-4" />
@@ -269,6 +258,7 @@ export default function BlogPage() {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
+    rootMargin: '100px 0px',
   });
 
   useEffect(() => {
@@ -314,6 +304,11 @@ export default function BlogPage() {
   const featuredPosts = posts.slice(0, 4);
   const regularPosts = posts.slice(4);
 
+  // Check if we should show featured section
+  const showFeatured = !loading && featuredPosts.length > 0 && !searchTerm;
+  const showRegular = !loading && regularPosts.length > 0 && !searchTerm;
+  const showSearchResults = searchTerm && posts.length > 0;
+
   return (
     <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
       
@@ -327,111 +322,96 @@ export default function BlogPage() {
         p, span, div, a, button, label, .font-body {
           font-family: 'Lato', sans-serif !important;
         }
+        
+        @media (max-width: 480px) {
+          .xs\\:inline {
+            display: inline !important;
+          }
+        }
       `}</style>
 
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        {/* Hero Section with Animation */}
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        {/* Hero Section - NO ANIMATION ON MOBILE */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-4">
-            <Sparkles className="h-5 w-5 text-blue-600" />
-            <span className="text-base font-bold text-blue-700 uppercase tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-3 sm:mb-4">
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+            <span className="text-xs sm:text-base font-bold text-blue-700 uppercase tracking-wide">
               Latest Articles
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
             From the{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Blog
             </span>
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-4">
+          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-2 sm:mt-4 px-4">
             Insights, tutorials, and deep dives into web development, design,
             and technology.
           </p>
         </motion.div>
 
-        {/* Search Bar with Animation */}
+        {/* Search Bar - SIMPLIFIED ANIMATION */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-10 max-w-md mx-auto"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
+          className="mb-8 sm:mb-10 max-w-md mx-auto"
         >
           <div className="relative">
             <Input
               type="search"
               placeholder="Search articles..."
-              className="pl-12 pr-4 py-3 h-12 text-base bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 rounded-2xl shadow-sm font-semibold"
+              className="pl-10 sm:pl-12 pr-4 py-2 sm:py-3 h-10 sm:h-12 text-sm sm:text-base bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 rounded-2xl shadow-sm font-semibold"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
           </div>
         </motion.div>
 
-        {/* Featured Posts Section - 4 columns */}
-        {!loading && featuredPosts.length > 0 && !searchTerm && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-12"
-          >
-            <div className="flex items-center gap-3 mb-5">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
-              <h2 className="text-2xl font-bold text-slate-900">
+        {/* Featured Posts Section */}
+        {showFeatured && (
+          <div className="mb-8 sm:mb-12">
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-5">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+              <h2 className="text-lg sm:text-2xl font-bold text-slate-900">
                 Featured Articles
               </h2>
             </div>
-            <motion.div 
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-            >
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {featuredPosts.map((post, index) => (
                 <PostCard key={post.id || index} post={post} index={index} />
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
 
         {/* All Posts Section */}
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          variants={fadeInUp}
-        >
-          {!loading && regularPosts.length > 0 && !searchTerm && (
-            <div className="flex items-center gap-3 mb-5">
-              <Zap className="h-5 w-5 text-indigo-600" />
-              <h2 className="text-2xl font-bold text-slate-900">
+        <div ref={ref}>
+          {showRegular && (
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-5">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 flex-shrink-0" />
+              <h2 className="text-lg sm:text-2xl font-bold text-slate-900">
                 Recent Posts
               </h2>
             </div>
           )}
 
-          {searchTerm && posts.length > 0 && (
-            <div className="mb-5">
-              <p className="text-base text-slate-600 font-bold">
+          {showSearchResults && (
+            <div className="mb-3 sm:mb-5">
+              <p className="text-sm sm:text-base text-slate-600 font-bold">
                 Found {posts.length} result{posts.length !== 1 ? "s" : ""} for "{searchTerm}"
               </p>
             </div>
           )}
 
-          {/* Posts Grid - 4 columns */}
-          <motion.div 
-            variants={staggerContainer}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-          >
+          {/* Posts Grid */}
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {loading ? (
               Array.from({ length: 8 }).map((_, i) => (
                 <PostCardSkeleton key={i} />
@@ -441,46 +421,38 @@ export default function BlogPage() {
                 <PostCard key={post.id || index} post={post} index={index} />
               ))
             ) : (
-              <motion.div 
-                variants={fadeInUp}
-                className="col-span-full text-center py-16"
-              >
-                <div className="inline-flex p-4 rounded-2xl bg-slate-100 border-2 border-slate-200 mb-4">
-                  <Search className="h-8 w-8 text-slate-400" />
+              <div className="col-span-full text-center py-12 sm:py-16">
+                <div className="inline-flex p-3 sm:p-4 rounded-2xl bg-slate-100 border-2 border-slate-200 mb-3 sm:mb-4">
+                  <Search className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
                   No posts found
                 </h3>
-                <p className="text-lg text-slate-600 font-semibold">
+                <p className="text-base sm:text-lg text-slate-600 font-semibold">
                   Try adjusting your search or browse all articles.
                 </p>
-              </motion.div>
+              </div>
             )}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        {/* Pagination with Animation */}
+        {/* Pagination */}
         {!loading &&
           pagination &&
           pagination.pages > 1 &&
           posts.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-12 flex justify-center items-center gap-2"
-            >
+            <div className="mt-8 sm:mt-12 flex justify-center items-center gap-1 sm:gap-2 flex-wrap">
               <Button
                 variant="outline"
-                size="lg"
+                size="default"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="border-2 border-slate-200 text-white hover:border-blue-400 hover:text-blue-600 rounded-2xl h-10 text-base font-bold px-5 transition-all"
+                className="border-2 border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 rounded-2xl h-9 sm:h-10 text-sm sm:text-base font-bold px-3 sm:px-5 transition-all"
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Prev
+                <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Prev</span>
               </Button>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 {Array.from(
                   { length: Math.min(5, pagination.pages) },
                   (_, i) => {
@@ -499,9 +471,9 @@ export default function BlogPage() {
                       <Button
                         key={i}
                         variant={pageNum === page ? "default" : "outline"}
-                        size="lg"
+                        size="default"
                         onClick={() => setPage(pageNum)}
-                        className={`w-10 h-10 p-0 rounded-2xl text-base font-bold transition-all ${
+                        className={`w-8 h-8 sm:w-10 sm:h-10 p-0 rounded-2xl text-sm sm:text-base font-bold transition-all ${
                           pageNum === page
                             ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/25"
                             : "border-2 border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600"
@@ -515,34 +487,29 @@ export default function BlogPage() {
               </div>
               <Button
                 variant="outline"
-                size="lg"
+                size="default"
                 onClick={() =>
                   setPage((p) => Math.min(pagination.pages, p + 1))
                 }
                 disabled={page === pagination.pages}
-                className="border-2 border-slate-200 text-white hover:border-blue-400 hover:text-white rounded-2xl h-10 text-base font-bold px-5 transition-all"
+                className="border-2 border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 rounded-2xl h-9 sm:h-10 text-sm sm:text-base font-bold px-3 sm:px-5 transition-all"
               >
-                Next
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <span className="hidden xs:inline">Next</span>
+                <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
-            </motion.div>
+            </div>
           )}
 
-        {/* Stats Footer with Animation */}
+        {/* Stats Footer */}
         {!loading && posts.length > 0 && pagination && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-12 pt-6 border-t-2 border-slate-200"
-          >
-            <div className="flex flex-wrap justify-center gap-6 text-center text-base text-slate-600 font-bold">
-              <div className="flex items-center gap-2">
-                <Rss className="h-5 w-5 text-blue-600" />
+          <div className="mt-8 sm:mt-12 pt-4 sm:pt-6 border-t-2 border-slate-200">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-center text-sm sm:text-base text-slate-600 font-bold">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Rss className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
                 <span>{pagination.total} articles published</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Heart className="h-5 w-5 text-blue-600" />
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.likes || 0),
@@ -551,8 +518,8 @@ export default function BlogPage() {
                   total likes
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <MessageCircle className="h-5 w-5 text-blue-600" />
+              <div className="flex items-center gap-1 sm:gap-2">
+                <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
                 <span>
                   {posts.reduce(
                     (sum, post) => sum + (post._count?.comments || 0),
@@ -562,7 +529,7 @@ export default function BlogPage() {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
