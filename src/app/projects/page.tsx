@@ -404,7 +404,7 @@ export default function ProjectsPage() {
                 </button>
               </Link>
               <Link href="/experience">
-                <button className="px-4 sm:px-10 py-2 sm:py-4.5 border-2 border-slate-300 text-white hover:text-slate-900 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl">
+                <button className="px-4 sm:px-10 py-2 sm:py-4.5 border-2 border-slate-300 text-slate-900  hover:text-slate-900 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl">
                   View My Experience
                 </button>
               </Link>
