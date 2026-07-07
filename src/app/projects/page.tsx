@@ -201,8 +201,8 @@ export default function ProjectsPage() {
           </p>
         </div>
 
-        {/* Stats Row - FIXED: Improved mobile layout */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
+        {/* Stats Row - FIXED: Kept 4 columns on mobile, removed animations */}
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
           {[
             { value: projects.length, label: "Total Projects", icon: Code2 },
             { value: featuredCount, label: "Featured", icon: Star },
@@ -213,15 +213,15 @@ export default function ProjectsPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-200/80 rounded-xl p-3 sm:p-5 text-center shadow-sm"
+                className="bg-white border-2 border-slate-200/80 rounded-xl p-2 sm:p-5 text-center shadow-sm"
               >
-                <div className="inline-flex p-2 sm:p-3 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-2">
-                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                <div className="inline-flex p-1.5 sm:p-3 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                  <Icon className="h-4 w-4 sm:h-6 sm:w-6" />
                 </div>
-                <div className="text-xl sm:text-4xl font-black text-slate-900 leading-none">
+                <div className="text-lg sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </div>
-                <div className="text-[10px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight">
+                <div className="text-[8px] sm:text-base font-bold text-slate-500 uppercase tracking-wide mt-1 sm:mt-1.5 leading-tight px-0.5">
                   {stat.label}
                 </div>
               </div>
