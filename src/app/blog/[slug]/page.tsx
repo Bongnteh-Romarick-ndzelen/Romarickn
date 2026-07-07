@@ -23,7 +23,7 @@ import {
   Reply,
   MoreVertical,
 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getBaseUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { postService } from "@/lib/services/post.service";
@@ -707,7 +707,7 @@ export default function BlogPostPage() {
                   post.content?.substring(0, 160).replace(/<[^>]*>/g, "")
                 }
                 imageUrl={post.coverImage}
-                url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
+                url={`${getBaseUrl()}/blog/${post.slug}`}
                 slug={post.slug}
               />
             </motion.div>

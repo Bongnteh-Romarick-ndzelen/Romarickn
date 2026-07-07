@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { cn } from "@/lib/utils";
+import { cn, getBaseUrl } from "@/lib/utils";
 import ConditionalHeader from "@/components/ConditionalHeader";
 import ConditionalFooter from "@/components/ConditionalFooter";
 import { AuthProvider } from "@/context/AuthContext";

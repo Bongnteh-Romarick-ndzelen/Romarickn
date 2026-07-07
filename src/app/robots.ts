@@ -1,8 +1,8 @@
 import { MetadataRoute } from "next";
+import { getBaseUrl } from "@/lib/utils";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://romarick.vercel.app";
+  const baseUrl = getBaseUrl();
 
   return {
     rules: {

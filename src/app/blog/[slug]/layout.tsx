@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { postService } from "@/lib/services/post.service";
+import { getBaseUrl } from "@/lib/utils";
 
 type Props = {
   params: { slug: string };
@@ -20,8 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     // Get absolute URL for the image
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "https://romarick.vercel.app";
+    const baseUrl = getBaseUrl();
     const imageUrl = post.coverImage?.startsWith("http")
       ? post.coverImage
       : `${baseUrl}${post.coverImage || "/og-image.jpg"}`;
