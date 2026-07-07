@@ -142,23 +142,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── STATS ROW ── MATCHES HOME PAGE LAYOUT ── */}
+      {/* ── STATS ROW ── FLEX ROW ON MOBILE, 4 COLUMNS ON DESKTOP ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-5 max-w-5xl mx-auto">
+        <div className="flex flex-row flex-wrap justify-center gap-2 sm:grid sm:grid-cols-4 sm:gap-5 max-w-5xl mx-auto">
           {stats.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-100 rounded-2xl p-5 text-center shadow-md shadow-slate-100/50"
+                className="flex-1 min-w-[70px] max-w-[90px] sm:max-w-none sm:min-w-0 bg-white border-2 border-slate-100 rounded-2xl p-3 sm:p-5 text-center shadow-md shadow-slate-100/50"
               >
-                <div className="inline-flex p-2 rounded-lg bg-blue-50 text-blue-600 mb-2">
-                  <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-1.5 sm:p-2 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <p className="text-3xl sm:text-4xl font-black text-slate-900 leading-none">
+                <p className="text-base sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-1.5">
+                <p className="text-[8px] sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-0.5 sm:mt-1.5 leading-tight">
                   {stat.label}
                 </p>
               </div>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies - MATCHES HOME PAGE LAYOUT */}
+            {/* Hobbies - MATCHES HOME PAGE STYLING */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
@@ -246,19 +246,17 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center hover:bg-white hover:border-blue-300 transition-colors"
                     >
-                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 flex-shrink-0">
+                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-2">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                          {hobby.name}
-                        </p>
-                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                          {hobby.desc}
-                        </p>
-                      </div>
+                      <p className="text-xs sm:text-base font-bold text-slate-800 truncate">
+                        {hobby.name}
+                      </p>
+                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
+                        {hobby.desc}
+                      </p>
                     </div>
                   );
                 })}
@@ -277,19 +275,17 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3.5 rounded-xl bg-slate-50 border-2 border-slate-200/60 overflow-hidden min-w-0"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center hover:bg-white hover:border-purple-300 transition-colors"
                     >
-                      <div className="p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 flex-shrink-0">
+                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-1 sm:mb-2">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm sm:text-base font-bold text-slate-800 truncate">
-                          {ach.title}
-                        </p>
-                        <p className="text-[10px] sm:text-sm font-semibold text-slate-500 truncate">
-                          {ach.desc}
-                        </p>
-                      </div>
+                      <p className="text-xs sm:text-base font-bold text-slate-800 truncate">
+                        {ach.title}
+                      </p>
+                      <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
+                        {ach.desc}
+                      </p>
                     </div>
                   );
                 })}
