@@ -213,7 +213,7 @@ export default function AboutPage() {
                 <Link href="/experience">
                   <Button
                     variant="outline"
-                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-white text-sm sm:text-base font-bold rounded-xl"
+                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-base font-bold rounded-xl"
                   >
                     Experience
                   </Button>
@@ -234,7 +234,7 @@ export default function AboutPage() {
               </p>
             </div>
 
-            {/* Hobbies - MATCHES HOME PAGE STYLING */}
+            {/* Hobbies - REDESIGNED TO MATCH STATS SECTION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-red-500" />
@@ -246,12 +246,12 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center hover:bg-white hover:border-blue-300 transition-colors"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
                     >
-                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-1 sm:mb-2">
+                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-1.5">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <p className="text-xs sm:text-base font-bold text-slate-800 truncate">
+                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
                         {hobby.name}
                       </p>
                       <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
@@ -263,7 +263,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Achievements */}
+            {/* Achievements - REDESIGNED TO MATCH STATS SECTION */}
             <div className="bg-white border-2 border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-sm">
               <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-3 sm:mb-5 flex items-center gap-2">
                 <Award className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500" />
@@ -275,12 +275,12 @@ export default function AboutPage() {
                   return (
                     <div
                       key={idx}
-                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center hover:bg-white hover:border-purple-300 transition-colors"
+                      className="bg-slate-50 border-2 border-slate-200/60 rounded-xl p-2 sm:p-3.5 text-center shadow-sm"
                     >
-                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-1 sm:mb-2">
+                      <div className="inline-flex p-1.5 sm:p-2.5 rounded-lg bg-purple-50 text-purple-600 mb-0.5 sm:mb-1.5">
                         <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
-                      <p className="text-xs sm:text-base font-bold text-slate-800 truncate">
+                      <p className="text-[10px] sm:text-base font-bold text-slate-800 truncate">
                         {ach.title}
                       </p>
                       <p className="text-[8px] sm:text-sm font-semibold text-slate-500 truncate">
