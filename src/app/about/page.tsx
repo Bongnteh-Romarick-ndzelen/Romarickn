@@ -213,7 +213,7 @@ export default function AboutPage() {
                 <Link href="/experience">
                   <Button
                     variant="outline"
-                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-base font-bold rounded-xl"
+                    className="px-5 sm:px-8 py-2.5 sm:py-4 border-2 border-slate-300 text-white text-sm sm:text-base font-bold rounded-xl"
                   >
                     Experience
                   </Button>

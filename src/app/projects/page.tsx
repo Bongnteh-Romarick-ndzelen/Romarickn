@@ -201,8 +201,8 @@ export default function ProjectsPage() {
           </p>
         </div>
 
-        {/* Stats Row - MATCHES HOME PAGE LAYOUT */}
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
+        {/* Stats Row - FLEX ROW ON MOBILE, 4 COLUMNS ON DESKTOP */}
+        <div className="flex flex-row flex-wrap justify-center gap-2 sm:grid sm:grid-cols-4 sm:gap-5 mb-6 sm:mb-10 max-w-5xl mx-auto">
           {[
             { value: projects.length, label: "Total Projects", icon: Code2 },
             { value: featuredCount, label: "Featured", icon: Star },
@@ -213,15 +213,15 @@ export default function ProjectsPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border-2 border-slate-100 rounded-2xl p-5 text-center shadow-md shadow-slate-100/50"
+                className="flex-1 min-w-[70px] max-w-[90px] sm:max-w-none sm:min-w-0 bg-white border-2 border-slate-100 rounded-2xl p-3 sm:p-5 text-center shadow-md shadow-slate-100/50"
               >
-                <div className="inline-flex p-2 rounded-lg bg-blue-50 text-blue-600 mb-2">
-                  <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
+                <div className="inline-flex p-1.5 sm:p-2 rounded-lg bg-blue-50 text-blue-600 mb-0.5 sm:mb-2">
+                  <Icon className="h-4 w-4 sm:h-7 sm:w-7" />
                 </div>
-                <p className="text-3xl sm:text-4xl font-black text-slate-900 leading-none">
+                <p className="text-base sm:text-4xl font-black text-slate-900 leading-none">
                   {stat.value}
                 </p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mt-1.5">
+                <p className="text-[8px] sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-0.5 sm:mt-1.5 leading-tight">
                   {stat.label}
                 </p>
               </div>
@@ -373,7 +373,7 @@ export default function ProjectsPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-[10px] sm:text-base font-bold h-7 sm:h-11 rounded-xl"
+                      className="w-full border-2 border-slate-300 text-white hover:text-slate-900 hover:bg-slate-50 text-[10px] sm:text-base font-bold h-7 sm:h-11 rounded-xl"
                     >
                       <Github className="mr-0.5 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
                       <span className="hidden sm:inline">Code</span>
@@ -404,7 +404,7 @@ export default function ProjectsPage() {
                 </button>
               </Link>
               <Link href="/experience">
-                <button className="px-4 sm:px-10 py-2 sm:py-4.5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl">
+                <button className="px-4 sm:px-10 py-2 sm:py-4.5 border-2 border-slate-300 text-white hover:text-slate-900 hover:bg-slate-50 text-sm sm:text-lg font-bold rounded-xl">
                   View My Experience
                 </button>
               </Link>
