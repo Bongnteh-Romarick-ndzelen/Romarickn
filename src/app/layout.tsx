@@ -14,8 +14,7 @@ const inter = Inter({
 });
 
 // Base URL for metadata
-const baseUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "https://romarick.vercel.app";
+const baseUrl = getBaseUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
