@@ -217,7 +217,7 @@ const stats = [
 export default function ExperiencePage() {
   return (
     <div className="min-h-screen bg-slate-50/50 selection:bg-blue-500 selection:text-white overflow-x-hidden">
-      
+
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&family=Radley:ital@0;1&display=swap');
         
@@ -457,26 +457,26 @@ export default function ExperiencePage() {
 
         {/* CTA Section */}
         <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-8 md:p-10 shadow-sm">
-            <h3 className="text-3xl font-bold text-slate-900 mb-3">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200/60 rounded-2xl p-6 sm:p-8 md:p-10 shadow-sm">
+            <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 sm:mb-3">
               Looking for more details?
             </h3>
-            <p className="text-lg text-slate-600 font-semibold mb-6 max-w-md mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 font-semibold mb-4 sm:mb-6 max-w-md mx-auto">
               Download my full resume for a complete overview of my experience
               and qualifications.
             </p>
-             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-  <a
-    href={`${API_BASE_URL}/api/resume/download`}
-    target="_blank"
-    rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+              <a
+                href={`${API_BASE_URL}/api/resume/download`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-10 py-3 sm:py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base sm:text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
               >
-                <Briefcase className="h-6 w-6" />
+                <Briefcase className="h-5 w-5 sm:h-6 sm:w-6" />
                 Download Resume
               </a>
-              <Link href="/contact">
-                <button className="w-full sm:w-auto px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all">
+              <Link href="/contact" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto px-6 sm:px-10 py-3 sm:py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-base sm:text-lg font-bold rounded-xl transition-all">
                   Contact Me
                 </button>
               </Link>
