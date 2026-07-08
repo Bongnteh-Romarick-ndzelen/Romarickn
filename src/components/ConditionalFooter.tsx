@@ -13,6 +13,10 @@ const NO_HEADER_FOOTER_PATHS = [
   '/auth',
   '/resend-verification',
   '/admin/dashboard',
+  '/admin/users',
+  '/admin/settings',
+  '/ai-assistance',
+  
 ];
 
 export default function ConditionalFooter() {
