@@ -16,7 +16,6 @@ const NO_HEADER_FOOTER_PATHS = [
   '/admin/users',
   '/admin/settings',
   '/ai-assistance',
-  
 ];
 
 export default function ConditionalFooter() {
@@ -25,9 +24,11 @@ export default function ConditionalFooter() {
   
   const normalizedPathname = pathname.replace(/\/$/, '');
   
+  const isBlogPost = normalizedPathname.startsWith('/blog/');
+  
   const shouldHide = NO_HEADER_FOOTER_PATHS.some(
     (path) => normalizedPathname === path || normalizedPathname.startsWith(path + '/')
-  );
+  ) || isBlogPost;
 
   if (shouldHide) {
     return null;

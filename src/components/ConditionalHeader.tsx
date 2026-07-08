@@ -22,9 +22,11 @@ export default function ConditionalHeader() {
   
   const normalizedPathname = pathname.replace(/\/$/, '');
   
+  const isBlogPost = normalizedPathname.startsWith('/blog/');
+  
   const shouldHide = NO_HEADER_FOOTER_PATHS.some(
     (path) => normalizedPathname === path || normalizedPathname.startsWith(path + '/')
-  );
+  ) || isBlogPost;
 
   if (shouldHide) {
     return null;
