@@ -21,6 +21,7 @@ import {
   FolderOpen,
   Mail,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { authService } from "@/lib/services/auth.service";
 import { motion, AnimatePresence } from "framer-motion";
+import { API_BASE_URL } from "@/lib/api";
 
 const menuItems = [
   { href: "/", label: "Home", icon: Home },
@@ -83,6 +85,24 @@ export function Header() {
       authLogout();
       router.push("/");
       setIsMobileMenuOpen(false);
+    }
+  };
+
+  const handleDownloadResume = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/resume/download`);
+      if (!response.ok) throw new Error("Failed to download resume");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Bongnteh_Romarick_Resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Download error:", error);
     }
   };
 
@@ -168,6 +188,16 @@ export function Header() {
                 );
               })}
             </nav>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadResume}
+              className="hidden md:inline-flex font-lato font-bold text-white hover:text-blue-600 hover:border-blue-600 rounded-xl gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Resume
+            </Button>
 
             {/* Auth Section - Desktop */}
             {user ? (
@@ -318,9 +348,19 @@ export function Header() {
                   Login
                 </Button>
               </Link>
-            )}
+             )}
 
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+             <Button
+               variant="ghost"
+               size="icon"
+               onClick={handleDownloadResume}
+               className="h-9 w-9 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl"
+               title="Download Resume"
+             >
+               <Download className="h-5 w-5" />
+             </Button>
+
+             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
