@@ -148,7 +148,7 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
   );
 }
 
-function RenderContent({ html }: { html: string }) {
+function RenderContent({ html, url }: { html: string; url?: string }) {
   const processContent = (content: string) => {
     let decodedContent = content;
     
@@ -162,6 +162,12 @@ function RenderContent({ html }: { html: string }) {
       .replace(/&rdquo;/g, '"')
       .replace(/&lsquo;/g, "'")
       .replace(/&rsquo;/g, "'");
+
+    if (url) {
+      decodedContent = decodedContent.replace(/<img[^>]*>/gi, (match) => {
+        return `<a href="${url}">${match}</a>`;
+      });
+    }
 
     const parts = decodedContent.split(/(<pre><code[^>]*>[\s\S]*?<\/code><\/pre>)/gi);
 
