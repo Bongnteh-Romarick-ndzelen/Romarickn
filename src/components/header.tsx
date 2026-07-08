@@ -193,7 +193,7 @@ export function Header() {
               variant="outline"
               size="sm"
               onClick={handleDownloadResume}
-              className="hidden md:inline-flex font-lato font-bold text-white hover:text-blue-600 hover:border-blue-600 rounded-xl gap-2"
+              className="hidden md:inline-flex font-lato font-bold text-white hover:text-blue-100 hover:border-blue-600 rounded-xl gap-2"
             >
               <Download className="h-4 w-4" />
               Resume
