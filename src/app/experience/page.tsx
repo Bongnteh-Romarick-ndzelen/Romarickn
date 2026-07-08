@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/lib/api";
 
 // Work Experience Data
 const workExperiences = [
@@ -464,18 +465,18 @@ export default function ExperiencePage() {
               Download my full resume for a complete overview of my experience
               and qualifications.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="/api/resume/download"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
+             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+  <a
+    href={`${API_BASE_URL}/api/resume/download`}
+    target="_blank"
+    rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold shadow-lg shadow-blue-600/25 transition-all"
               >
                 <Briefcase className="h-6 w-6" />
                 Download Resume
               </a>
               <Link href="/contact">
-                <button className="px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all">
+                <button className="w-full sm:w-auto px-10 py-5 border-2 border-slate-300 text-slate-700 hover:bg-slate-50 text-lg font-bold rounded-xl transition-all">
                   Contact Me
                 </button>
               </Link>
