@@ -725,7 +725,7 @@ export default function BlogPostPage() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="prose max-w-none"
             >
-              <RenderContent html={renderedContent} />
+              <RenderContent html={renderedContent} url={`${getBaseUrl()}/blog/${post.slug}`} />
             </motion.div>
 
             {/* Tags */}
