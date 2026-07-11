@@ -96,7 +96,6 @@ export default function ContactPage() {
         setIsSuccess(true);
         setFormData({ name: "", email: "", subject: "", message: "" });
         
-        // Close form after 3 seconds
         setTimeout(() => {
           setFormVisible(false);
         }, 3000);
@@ -139,27 +138,27 @@ export default function ContactPage() {
         }
       `}</style>
 
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
         {/* Header with Animation */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-4">
-            <MessageSquare className="h-5 w-5 text-blue-600" />
-            <span className="text-base font-bold text-blue-700 uppercase tracking-wide">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full bg-blue-50/80 border-2 border-blue-200 backdrop-blur-sm mb-3 sm:mb-4">
+            <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+            <span className="text-xs sm:text-base font-bold text-blue-700 uppercase tracking-wide">
               Get in Touch
             </span>
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 tracking-tight">
             Contact{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
               Me
             </span>
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-4">
+          <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-bold mt-2 sm:mt-4">
             Have a question or want to work together? I'd love to hear from you.
           </p>
         </motion.div>
@@ -169,10 +168,10 @@ export default function ContactPage() {
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           variants={staggerContainer}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {/* Contact Info */}
-          <motion.div variants={fadeInUp} className="lg:col-span-1 space-y-6">
+          <motion.div variants={fadeInUp} className="lg:col-span-1 space-y-4 sm:space-y-6">
             <motion.div
               whileHover="hover"
               initial="rest"
@@ -182,26 +181,26 @@ export default function ContactPage() {
                 variants={cardHover}
                 className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <CardHeader className="pb-4 pt-6 px-6">
-                  <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                    <MessageSquare className="h-6 w-6 text-blue-600" />
+                <CardHeader className="pb-3 pt-4 sm:pb-4 sm:pt-6 px-4 sm:px-6">
+                  <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     Contact Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 pb-6 px-6">
+                <CardContent className="space-y-3 sm:space-y-4 pb-4 sm:pb-6 px-4 sm:px-6">
                   <motion.a 
                     href="mailto:ndzelenromarick@gmail.com"
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-start gap-4 p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 transition-all cursor-pointer"
+                    className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-blue-300 transition-all cursor-pointer"
                   >
-                    <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
-                      <Mail className="h-5 w-5" />
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                      <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-slate-800">
+                      <h3 className="text-sm sm:text-base font-black text-slate-800">
                         Email
                       </h3>
-                      <p className="text-base font-semibold text-slate-600 break-all">
+                      <p className="text-sm sm:text-base font-semibold text-slate-600 break-all">
                         ndzelenromarick@gmail.com
                       </p>
                     </div>
@@ -210,16 +209,16 @@ export default function ContactPage() {
                   <motion.a 
                     href="tel:+237678196930"
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-start gap-4 p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-indigo-300 transition-all cursor-pointer"
+                    className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-indigo-300 transition-all cursor-pointer"
                   >
-                    <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
-                      <Phone className="h-5 w-5" />
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
+                      <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-slate-800">
+                      <h3 className="text-sm sm:text-base font-black text-slate-800">
                         Call Me
                       </h3>
-                      <p className="text-base font-semibold text-slate-600">
+                      <p className="text-sm sm:text-base font-semibold text-slate-600">
                         +237 678 196 930
                       </p>
                     </div>
@@ -230,16 +229,16 @@ export default function ContactPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-start gap-4 p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-green-300 transition-all cursor-pointer"
+                    className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-green-300 transition-all cursor-pointer"
                   >
-                    <div className="p-2.5 rounded-xl bg-green-50 text-green-600">
-                      <MessageSquare className="h-5 w-5" />
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-green-50 text-green-600">
+                      <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-slate-800">
+                      <h3 className="text-sm sm:text-base font-black text-slate-800">
                         WhatsApp
                       </h3>
-                      <p className="text-base font-semibold text-slate-600">
+                      <p className="text-sm sm:text-base font-semibold text-slate-600">
                         +237 676 154 253
                       </p>
                     </div>
@@ -250,16 +249,16 @@ export default function ContactPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-start gap-4 p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 transition-all cursor-pointer"
+                    className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-3 rounded-xl bg-slate-50 border-2 border-slate-200/60 hover:border-purple-300 transition-all cursor-pointer"
                   >
-                    <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600">
-                      <MapPin className="h-5 w-5" />
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-purple-50 text-purple-600">
+                      <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-slate-800">
+                      <h3 className="text-sm sm:text-base font-black text-slate-800">
                         Location
                       </h3>
-                      <p className="text-base font-semibold text-slate-600">
+                      <p className="text-sm sm:text-base font-semibold text-slate-600">
                         Bambili, Cameroon
                       </p>
                     </div>
@@ -277,14 +276,14 @@ export default function ContactPage() {
                 variants={cardHover}
                 className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
               >
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Clock className="h-6 w-6 text-blue-600" />
-                    <span className="text-base font-black text-slate-800">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                    <span className="text-sm sm:text-base font-black text-slate-800">
                       Response Time
                     </span>
                   </div>
-                  <p className="text-base text-slate-600 font-semibold leading-relaxed">
+                  <p className="text-sm sm:text-base text-slate-600 font-semibold leading-relaxed">
                     I typically respond within 24 hours. Looking forward to
                     hearing from you!
                   </p>
@@ -313,36 +312,36 @@ export default function ContactPage() {
                       variants={cardHover}
                       className="bg-white border-2 border-slate-200/80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300"
                     >
-                      <CardHeader className="pb-4 pt-6 px-6">
-                        <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                          <Send className="h-6 w-6 text-blue-600" />
+                      <CardHeader className="pb-3 pt-4 sm:pb-4 sm:pt-6 px-4 sm:px-6">
+                        <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                          <Send className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                           Send a Message
                         </CardTitle>
-                        <CardDescription className="text-base text-slate-600 font-semibold">
+                        <CardDescription className="text-sm sm:text-base text-slate-600 font-semibold">
                           Fill out the form below and I'll get back to you as soon as
                           possible.
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="pb-6 px-6">
+                      <CardContent className="pb-4 sm:pb-6 px-4 sm:px-6">
                         {error && (
                           <motion.div 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="mb-5 p-4 rounded-xl bg-red-50 border-2 border-red-200"
+                            className="mb-4 sm:mb-5 p-3 sm:p-4 rounded-xl bg-red-50 border-2 border-red-200"
                           >
                             <div className="flex items-center gap-2">
-                              <AlertCircle className="h-5 w-5 text-red-600" />
-                              <span className="text-base font-bold text-red-700">
+                              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
+                              <span className="text-sm sm:text-base font-bold text-red-700">
                                 {error}
                               </span>
                             </div>
                           </motion.div>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="name" className="text-base font-bold text-slate-700">
+                        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            <div className="space-y-1.5 sm:space-y-2">
+                              <Label htmlFor="name" className="text-sm sm:text-base font-bold text-slate-700">
                                 Your Name *
                               </Label>
                               <Input
@@ -351,11 +350,11 @@ export default function ContactPage() {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-base h-12 rounded-xl font-semibold"
+                                className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-sm sm:text-base h-10 sm:h-12 rounded-xl font-semibold"
                               />
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="email" className="text-base font-bold text-slate-700">
+                            <div className="space-y-1.5 sm:space-y-2">
+                              <Label htmlFor="email" className="text-sm sm:text-base font-bold text-slate-700">
                                 Email Address *
                               </Label>
                               <Input
@@ -365,13 +364,13 @@ export default function ContactPage() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-base h-12 rounded-xl font-semibold"
+                                className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-sm sm:text-base h-10 sm:h-12 rounded-xl font-semibold"
                               />
                             </div>
                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="subject" className="text-base font-bold text-slate-700">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <Label htmlFor="subject" className="text-sm sm:text-base font-bold text-slate-700">
                               Subject *
                             </Label>
                             <Input
@@ -380,24 +379,24 @@ export default function ContactPage() {
                               value={formData.subject}
                               onChange={handleChange}
                               required
-                              className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-base h-12 rounded-xl font-semibold"
+                              className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-sm sm:text-base h-10 sm:h-12 rounded-xl font-semibold"
                             />
                           </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="message" className="text-base font-bold text-slate-700">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <Label htmlFor="message" className="text-sm sm:text-base font-bold text-slate-700">
                               Message *
                             </Label>
                             <Textarea
                               id="message"
                               placeholder="Tell me about your project, ideas, or questions..."
-                              rows={6}
+                              rows={5}
                               value={formData.message}
                               onChange={handleChange}
                               required
-                              className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-base rounded-xl resize-none font-semibold"
+                              className="bg-white border-2 border-slate-200 focus:border-blue-400 text-slate-800 placeholder:text-slate-400 text-sm sm:text-base rounded-xl resize-none font-semibold"
                             />
-                            <p className="text-sm text-slate-500 font-semibold text-right">
+                            <p className="text-xs sm:text-sm text-slate-500 font-semibold text-right">
                               {formData.message.length}/5000 characters
                             </p>
                           </div>
@@ -407,22 +406,22 @@ export default function ContactPage() {
                             disabled={isSubmitting}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base sm:text-lg font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                           >
                             {isSubmitting ? (
-                              <span className="flex items-center justify-center gap-3">
-                                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                              <span className="flex items-center justify-center gap-2 sm:gap-3">
+                                <div className="h-4 w-4 sm:h-5 sm:w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                 Sending...
                               </span>
                             ) : (
                               <span className="flex items-center justify-center gap-2">
-                                <Send className="h-5 w-5" />
+                                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
                                 Send Message
                               </span>
                             )}
                           </motion.button>
 
-                          <p className="text-center text-sm text-slate-500 font-semibold pt-2">
+                          <p className="text-center text-xs sm:text-sm text-slate-500 font-semibold pt-1 sm:pt-2">
                             Your information will never be shared. I respect your
                             privacy.
                           </p>
@@ -437,22 +436,22 @@ export default function ContactPage() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="bg-white border-2 border-green-200 rounded-2xl overflow-hidden shadow-lg shadow-green-100 p-8 text-center"
+                  className="bg-white border-2 border-green-200 rounded-2xl overflow-hidden shadow-lg shadow-green-100 p-6 sm:p-8 text-center"
                 >
-                  <div className="inline-flex p-4 rounded-2xl bg-green-50 border-2 border-green-200 mb-4">
-                    <CheckCircle className="h-12 w-12 text-green-600" />
+                  <div className="inline-flex p-3 sm:p-4 rounded-2xl bg-green-50 border-2 border-green-200 mb-3 sm:mb-4">
+                    <CheckCircle className="h-10 w-10 sm:h-12 sm:w-12 text-green-600" />
                   </div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-2">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">
                     Message Sent! 🎉
                   </h3>
-                  <p className="text-lg text-slate-600 font-semibold mb-6">
+                  <p className="text-base sm:text-lg text-slate-600 font-semibold mb-4 sm:mb-6">
                     Thank you for reaching out. I'll get back to you within 24 hours.
                   </p>
                   <motion.button
                     onClick={handleResetForm}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
+                    className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
                   >
                     Send Another Message
                   </motion.button>
